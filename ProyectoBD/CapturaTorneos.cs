@@ -20,11 +20,11 @@ namespace ProyectoBD
         {
             InitializeComponent();
             varConexion = new ClaseConexion();
-            CargaTorneos();
-            cbGenero.SelectedIndex = 0;
+            cargaTorneos();
+            limpiaElementos();
         }
 
-        public void CargaTorneos()
+        public void cargaTorneos()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -135,6 +135,7 @@ namespace ProyectoBD
                     command.Parameters.AddWithValue("@fechaFin", fechaFin);
                     command.ExecuteNonQuery();
                     //MessageBox.Show("Se agregó con éxito al nuevo Torneo");
+                    cargaTorneos();
                     limpiaElementos();
                 }
                 catch (Exception ex)
@@ -161,7 +162,8 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     command.ExecuteNonQuery();
-                    MessageBox.Show("Torneo eliminado correctamente");
+                    //MessageBox.Show("Torneo eliminado correctamente");
+                    cargaTorneos();
                     limpiaElementos();
                 }
                 catch (Exception ex)
@@ -237,6 +239,7 @@ namespace ProyectoBD
                     conexion.Open();
                     command.ExecuteNonQuery();
                     //MessageBox.Show("Participante modificado correctamente");
+                    cargaTorneos();
                     limpiaElementos();
                 }
                 catch (Exception ex)
@@ -255,7 +258,6 @@ namespace ProyectoBD
             mcFechaIni.SetDate(DateTime.Today);
             mcFechaFin.SetDate(DateTime.Today);
             idTorneoSeleccionado = -1;
-            CargaTorneos();
         }
     }
 }

@@ -21,11 +21,11 @@ namespace ProyectoBD
         {
             InitializeComponent();
             varConexion = new ClaseConexion();
-            CargaParticipante();
+            cargaParticipantes();
             limpiaElementos();
         }
 
-        public void CargaParticipante()
+        public void cargaParticipantes()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -102,7 +102,7 @@ namespace ProyectoBD
 
                     //MessageBox.Show("Se agregó con éxito al nuevo Participante");
 
-                    CargaParticipante();
+                    cargaParticipantes();
                     limpiaElementos();
                 }
                 catch (Exception ex)
@@ -116,7 +116,7 @@ namespace ProyectoBD
         {
             if (IdParticipanteSeleccionado == -1)
             {
-                MessageBox.Show("Seleccione un Participante para modificar");
+                MessageBox.Show("Seleccione un Lugar para modificar");
                 return;
             }
             string nombre = txtNombre.Text;
@@ -151,7 +151,7 @@ namespace ProyectoBD
                     conexion.Open();
                     command.ExecuteNonQuery();
                     //MessageBox.Show("Participante modificado correctamente");
-                    CargaParticipante();
+                    cargaParticipantes();
                     limpiaElementos();
                 }
                 catch (Exception ex)
@@ -179,14 +179,13 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     command.ExecuteNonQuery();
-                    MessageBox.Show("Participante eliminado correctamente");
-                    CargaParticipante();
+                    //MessageBox.Show("Participante eliminado correctamente");
+                    cargaParticipantes();
                     limpiaElementos() ;
                 }
                 catch (Exception ex)
                 {
                     ManejadorErroresBD.MostrarErrorAmigable(ex);
-                    //MessageBox.Show("Error al eliminar: " + ex.Message);
                 }
             }
         }

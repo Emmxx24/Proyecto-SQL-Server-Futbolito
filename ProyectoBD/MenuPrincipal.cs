@@ -91,7 +91,7 @@ namespace ProyectoBD
         private void lugarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Text = "Lugar";
-            //AbrirFormularioHijo(new CapturaLugares());
+            AbrirFormularioHijo(new CapturaLugar());
         }
 
         private void partidoToolStripMenuItem_Click(object sender, EventArgs e)
