@@ -15,7 +15,7 @@ namespace ProyectoBD
     public partial class frmParticipante : Form
     {
         private ClaseConexion varConexion;
-        private int IdParticipanteSeleccionado = -1;
+        private int idParticipanteSeleccionado = -1;
 
         public frmParticipante()
         {
@@ -25,7 +25,7 @@ namespace ProyectoBD
             limpiaElementos();
         }
 
-        public void cargaParticipantes()
+        private void cargaParticipantes()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -49,7 +49,7 @@ namespace ProyectoBD
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al cargar Participante: " + ex.Message);
+                    MessageBox.Show("Error al cargar Participantes: " + ex.Message);
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace ProyectoBD
                 MessageBox.Show("El número de teléfono debe tener 10 dígitos");
                 return;
             }
-            if(txtCorreo.Text.Contains("@") == false || txtCorreo.Text.Contains(".") == false)
+            if (txtCorreo.Text.Contains("@") == false || txtCorreo.Text.Contains(".") == false)
             {
                 MessageBox.Show("Ingrese un correo electrónico válido");
                 return;
@@ -114,9 +114,9 @@ namespace ProyectoBD
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
-            if (IdParticipanteSeleccionado == -1)
+            if (idParticipanteSeleccionado == -1)
             {
-                MessageBox.Show("Seleccione un Lugar para modificar");
+                MessageBox.Show("Seleccione un Participante para modificar");
                 return;
             }
             string nombre = txtNombre.Text;
@@ -145,7 +145,7 @@ namespace ProyectoBD
                 command.Parameters.AddWithValue("@telefono", telefono);
                 command.Parameters.AddWithValue("@correo", correo);
                 command.Parameters.AddWithValue("@fecha", fecha);
-                command.Parameters.AddWithValue("@id", IdParticipanteSeleccionado);
+                command.Parameters.AddWithValue("@id", idParticipanteSeleccionado);
                 try
                 {
                     conexion.Open();
@@ -164,7 +164,7 @@ namespace ProyectoBD
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (IdParticipanteSeleccionado == -1)
+            if (idParticipanteSeleccionado == -1)
             {
                 MessageBox.Show("Seleccione un Participante para eliminar");
                 return;
@@ -173,7 +173,7 @@ namespace ProyectoBD
             using (SqlConnection conexion = varConexion.conectar())
             using (SqlCommand command = new SqlCommand(query, conexion))
             {
-                command.Parameters.AddWithValue("@id", IdParticipanteSeleccionado);
+                command.Parameters.AddWithValue("@id", idParticipanteSeleccionado);
 
                 try
                 {
@@ -181,7 +181,7 @@ namespace ProyectoBD
                     command.ExecuteNonQuery();
                     //MessageBox.Show("Participante eliminado correctamente");
                     cargaParticipantes();
-                    limpiaElementos() ;
+                    limpiaElementos();
                 }
                 catch (Exception ex)
                 {
@@ -198,12 +198,13 @@ namespace ProyectoBD
                 {
                     DataGridViewRow fila = dgvParticipante.Rows[e.RowIndex];
 
-                    IdParticipanteSeleccionado = Convert.ToInt32(fila.Cells["IdParticipante"].Value);
+                    idParticipanteSeleccionado = Convert.ToInt32(fila.Cells["IdParticipante"].Value);
                     txtNombre.Text = fila.Cells["NombreParticipante"].Value.ToString();
                     cbGenero.Text = fila.Cells["Genero"].Value.ToString();
                     txtTelefono.Text = fila.Cells["Telefono"].Value.ToString();
                     txtCorreo.Text = fila.Cells["CorreoElectronico"].Value.ToString();
                     mcFecha.SetDate(Convert.ToDateTime(fila.Cells["FechaNacimiento"].Value));
+                    actualizaBotones(1);
                 }
             }
             catch (Exception ex)
@@ -220,7 +221,41 @@ namespace ProyectoBD
             txtTelefono.Clear();
             txtCorreo.Clear();
             mcFecha.SetDate(DateTime.Today);
-            IdParticipanteSeleccionado = -1;
+            idParticipanteSeleccionado = -1;
+            actualizaBotones(0);
+        }
+
+        private void btnRegistrarJugador_Click(object sender, EventArgs e)
+        {
+            if(idParticipanteSeleccionado != -1)
+            {
+                Form formulario = new CapturaJugador(idParticipanteSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
+            }
+        }
+
+        private void actualizaBotones(int op)
+        {
+            if (op == 1)
+            {
+                btnRegistrarArbitro.Enabled = true;
+                btnRegistrarArbitro.Visible = true;
+                btnRegistrarJugador.Enabled = true;
+                btnRegistrarJugador.Visible = true;
+            }
+            else
+            {
+                btnRegistrarArbitro.Enabled = false;
+                btnRegistrarArbitro.Visible = false;
+                btnRegistrarJugador.Enabled = false;
+                btnRegistrarJugador.Visible = false;
+            }
         }
     }
 }

@@ -44,7 +44,7 @@ namespace ProyectoBD
             //        return false;
             //    }
             //}
-            if (this.ActiveMdiChild != null)         
+            if (this.ActiveMdiChild != null)
                 this.ActiveMdiChild.Close();
             // Si no había ninguna ventana abierta, regresamos true para que abra la nueva directo
             return true;
@@ -69,7 +69,8 @@ namespace ProyectoBD
 
         private void jugadorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Jugador";
+            AbrirFormularioHijo(new CapturaJugador());
         }
 
         private void arbitroToolStripMenuItem_Click(object sender, EventArgs e)
@@ -115,6 +116,16 @@ namespace ProyectoBD
         }
 
         private void equipoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void detalleTorneoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void detalleEquipoToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
