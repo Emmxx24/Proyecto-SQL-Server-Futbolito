@@ -74,7 +74,7 @@ namespace ProyectoBD
         {
             if (idLugarSeleccionado == -1)
             {
-                MessageBox.Show("Seleccione un Torneo para modificar");
+                MessageBox.Show("Seleccione un Lugar para modificar");
                 return;
             }
             string nombre = txtNombreLugar.Text;

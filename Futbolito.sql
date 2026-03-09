@@ -88,7 +88,8 @@ CREATE TABLE Persona.Arbitro
 	CONSTRAINT PK_ARBITRO PRIMARY KEY (IdArbitro),
 	CONSTRAINT FK_ARBITRO_PARTICIPANTE FOREIGN KEY (IdParticipante) 
 	REFERENCES Persona.Participante (IdParticipante),
-	CONSTRAINT UQ_ARBITRO_CEDULA UNIQUE (CedulaArbitro)
+	CONSTRAINT UQ_ARBITRO_CEDULA UNIQUE (CedulaArbitro),
+	CONSTRAINT UQ_ARBITRO_PARTICIPANTE UNIQUE (IdParticipante)
 );
 GO
 
@@ -104,7 +105,8 @@ CREATE TABLE Persona.Jugador
 
 	CONSTRAINT PK_JUGADOR PRIMARY KEY (IdJugador),
 	CONSTRAINT FK_JUGADOR_PARTICIPANTE FOREIGN KEY (IdParticipante) 
-	REFERENCES Persona.Participante (IdParticipante)
+	REFERENCES Persona.Participante (IdParticipante),
+	CONSTRAINT UQ_JUGADOR_PARTICIPANTE UNIQUE (IdParticipante)
 );
 GO
 
@@ -213,4 +215,21 @@ CREATE TABLE Evento.Tarjeta
 	CONSTRAINT FK_TARJETA_PARTIDO FOREIGN KEY (IdPartido)
 	REFERENCES Evento.Partido (IdPartido)
 );
+GO
+
+/*Reglas*/
+
+/*Regla con resitricción de cadenas*/
+CREATE RULE RL_POSICION AS @POSICION IN 
+('Portero', 'Defensa', 'Medio', 'Delantero');
+GO
+
+EXEC sp_bindrule 'RL_POSICION', 'Persona.Jugador.Posicion';
+GO
+
+/*Regla con resitricción de numero*/
+CREATE RULE RL_CAPACIDAD AS @CAPACIDAD > 1000;
+GO
+
+EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO

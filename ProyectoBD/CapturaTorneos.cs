@@ -24,7 +24,7 @@ namespace ProyectoBD
             limpiaElementos();
         }
 
-        public void cargaTorneos()
+        private void cargaTorneos()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
