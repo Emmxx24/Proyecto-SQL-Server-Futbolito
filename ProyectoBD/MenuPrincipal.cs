@@ -97,7 +97,8 @@ namespace ProyectoBD
 
         private void partidoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Partido";
+            AbrirFormularioHijo(new CapturaPartido());
         }
 
         private void resultadoPartidoToolStripMenuItem_Click(object sender, EventArgs e)

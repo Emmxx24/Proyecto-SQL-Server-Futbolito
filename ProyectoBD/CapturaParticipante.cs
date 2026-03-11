@@ -227,8 +227,33 @@ namespace ProyectoBD
 
         private void btnRegistrarJugador_Click(object sender, EventArgs e)
         {
-            if(idParticipanteSeleccionado != -1)
+            if (idParticipanteSeleccionado != -1)
             {
+                int esArbitro = 0;
+
+                string query = "SELECT COUNT(*) FROM Persona.Arbitro WHERE IdParticipante = @idParticipante";
+
+                using (SqlConnection conexion = varConexion.conectar())
+                using (SqlCommand comando = new SqlCommand(query, conexion))
+                {
+                    comando.Parameters.AddWithValue("@idParticipante", idParticipanteSeleccionado);
+
+                    try
+                    {
+                        conexion.Open();
+                        esArbitro = Convert.ToInt32(comando.ExecuteScalar());
+                    }
+                    catch (Exception ex)
+                    {
+                        ManejadorErroresBD.MostrarErrorAmigable(ex);
+                        return; 
+                    }
+                }
+                if (esArbitro > 0)
+                {
+                    MessageBox.Show("Este participante ya está registrado como Árbitro. No puede ser Jugador");
+                    return;
+                }
                 Form formulario = new CapturaJugador(idParticipanteSeleccionado);
                 formulario.ShowDialog();
                 limpiaElementos();

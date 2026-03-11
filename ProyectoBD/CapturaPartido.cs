@@ -1,0 +1,509 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
+
+namespace ProyectoBD
+{
+    public partial class CapturaPartido : Form
+    {
+        private ClaseConexion varConexion;
+        private int idPartidoSeleccionado = -1;
+        public CapturaPartido()
+        {
+            varConexion = new ClaseConexion();
+            InitializeComponent();
+            cargaPartidos();
+
+            cargaTorneos();
+            cargaArbitros();
+            cargaLugares();
+            limpiaElementos();
+
+        }
+        private void cargaLugares()
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT IdLugar, Nombre FROM Juego.Lugar";
+                SqlCommand comando = new SqlCommand(query, conexion);
+                SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                DataTable tablaLugares = new DataTable();
+                adaptador.Fill(tablaLugares);
+
+                cbLugar.DataSource = tablaLugares;
+                cbLugar.DisplayMember = "Nombre"; // Ojo, aquí es número o nombre según tu BD
+                cbLugar.ValueMember = "IdLugar";
+            }
+        }
+        private void cargaPartidos()
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    conexion.Open();
+                    string query = "SELECT p.IdPartido, " +
+                    "t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante, " + // <-- ¡ESTA ES LA LÍNEA MÁGICA DE LOS IDs!
+                    "el.NombreEquipo AS eqloc, ev.NombreEquipo AS eqvisi, pa.NombreParticipante, t.NombreTorneo, " +
+                    "j.NumeroJornada, l.Nombre, p.Fecha, p.HoraInicio, p.Estado " +
+                    "FROM Evento.Partido p INNER JOIN Juego.Jornada j " +
+                    "ON p.IdJornada = j.IdJornada INNER JOIN Club.Equipo el " +
+                    "ON p.IdLocal = el.IdEquipo INNER JOIN Club.Equipo ev " +
+                    "ON p.IdVisitante = ev.IdEquipo INNER JOIN Persona.Arbitro a " +
+                    "ON p.IdArbitro = a.IdArbitro INNER JOIN Persona.Participante pa " +
+                    "ON pa.IdParticipante = a.IdParticipante INNER JOIN Juego.Lugar l " +
+                    "ON p.IdLugar = l.IdLugar " +
+                    "INNER JOIN Juego.Torneo t ON j.IdTorneo = t.IdTorneo";
+                    SqlCommand comando = new SqlCommand(query, conexion);
+                    SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    dgvPartidos.DataSource = tabla;
+
+                    dgvPartidos.Columns["IdPartido"].HeaderText = "ID Partido";
+                    dgvPartidos.Columns["eqloc"].HeaderText = "Equipo Local";
+                    dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Solicitante";
+                    dgvPartidos.Columns["NombreParticipante"].HeaderText = "Árbitro";
+                    dgvPartidos.Columns["NombreTorneo"].HeaderText = "Torneo";
+                    dgvPartidos.Columns["NumeroJornada"].HeaderText = "Jornada";
+                    dgvPartidos.Columns["Nombre"].HeaderText = "Lugar";
+                    dgvPartidos.Columns["Fecha"].HeaderText = "Fecha";
+                    dgvPartidos.Columns["HoraInicio"].HeaderText = "Hora de inicio";
+                    dgvPartidos.Columns["Estado"].HeaderText = "Estado";
+                    //no visibles pero importantes para manejar los combobox
+                    dgvPartidos.Columns["IdTorneo"].Visible = false;
+                    dgvPartidos.Columns["IdJornada"].Visible = false;
+                    dgvPartidos.Columns["IdArbitro"].Visible = false;
+                    dgvPartidos.Columns["IdLugar"].Visible = false;
+                    dgvPartidos.Columns["IdLocal"].Visible = false;
+                    dgvPartidos.Columns["IdVisitante"].Visible = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar Partidos: " + ex.Message);
+                }
+            }
+        }
+        private void cargaTorneos()
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    string query = "SELECT IdTorneo, NombreTorneo FROM Juego.Torneo";
+                    SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion);
+                    DataTable tablaTorneos = new DataTable();
+                    adaptador.Fill(tablaTorneos);
+
+                    cbTorneo.DisplayMember = "NombreTorneo"; // Lo que el usuario lee
+                    cbTorneo.ValueMember = "IdTorneo";       // El ID que guardas
+
+                    cbTorneo.DataSource = tablaTorneos;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar Torneos: " + ex.Message);
+                }
+
+            }
+        }
+        private void cargaArbitros()
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    string query = "SELECT a.IdArbitro, p.NombreParticipante " +
+                                   "FROM Persona.Arbitro a " +
+                                   "INNER JOIN Persona.Participante p " +
+                                   "ON a.IdParticipante = p.IdParticipante";
+
+                    SqlCommand comando = new SqlCommand(query, conexion);
+                    SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                    DataTable tablaArbitros = new DataTable();
+                    adaptador.Fill(tablaArbitros);
+
+                    cbArbitro.ValueMember = "IdArbitro";
+                    cbArbitro.DisplayMember = "NombreParticipante";
+                    cbArbitro.DataSource = tablaArbitros;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar Árbitros: " + ex.Message);
+                }
+            }
+        }
+        private void limpiaElementos()
+        {
+            cbTorneo.SelectedIndex = -1;
+            cbJornada.SelectedIndex = -1;
+            cbArbitro.SelectedIndex = -1;
+            cbLugar.SelectedIndex = -1;
+            cbLocal.SelectedIndex = -1;
+            cbVisitante.SelectedIndex = -1;
+            dtpFecha.Value = DateTime.Today;
+            dtpHora.Value = DateTime.Now;
+            idPartidoSeleccionado = -1;
+            actualizaBotones(0);
+        }
+
+        private void dgvPartidos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (e.RowIndex >= 0)
+                {
+                    DataGridViewRow fila = dgvPartidos.Rows[e.RowIndex];
+                    idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
+                    cbTorneo.SelectedValue = Convert.ToInt32(fila.Cells["IdTorneo"].Value);
+                    cbJornada.SelectedValue = Convert.ToInt32(fila.Cells["IdJornada"].Value);
+                    cbLocal.SelectedValue = Convert.ToInt32(fila.Cells["IdLocal"].Value);
+                    cbVisitante.SelectedValue = Convert.ToInt32(fila.Cells["IdVisitante"].Value);
+                    cbArbitro.SelectedValue = Convert.ToInt32(fila.Cells["IdArbitro"].Value);
+                    cbLugar.SelectedValue = Convert.ToInt32(fila.Cells["IdLugar"].Value);
+
+                    dtpFecha.Value = Convert.ToDateTime(fila.Cells["Fecha"].Value);
+                    TimeSpan horaSql = (TimeSpan)fila.Cells["HoraInicio"].Value;
+                    dtpHora.Value = DateTime.Today.Add(horaSql);
+                    actualizaBotones(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al seleccionar el Partido: " + ex.Message);
+            }
+        }
+
+        private void cbTorneo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbTorneo.SelectedValue != null && int.TryParse(cbTorneo.SelectedValue.ToString(), out int idTorneo))
+            {
+                cargaEquipos(idTorneo);
+                cargaJornadas(idTorneo);
+            }
+        }
+        private void cargaEquipos(int idTorneo)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT e.IdEquipo, e.NombreEquipo " +
+                               "FROM Club.Equipo e " +
+                               "INNER JOIN Juego.DetalleTorneo dt " +
+                               "ON e.IdEquipo = dt.IdEquipo " +
+                               "WHERE dt.IdTorneo = @IdTorneo";
+
+                SqlCommand comando = new SqlCommand(query, conexion);
+                comando.Parameters.AddWithValue("@IdTorneo", idTorneo);
+
+                SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                DataTable tablaEquipos = new DataTable();
+                adaptador.Fill(tablaEquipos);
+
+                cbLocal.ValueMember = "IdEquipo";
+                cbLocal.DisplayMember = "NombreEquipo";
+                cbLocal.DataSource = tablaEquipos;
+
+                DataTable tablaVisitantes = tablaEquipos.Copy();
+                cbVisitante.ValueMember = "IdEquipo";
+                cbVisitante.DisplayMember = "NombreEquipo";
+                cbVisitante.DataSource = tablaVisitantes;
+            }
+        }
+        private void cargaJornadas(int idTorneo)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT IdJornada, NumeroJornada FROM Juego.Jornada WHERE IdTorneo = @IdTorneo";
+                SqlCommand comando = new SqlCommand(query, conexion);
+                comando.Parameters.AddWithValue("@IdTorneo", idTorneo);
+
+                SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                DataTable tablaJornadas = new DataTable();
+                adaptador.Fill(tablaJornadas);
+
+                cbJornada.DisplayMember = "NumeroJornada"; 
+                cbJornada.ValueMember = "IdJornada";
+                cbJornada.DataSource = tablaJornadas;
+            }
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            if (cbArbitro.SelectedIndex == -1 || cbJornada.SelectedIndex == -1 ||
+                cbLugar.SelectedIndex == -1 || cbLocal.SelectedIndex == -1 ||
+                cbVisitante.SelectedIndex == -1)
+            {
+                MessageBox.Show("Por favor complete todos los campos");
+                return;
+            }
+            int idArbitro = Convert.ToInt32(cbArbitro.SelectedValue);
+            int idJornada = Convert.ToInt32(cbJornada.SelectedValue);
+            int idLugar = Convert.ToInt32(cbLugar.SelectedValue);
+            int equiLocal = Convert.ToInt32(cbLocal.SelectedValue);
+            int equiVisitante = Convert.ToInt32(cbVisitante.SelectedValue);
+            DateTime fecha = dtpFecha.Value.Date;
+            TimeSpan horaSql = new TimeSpan(dtpHora.Value.Hour, dtpHora.Value.Minute, 0);
+            if (equiLocal == equiVisitante)
+            {
+                MessageBox.Show("El equipo local y el equipo visitante no pueden ser el mismo.",
+                                "Error de lógica", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql);
+            switch (verificaArbitro)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el árbitro.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("El árbitro seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            int verificaLug = verificaLugar(idLugar, fecha, horaSql);
+            switch (verificaLug)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el lugar.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("El lugar seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            string query = "INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio) " +
+                           "VALUES (@idArbitro, @idJornada, @idLugar, @idLocal, @idVisitante, @fecha, @horaInicio)";
+
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                try
+                {
+                    conexion.Open();
+                    command.Parameters.AddWithValue("@idArbitro", idArbitro);
+                    command.Parameters.AddWithValue("@idJornada", idJornada);
+                    command.Parameters.AddWithValue("@idLugar", idLugar);
+                    command.Parameters.AddWithValue("@idLocal", equiLocal);
+                    command.Parameters.AddWithValue("@idVisitante", equiVisitante);
+                    command.Parameters.AddWithValue("@fecha", fecha);
+                    command.Parameters.AddWithValue("@horaInicio", horaSql);
+                    command.ExecuteNonQuery();
+                    cargaPartidos();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            if (idPartidoSeleccionado <= 0)
+            {
+                MessageBox.Show("Seleccione un Partido de la tabla para modificar");
+                return;
+            }
+
+            if (cbArbitro.SelectedIndex == -1 || cbJornada.SelectedIndex == -1 ||
+                cbLugar.SelectedIndex == -1 || cbLocal.SelectedIndex == -1 ||
+                cbVisitante.SelectedIndex == -1)
+            {
+                MessageBox.Show("Complete todos los campos ");
+                return;
+            }
+
+            int idArbitro = Convert.ToInt32(cbArbitro.SelectedValue);
+            int idJornada = Convert.ToInt32(cbJornada.SelectedValue);
+            int idLugar = Convert.ToInt32(cbLugar.SelectedValue);
+            int equiLocal = Convert.ToInt32(cbLocal.SelectedValue);
+            int equiVisitante = Convert.ToInt32(cbVisitante.SelectedValue);
+            DateTime fecha = dtpFecha.Value.Date;
+            TimeSpan horaSql = new TimeSpan(dtpHora.Value.Hour, dtpHora.Value.Minute, 0);
+            if (equiLocal == equiVisitante)
+            {
+                MessageBox.Show("El equipo local y el equipo visitante no pueden ser el mismo");
+                return;
+            }
+
+            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql);
+            switch (verificaArbitro)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el árbitro.");
+                    return; 
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("El árbitro seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            int verificaLug = verificaLugar(idLugar, fecha, horaSql);
+            switch (verificaLug)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el lugar.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("El lugar seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            string query = "UPDATE Evento.Partido " +
+                           "SET IdArbitro = @idArbitro, " +
+                           "IdJornada = @idJornada, " +
+                           "IdLugar = @idLugar, " +
+                           "IdLocal = @idLocal, " +
+                           "IdVisitante = @idVisitante, " +
+                           "Fecha = @fecha, " +
+                           "HoraInicio = @horaInicio " +
+                           "WHERE IdPartido = @idPartido";
+
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                // 6. Pasar todos los parámetros
+                command.Parameters.AddWithValue("@idArbitro", idArbitro);
+                command.Parameters.AddWithValue("@idJornada", idJornada);
+                command.Parameters.AddWithValue("@idLugar", idLugar);
+                command.Parameters.AddWithValue("@idLocal", equiLocal);
+                command.Parameters.AddWithValue("@idVisitante", equiVisitante);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaSql);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+                try
+                {
+                    conexion.Open();
+                    command.ExecuteNonQuery();
+                    cargaPartidos();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
+        }
+
+       
+        private int verificarArbitro(int idArbitro, DateTime fecha, TimeSpan horaInicio)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT COUNT(*) FROM Evento.Partido " +
+                               "WHERE IdArbitro = @idArbitro " +
+                               "AND Fecha = @fecha " +
+                               "AND HoraInicio = @horaInicio " +
+                               "AND IdPartido != @idPartido";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idArbitro", idArbitro);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaInicio);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar el árbitro: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        private int verificaLugar(int idLugar, DateTime fecha, TimeSpan horaInicio)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                // Contamos cuántos partidos hay en ESA cancha, ESE día y a ESA hora exacta
+                string query = "SELECT COUNT(*) FROM Evento.Partido " +
+                               "WHERE IdLugar = @idLugar " +
+                               "AND Fecha = @fecha " +
+                               "AND HoraInicio = @horaInicio " +
+                               "AND IdPartido != @idPartido";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+
+                command.Parameters.AddWithValue("@idLugar", idLugar);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaInicio);
+                // Excluimos el partido actual por si estamos en modo "Modificar"
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar la disponibilidad del lugar: " + ex.Message);
+                    // Retornamos -1 para que tu switch sepa que hubo un error de conexión
+                    return -1;
+                }
+            }
+        }
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (idPartidoSeleccionado == -1)
+            {
+                MessageBox.Show("Seleccione un Partido para eliminar");
+                return;
+            }
+            string query = "DELETE FROM Evento.Partido WHERE IdPartido = @id";
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                command.Parameters.AddWithValue("@id", idPartidoSeleccionado);
+
+                try
+                {
+                    conexion.Open();
+                    command.ExecuteNonQuery();
+                    //MessageBox.Show("Partido eliminado correctamente");
+                    cargaPartidos();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
+        }
+
+        private void actualizaBotones(int op)
+        {
+            if (op == 1)
+            {
+                btnRegisResult.Enabled = true;
+                btnRegisResult.Visible = true;
+            }
+            else
+            {
+                btnRegisResult.Enabled = false;
+                btnRegisResult.Visible = false;
+            }
+        }
+    }
+}
