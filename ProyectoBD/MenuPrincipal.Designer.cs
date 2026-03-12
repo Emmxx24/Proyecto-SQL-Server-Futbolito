@@ -44,6 +44,8 @@
             tarjetaToolStripMenuItem = new ToolStripMenuItem();
             clubToolStripMenuItem = new ToolStripMenuItem();
             equipoToolStripMenuItem = new ToolStripMenuItem();
+            detalleTorneoToolStripMenuItem = new ToolStripMenuItem();
+            detalleEquipoToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -87,7 +89,7 @@
             // 
             // juegoToolStripMenuItem
             // 
-            juegoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { torneoToolStripMenuItem, jornadaToolStripMenuItem, lugarToolStripMenuItem });
+            juegoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { torneoToolStripMenuItem, jornadaToolStripMenuItem, lugarToolStripMenuItem, detalleTorneoToolStripMenuItem });
             juegoToolStripMenuItem.Name = "juegoToolStripMenuItem";
             juegoToolStripMenuItem.Size = new Size(62, 24);
             juegoToolStripMenuItem.Text = "Juego";
@@ -95,21 +97,21 @@
             // torneoToolStripMenuItem
             // 
             torneoToolStripMenuItem.Name = "torneoToolStripMenuItem";
-            torneoToolStripMenuItem.Size = new Size(144, 26);
+            torneoToolStripMenuItem.Size = new Size(224, 26);
             torneoToolStripMenuItem.Text = "Torneo";
             torneoToolStripMenuItem.Click += torneoToolStripMenuItem_Click;
             // 
             // jornadaToolStripMenuItem
             // 
             jornadaToolStripMenuItem.Name = "jornadaToolStripMenuItem";
-            jornadaToolStripMenuItem.Size = new Size(144, 26);
+            jornadaToolStripMenuItem.Size = new Size(224, 26);
             jornadaToolStripMenuItem.Text = "Jornada";
             jornadaToolStripMenuItem.Click += jornadaToolStripMenuItem_Click;
             // 
             // lugarToolStripMenuItem
             // 
             lugarToolStripMenuItem.Name = "lugarToolStripMenuItem";
-            lugarToolStripMenuItem.Size = new Size(144, 26);
+            lugarToolStripMenuItem.Size = new Size(224, 26);
             lugarToolStripMenuItem.Text = "Lugar";
             lugarToolStripMenuItem.Click += lugarToolStripMenuItem_Click;
             // 
@@ -123,34 +125,34 @@
             // partidoToolStripMenuItem
             // 
             partidoToolStripMenuItem.Name = "partidoToolStripMenuItem";
-            partidoToolStripMenuItem.Size = new Size(205, 26);
+            partidoToolStripMenuItem.Size = new Size(224, 26);
             partidoToolStripMenuItem.Text = "Partido";
             partidoToolStripMenuItem.Click += partidoToolStripMenuItem_Click;
             // 
             // resultadoPartidoToolStripMenuItem
             // 
             resultadoPartidoToolStripMenuItem.Name = "resultadoPartidoToolStripMenuItem";
-            resultadoPartidoToolStripMenuItem.Size = new Size(205, 26);
+            resultadoPartidoToolStripMenuItem.Size = new Size(224, 26);
             resultadoPartidoToolStripMenuItem.Text = "ResultadoPartido";
             resultadoPartidoToolStripMenuItem.Click += resultadoPartidoToolStripMenuItem_Click;
             // 
             // golToolStripMenuItem
             // 
             golToolStripMenuItem.Name = "golToolStripMenuItem";
-            golToolStripMenuItem.Size = new Size(205, 26);
+            golToolStripMenuItem.Size = new Size(224, 26);
             golToolStripMenuItem.Text = "Gol";
             golToolStripMenuItem.Click += golToolStripMenuItem_Click;
             // 
             // tarjetaToolStripMenuItem
             // 
             tarjetaToolStripMenuItem.Name = "tarjetaToolStripMenuItem";
-            tarjetaToolStripMenuItem.Size = new Size(205, 26);
+            tarjetaToolStripMenuItem.Size = new Size(224, 26);
             tarjetaToolStripMenuItem.Text = "Tarjeta";
             tarjetaToolStripMenuItem.Click += tarjetaToolStripMenuItem_Click;
             // 
             // clubToolStripMenuItem
             // 
-            clubToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { equipoToolStripMenuItem });
+            clubToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { equipoToolStripMenuItem, detalleEquipoToolStripMenuItem });
             clubToolStripMenuItem.Name = "clubToolStripMenuItem";
             clubToolStripMenuItem.Size = new Size(53, 24);
             clubToolStripMenuItem.Text = "Club";
@@ -158,9 +160,23 @@
             // equipoToolStripMenuItem
             // 
             equipoToolStripMenuItem.Name = "equipoToolStripMenuItem";
-            equipoToolStripMenuItem.Size = new Size(139, 26);
+            equipoToolStripMenuItem.Size = new Size(224, 26);
             equipoToolStripMenuItem.Text = "Equipo";
             equipoToolStripMenuItem.Click += equipoToolStripMenuItem_Click;
+            // 
+            // detalleTorneoToolStripMenuItem
+            // 
+            detalleTorneoToolStripMenuItem.Name = "detalleTorneoToolStripMenuItem";
+            detalleTorneoToolStripMenuItem.Size = new Size(224, 26);
+            detalleTorneoToolStripMenuItem.Text = "DetalleTorneo";
+            detalleTorneoToolStripMenuItem.Click += detalleTorneoToolStripMenuItem_Click;
+            // 
+            // detalleEquipoToolStripMenuItem
+            // 
+            detalleEquipoToolStripMenuItem.Name = "detalleEquipoToolStripMenuItem";
+            detalleEquipoToolStripMenuItem.Size = new Size(224, 26);
+            detalleEquipoToolStripMenuItem.Text = "DetalleEquipo";
+            detalleEquipoToolStripMenuItem.Click += detalleEquipoToolStripMenuItem_Click;
             // 
             // MenuPrincipal
             // 
@@ -197,5 +213,7 @@
         private ToolStripMenuItem golToolStripMenuItem;
         private ToolStripMenuItem tarjetaToolStripMenuItem;
         private ToolStripMenuItem equipoToolStripMenuItem;
+        private ToolStripMenuItem detalleTorneoToolStripMenuItem;
+        private ToolStripMenuItem detalleEquipoToolStripMenuItem;
     }
 }
