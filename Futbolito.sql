@@ -233,3 +233,34 @@ GO
 
 EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
+
+/*Trigger Actualizar CantEquipos y NumJornadas en la tabla Torneo al inscribir un equipo.*/
+CREATE TRIGGER TR_ActualizarTorneo
+ON DetalleTorneo
+AFTER INSERT
+AS
+BEGIN
+
+    DECLARE @torneo INT
+
+    SELECT @torneo = IdTorneo FROM inserted
+
+    DECLARE @totalEquipos INT
+
+    SELECT @totalEquipos = COUNT(*)
+    FROM DetalleTorneo
+    WHERE IdTorneo = @torneo
+
+    DECLARE @jornadas INT
+
+    IF @totalEquipos > 1
+        SET @jornadas = @totalEquipos - 1
+    ELSE
+        SET @jornadas = 0
+
+    UPDATE Torneo
+    SET CantEquipos = @totalEquipos,
+        NumJornadas = @jornadas
+    WHERE IdTorneo = @torneo
+
+END

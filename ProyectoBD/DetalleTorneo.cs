@@ -94,107 +94,24 @@ namespace ProyectoBD
             {
                 conn.Open();
 
-                SqlTransaction trans = conn.BeginTransaction();
-
                 try
                 {
-                    int idTorneo = Convert.ToInt32(cmbTorneo.SelectedValue);
-                    int idEquipo = Convert.ToInt32(cmbEquipo.SelectedValue);
+                    string query = @"INSERT INTO DetalleTorneo(IdTorneo,IdEquipo)
+                             VALUES(@torneo,@equipo)";
 
-                    // 1️⃣ VALIDAR SI EL EQUIPO YA ESTA INSCRITO
-                    string validar = @"SELECT COUNT(*)
-                               FROM DetalleTorneo
-                               WHERE IdTorneo=@torneo AND IdEquipo=@equipo";
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
-                    SqlCommand cmdValidar = new SqlCommand(validar, conn, trans);
+                    cmd.Parameters.AddWithValue("@torneo", cmbTorneo.SelectedValue);
+                    cmd.Parameters.AddWithValue("@equipo", cmbEquipo.SelectedValue);
 
-                    cmdValidar.Parameters.AddWithValue("@torneo", idTorneo);
-                    cmdValidar.Parameters.AddWithValue("@equipo", idEquipo);
-
-                    int existe = (int)cmdValidar.ExecuteScalar();
-
-                    if (existe > 0)
-                    {
-                        MessageBox.Show("Ese equipo ya está inscrito en el torneo");
-                        trans.Rollback();
-                        return;
-                    }
-
-                    // 2️⃣ VALIDAR NOMBRE DE EQUIPO DUPLICADO
-                    string validarNombre = @"
-                    SELECT COUNT(*)
-                    FROM DetalleTorneo DT
-                    INNER JOIN Equipo E ON DT.IdEquipo = E.IdEquipo
-                    WHERE DT.IdTorneo=@torneo AND E.NombreEquipo =
-                    (SELECT NombreEquipo FROM Equipo WHERE IdEquipo=@equipo)";
-
-                    SqlCommand cmdNombre = new SqlCommand(validarNombre, conn, trans);
-
-                    cmdNombre.Parameters.AddWithValue("@torneo", idTorneo);
-                    cmdNombre.Parameters.AddWithValue("@equipo", idEquipo);
-
-                    int nombreExiste = (int)cmdNombre.ExecuteScalar();
-
-                    if (nombreExiste > 0)
-                    {
-                        MessageBox.Show("Ya existe un equipo con ese nombre en el torneo");
-                        trans.Rollback();
-                        return;
-                    }
-
-                    // 3️⃣ INSERTAR EQUIPO
-                    string insert = @"INSERT INTO DetalleTorneo(IdTorneo,IdEquipo)
-                              VALUES(@torneo,@equipo)";
-
-                    SqlCommand cmdInsert = new SqlCommand(insert, conn, trans);
-
-                    cmdInsert.Parameters.AddWithValue("@torneo", idTorneo);
-                    cmdInsert.Parameters.AddWithValue("@equipo", idEquipo);
-
-                    cmdInsert.ExecuteNonQuery();
-
-                    // 4️⃣ CONTAR EQUIPOS
-                    string count = @"SELECT COUNT(*)
-                             FROM DetalleTorneo
-                             WHERE IdTorneo=@torneo";
-
-                    SqlCommand cmdCount = new SqlCommand(count, conn, trans);
-
-                    cmdCount.Parameters.AddWithValue("@torneo", idTorneo);
-
-                    int totalEquipos = (int)cmdCount.ExecuteScalar();
-
-                    // 5️⃣ CALCULAR JORNADAS
-                    int jornadas = 0;
-
-                    if (totalEquipos > 1)
-                    {
-                        jornadas = totalEquipos - 1;
-                    }
-                    // 6️⃣ ACTUALIZAR TORNEO
-                    string update = @"UPDATE Torneo
-                              SET CantEquipos=@equipos,
-                                  NumJornadas=@jornadas
-                              WHERE IdTorneo=@torneo";
-
-                    SqlCommand cmdUpdate = new SqlCommand(update, conn, trans);
-
-                    cmdUpdate.Parameters.AddWithValue("@equipos", totalEquipos);
-                    cmdUpdate.Parameters.AddWithValue("@jornadas", jornadas);
-                    cmdUpdate.Parameters.AddWithValue("@torneo", idTorneo);
-
-                    cmdUpdate.ExecuteNonQuery();
-
-                    trans.Commit();
-                    cmbEquipo.SelectedIndex = -1;
-                    CargarEquipos();
-                    CargarDetalleTorneo();
+                    cmd.ExecuteNonQuery();
 
                     MessageBox.Show("Equipo inscrito correctamente");
+
+                    CargarDetalleTorneo();
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
                     MessageBox.Show("Error: " + ex.Message);
                 }
             }
