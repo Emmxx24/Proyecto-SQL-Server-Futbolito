@@ -227,9 +227,24 @@ namespace ProyectoBD
 
         private void btnRegistrarJugador_Click(object sender, EventArgs e)
         {
-            if(idParticipanteSeleccionado != -1)
+            if (idParticipanteSeleccionado != -1)
             {
                 Form formulario = new CapturaJugador(idParticipanteSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
+            }
+        }
+
+        private void btnRegistrarArbitro_Click(object sender, EventArgs e)
+        {
+            if (idParticipanteSeleccionado != -1)
+            {
+                Form formulario = new CapturaArbitro(idParticipanteSeleccionado);
                 formulario.ShowDialog();
                 limpiaElementos();
             }
