@@ -29,8 +29,7 @@ namespace ProyectoBD
             int capacidad = Convert.ToInt32(numericCapacidad.Value);
 
             if (string.IsNullOrEmpty(nombre) ||
-                    string.IsNullOrEmpty(nombre) ||
-                    string.IsNullOrEmpty(ubicacion.ToString()) ||
+                    string.IsNullOrEmpty(ubicacion) ||
                     string.IsNullOrEmpty(capacidad.ToString())
                 )
             {
@@ -42,6 +41,11 @@ namespace ProyectoBD
                 if (capacidad == 0)
                 {
                     MessageBox.Show("Ingrese una capacidad válida");
+                    return;
+                }
+                else if (capacidad <= 1000)
+                {
+                    MessageBox.Show("La capacidad debe ser mayor a 1000");
                     return;
                 }
             }
@@ -94,6 +98,11 @@ namespace ProyectoBD
                 if (capacidad == 0)
                 {
                     MessageBox.Show("Ingrese una capacidad válida");
+                    return;
+                }
+                else if (capacidad <= 1000)
+                {
+                    MessageBox.Show("La capacidad debe ser mayor a 1000");
                     return;
                 }
             }

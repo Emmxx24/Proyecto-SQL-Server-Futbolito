@@ -65,9 +65,9 @@
             lblCapaciLugar.AutoSize = true;
             lblCapaciLugar.Location = new Point(38, 196);
             lblCapaciLugar.Name = "lblCapaciLugar";
-            lblCapaciLugar.Size = new Size(83, 20);
+            lblCapaciLugar.Size = new Size(187, 20);
             lblCapaciLugar.TabIndex = 2;
-            lblCapaciLugar.Text = "Capacidad:";
+            lblCapaciLugar.Text = "Capacidad (mayor a 1000):";
             // 
             // dgvLugar
             // 
@@ -110,7 +110,7 @@
             // 
             numericCapacidad.Location = new Point(38, 235);
             numericCapacidad.Margin = new Padding(3, 4, 3, 4);
-            numericCapacidad.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            numericCapacidad.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numericCapacidad.Name = "numericCapacidad";
             numericCapacidad.Size = new Size(137, 27);
             numericCapacidad.TabIndex = 7;

@@ -129,7 +129,7 @@
             dgvJugador.ReadOnly = true;
             dgvJugador.RowHeadersWidth = 51;
             dgvJugador.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvJugador.Size = new Size(837, 188);
+            dgvJugador.Size = new Size(1176, 252);
             dgvJugador.TabIndex = 8;
             dgvJugador.CellClick += dgvJugador_CellClick;
             // 
@@ -170,7 +170,8 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(861, 481);
+            AutoSize = true;
+            ClientSize = new Size(1200, 543);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);

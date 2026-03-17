@@ -233,3 +233,24 @@ GO
 
 EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
+
+/*Disparadores*/
+/*/Disparador para calcular la edad del Participante*/
+CREATE TRIGGER Persona.TR_PARTICIPANTE_CALCULAR_EDAD
+ON Persona.Participante
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE p
+    SET p.Edad = 
+        DATEDIFF(YEAR, i.FechaNacimiento, GETDATE()) - 
+        CASE 
+            WHEN MONTH(i.FechaNacimiento) > MONTH(GETDATE()) THEN 1
+            WHEN MONTH(i.FechaNacimiento) = MONTH(GETDATE()) 
+             AND DAY(i.FechaNacimiento)  > DAY(GETDATE()) THEN 1
+            ELSE 0
+        END
+    FROM Persona.Participante p
+    INNER JOIN inserted i ON p.IdParticipante = i.IdParticipante;
+END;

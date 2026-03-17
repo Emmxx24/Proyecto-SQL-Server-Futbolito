@@ -68,7 +68,7 @@ namespace ProyectoBD
                     string query = "SELECT " +
                         "p.IdParticipante," +
                         "j.IdJugador," +
-                        "p.NombreParticipante," +
+                        "CONCAT(p.NombreParticipante, ' (', p.Edad, ')') AS NombreConEdad, " +
                         "j.Posicion," +
                         "j.Numero," +
                         "j.TipoSangre," +
@@ -77,15 +77,17 @@ namespace ProyectoBD
                         "FROM Persona.Jugador j " +
                         "INNER JOIN Persona.Participante p " +
                         "ON j.IdParticipante = p.IdParticipante ";
+
                     SqlCommand comando = new SqlCommand(query, conexion);
                     SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                     DataTable tabla = new DataTable();
                     adaptador.Fill(tabla);
+
                     dgvJugador.DataSource = tabla;
 
-                    dgvJugador.Columns["IdParticipante"].HeaderText = "ID Participante";
+                    dgvJugador.Columns["IdParticipante"].Visible = false;
                     dgvJugador.Columns["IdJugador"].HeaderText = "ID Jugador";
-                    dgvJugador.Columns["NombreParticipante"].HeaderText = "Nombre del Jugador";
+                    dgvJugador.Columns["NombreConEdad"].HeaderText = "Nombre del Jugador (Edad)";
                     dgvJugador.Columns["Posicion"].HeaderText = "Posición";
                     dgvJugador.Columns["Numero"].HeaderText = "Dorsal";
                     dgvJugador.Columns["TipoSangre"].HeaderText = "Tipo de sangre";
