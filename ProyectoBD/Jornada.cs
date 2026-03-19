@@ -22,8 +22,6 @@ namespace ProyectoBD
             CargarTorneos();
             MostrarJornadas();
             cmbTorneo.SelectedIndexChanged += cmbTorneo_SelectedIndexChanged;
-
-            cmbTorneo.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void bttnAgregar_Click(object sender, EventArgs e)
@@ -170,7 +168,13 @@ namespace ProyectoBD
                 {
                     conn.Open();
 
-                    string query = "SELECT IdTorneo, NombreTorneo FROM Juego.Torneo";
+                    string query = @"
+                        SELECT 
+                        T.IdTorneo, 
+                        T.NombreTorneo + ' (' + 
+                        CONVERT(varchar(10), T.FechaInicio, 103) + ' - ' + 
+                        CONVERT(varchar(10), T.FechaFin, 103) + ')' AS NombreCompleto
+                        FROM Juego.Torneo T";
 
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
@@ -178,7 +182,7 @@ namespace ProyectoBD
                     da.Fill(dt);
 
                     cmbTorneo.DataSource = dt;
-                    cmbTorneo.DisplayMember = "NombreTorneo";
+                    cmbTorneo.DisplayMember = "NombreCompleto";
                     cmbTorneo.ValueMember = "IdTorneo";
                 }
                 catch (Exception ex)
@@ -200,6 +204,8 @@ namespace ProyectoBD
 
                     string query = @"SELECT J.IdJornada,
                                         T.NombreTorneo,
+                                        CONVERT(varchar(10), T.FechaInicio, 103) + ' - ' + 
+                                        CONVERT(varchar(10), T.FechaFin, 103) AS Periodo,
                                         J.NumeroJornada
                                  FROM Juego.Jornada J
                                  INNER JOIN Juego.Torneo T
@@ -279,7 +285,7 @@ namespace ProyectoBD
                     conn.Open();
 
                     string query = @"SELECT J.IdJornada,
-                    T.NombreTorneo,
+                    CONCAT(T.NombreTorneo, ' (', T.FechaInicio, ' / ', T.FechaFin,')') AS Torneo, 
                     J.NumeroJornada
                     FROM Juego.Jornada J
                     INNER JOIN Juego.Torneo T

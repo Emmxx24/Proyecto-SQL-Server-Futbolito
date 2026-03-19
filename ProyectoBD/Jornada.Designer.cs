@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             cmbTorneo = new ComboBox();
@@ -52,7 +53,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(14, 87);
+            label2.Location = new Point(87, 85);
             label2.Name = "label2";
             label2.Size = new Size(143, 20);
             label2.TabIndex = 1;
@@ -60,11 +61,12 @@
             // 
             // cmbTorneo
             // 
+            cmbTorneo.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbTorneo.FormattingEnabled = true;
             cmbTorneo.Location = new Point(160, 16);
             cmbTorneo.Margin = new Padding(3, 4, 3, 4);
             cmbTorneo.Name = "cmbTorneo";
-            cmbTorneo.Size = new Size(138, 28);
+            cmbTorneo.Size = new Size(278, 28);
             cmbTorneo.TabIndex = 2;
             cmbTorneo.DropDown += cmbTorneo_DropDown;
             cmbTorneo.SelectedIndexChanged += cmbTorneo_SelectedIndexChanged;
@@ -72,7 +74,7 @@
             // bttnEliminar
             // 
             bttnEliminar.BackColor = SystemColors.ActiveCaption;
-            bttnEliminar.Location = new Point(218, 157);
+            bttnEliminar.Location = new Point(352, 157);
             bttnEliminar.Margin = new Padding(3, 4, 3, 4);
             bttnEliminar.Name = "bttnEliminar";
             bttnEliminar.Size = new Size(86, 40);
@@ -84,7 +86,7 @@
             // bttnModificar
             // 
             bttnModificar.BackColor = SystemColors.ActiveCaption;
-            bttnModificar.Location = new Point(126, 157);
+            bttnModificar.Location = new Point(220, 157);
             bttnModificar.Margin = new Padding(3, 4, 3, 4);
             bttnModificar.Name = "bttnModificar";
             bttnModificar.Size = new Size(86, 40);
@@ -96,7 +98,7 @@
             // bttnAgregar
             // 
             bttnAgregar.BackColor = SystemColors.ActiveCaption;
-            bttnAgregar.Location = new Point(33, 157);
+            bttnAgregar.Location = new Point(87, 157);
             bttnAgregar.Margin = new Padding(3, 4, 3, 4);
             bttnAgregar.Name = "bttnAgregar";
             bttnAgregar.Size = new Size(86, 40);
@@ -111,19 +113,29 @@
             dgvJornada.AllowUserToDeleteRows = false;
             dgvJornada.AllowUserToResizeColumns = false;
             dgvJornada.AllowUserToResizeRows = false;
+            dgvJornada.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvJornada.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvJornada.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvJornada.Location = new Point(14, 269);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvJornada.DefaultCellStyle = dataGridViewCellStyle1;
+            dgvJornada.Location = new Point(14, 225);
             dgvJornada.Margin = new Padding(3, 4, 3, 4);
             dgvJornada.Name = "dgvJornada";
             dgvJornada.ReadOnly = true;
             dgvJornada.RowHeadersWidth = 51;
-            dgvJornada.Size = new Size(424, 315);
+            dgvJornada.Size = new Size(680, 359);
             dgvJornada.TabIndex = 7;
             dgvJornada.CellClick += dgvJornada_CellClick;
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(160, 87);
+            numericUpDown1.Location = new Point(236, 83);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(52, 27);
             numericUpDown1.TabIndex = 8;
@@ -133,7 +145,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(604, 600);
+            ClientSize = new Size(706, 600);
             Controls.Add(numericUpDown1);
             Controls.Add(dgvJornada);
             Controls.Add(bttnAgregar);
