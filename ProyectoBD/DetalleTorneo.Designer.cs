@@ -42,27 +42,32 @@
             // cmbTorneo
             // 
             cmbTorneo.FormattingEnabled = true;
-            cmbTorneo.Location = new Point(12, 29);
+            cmbTorneo.Location = new Point(14, 39);
+            cmbTorneo.Margin = new Padding(3, 4, 3, 4);
             cmbTorneo.Name = "cmbTorneo";
-            cmbTorneo.Size = new Size(261, 23);
+            cmbTorneo.Size = new Size(298, 28);
             cmbTorneo.TabIndex = 0;
+            cmbTorneo.DropDown += cmbTorneo_DropDown;
             cmbTorneo.SelectedIndexChanged += cmbTorneo_SelectedIndexChanged;
             // 
             // cmbEquipo
             // 
             cmbEquipo.FormattingEnabled = true;
-            cmbEquipo.Location = new Point(12, 74);
+            cmbEquipo.Location = new Point(14, 99);
+            cmbEquipo.Margin = new Padding(3, 4, 3, 4);
             cmbEquipo.Name = "cmbEquipo";
-            cmbEquipo.Size = new Size(261, 23);
+            cmbEquipo.Size = new Size(298, 28);
             cmbEquipo.TabIndex = 1;
+            cmbEquipo.DropDown += cmbEquipo_DropDown;
             cmbEquipo.SelectedIndexChanged += cmbEquipo_SelectedIndexChanged;
             // 
             // bttnInscribir
             // 
             bttnInscribir.BackColor = SystemColors.ActiveCaption;
-            bttnInscribir.Location = new Point(12, 119);
+            bttnInscribir.Location = new Point(14, 159);
+            bttnInscribir.Margin = new Padding(3, 4, 3, 4);
             bttnInscribir.Name = "bttnInscribir";
-            bttnInscribir.Size = new Size(79, 28);
+            bttnInscribir.Size = new Size(90, 37);
             bttnInscribir.TabIndex = 2;
             bttnInscribir.Text = "Agregar";
             bttnInscribir.UseVisualStyleBackColor = false;
@@ -71,18 +76,18 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 11);
+            label1.Location = new Point(14, 15);
             label1.Name = "label1";
-            label1.Size = new Size(43, 15);
+            label1.Size = new Size(55, 20);
             label1.TabIndex = 3;
             label1.Text = "Torneo";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 56);
+            label2.Location = new Point(14, 75);
             label2.Name = "label2";
-            label2.Size = new Size(44, 15);
+            label2.Size = new Size(56, 20);
             label2.TabIndex = 4;
             label2.Text = "Equipo";
             // 
@@ -90,20 +95,23 @@
             // 
             dgvDetalleTorneo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDetalleTorneo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDetalleTorneo.Location = new Point(12, 175);
+            dgvDetalleTorneo.Location = new Point(14, 233);
+            dgvDetalleTorneo.Margin = new Padding(3, 4, 3, 4);
             dgvDetalleTorneo.MultiSelect = false;
             dgvDetalleTorneo.Name = "dgvDetalleTorneo";
             dgvDetalleTorneo.ReadOnly = true;
+            dgvDetalleTorneo.RowHeadersWidth = 51;
             dgvDetalleTorneo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDetalleTorneo.Size = new Size(457, 258);
+            dgvDetalleTorneo.Size = new Size(522, 344);
             dgvDetalleTorneo.TabIndex = 5;
             // 
             // bttnModificar
             // 
             bttnModificar.BackColor = SystemColors.ActiveCaption;
-            bttnModificar.Location = new Point(110, 119);
+            bttnModificar.Location = new Point(126, 159);
+            bttnModificar.Margin = new Padding(3, 4, 3, 4);
             bttnModificar.Name = "bttnModificar";
-            bttnModificar.Size = new Size(79, 28);
+            bttnModificar.Size = new Size(90, 37);
             bttnModificar.TabIndex = 6;
             bttnModificar.Text = "Modificar";
             bttnModificar.UseVisualStyleBackColor = false;
@@ -112,9 +120,10 @@
             // bttnEliminar
             // 
             bttnEliminar.BackColor = SystemColors.ActiveCaption;
-            bttnEliminar.Location = new Point(211, 119);
+            bttnEliminar.Location = new Point(241, 159);
+            bttnEliminar.Margin = new Padding(3, 4, 3, 4);
             bttnEliminar.Name = "bttnEliminar";
-            bttnEliminar.Size = new Size(79, 28);
+            bttnEliminar.Size = new Size(90, 37);
             bttnEliminar.TabIndex = 7;
             bttnEliminar.Text = "Eliminar";
             bttnEliminar.UseVisualStyleBackColor = false;
@@ -122,9 +131,9 @@
             // 
             // DetalleTorneo
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(483, 445);
+            ClientSize = new Size(552, 593);
             Controls.Add(bttnEliminar);
             Controls.Add(bttnModificar);
             Controls.Add(dgvDetalleTorneo);
@@ -134,6 +143,7 @@
             Controls.Add(cmbEquipo);
             Controls.Add(cmbTorneo);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "DetalleTorneo";
             Text = "DetalleTorneo";
             ((System.ComponentModel.ISupportInitialize)dgvDetalleTorneo).EndInit();

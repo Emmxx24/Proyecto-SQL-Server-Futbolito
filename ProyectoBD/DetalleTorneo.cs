@@ -32,18 +32,25 @@ namespace ProyectoBD
 
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                string query = "SELECT IdTorneo, NombreTorneo FROM Torneo";
+                    string query = "SELECT IdTorneo, NombreTorneo FROM Juego.Torneo";
 
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
+                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
 
-                da.Fill(dt);
+                    da.Fill(dt);
 
-                cmbTorneo.DataSource = dt;
-                cmbTorneo.DisplayMember = "NombreTorneo";
-                cmbTorneo.ValueMember = "IdTorneo";
+                    cmbTorneo.DataSource = dt;
+                    cmbTorneo.DisplayMember = "NombreTorneo";
+                    cmbTorneo.ValueMember = "IdTorneo";
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
             }
         }
 
@@ -63,18 +70,26 @@ namespace ProyectoBD
 
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                string query = "SELECT IdEquipo, NombreEquipo FROM Equipo";
+                    string query = "SELECT IdEquipo, NombreEquipo FROM Club.Equipo";
 
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
+                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
 
-                da.Fill(dt);
+                    da.Fill(dt);
 
-                cmbEquipo.DataSource = dt;
-                cmbEquipo.DisplayMember = "NombreEquipo";
-                cmbEquipo.ValueMember = "IdEquipo";
+                    cmbEquipo.DataSource = dt;
+                    cmbEquipo.DisplayMember = "NombreEquipo";
+                    cmbEquipo.ValueMember = "IdEquipo";
+
+                }
+                catch (Exception e)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(e);
+                }
             }
         }
 
@@ -92,10 +107,10 @@ namespace ProyectoBD
 
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
-
                 try
                 {
+
+                    conn.Open();
                     string query = @"INSERT INTO DetalleTorneo(IdTorneo,IdEquipo)
                              VALUES(@torneo,@equipo)";
 
@@ -135,23 +150,30 @@ namespace ProyectoBD
 
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
+                try
+                {
 
-                string query = @"SELECT DT.IdTorneo,
-                 DT.IdEquipo,
-                 T.NombreTorneo,
-                 E.NombreEquipo
-                 FROM DetalleTorneo DT
-                 INNER JOIN Torneo T ON DT.IdTorneo = T.IdTorneo
-                 INNER JOIN Equipo E ON DT.IdEquipo = E.IdEquipo";
+                    conn.Open();
+                    string query = @"
+                    SELECT DT.IdTorneo,
+                    DT.IdEquipo,
+                    T.NombreTorneo,
+                    E.NombreEquipo,
+                    CONCAT(CONVERT(varchar(10), J.FechaInicio, 103), ' - ', CONVERT(varchar(10), J.FechaFin, 103)) AS PeriodoJornada
+                    FROM DetalleTorneo DT
+                    INNER JOIN Juego.Torneo T ON DT.IdTorneo = T.IdTorneo
+                    INNER JOIN Club.Equipo E ON DT.IdEquipo = E.IdEquipo
+                    INNER JOIN Juego.Jornada J ON DT.IdTorneo = J.IdTorneo";
 
+                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
 
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
+                    da.Fill(dt);
 
-                da.Fill(dt);
+                    dgvDetalleTorneo.DataSource = dt;
 
-                dgvDetalleTorneo.DataSource = dt;
+                }
+                catch (Exception ex) { ManejadorErroresBD.MostrarErrorAmigable(ex); }
             }
         }
 
@@ -166,28 +188,35 @@ namespace ProyectoBD
 
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                int idTorneo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdTorneo"].Value);
-                int idEquipo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdEquipo"].Value);
+                    int idTorneo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdTorneo"].Value);
+                    int idEquipo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdEquipo"].Value);
 
-                string query = @"UPDATE DetalleTorneo
+                    string query = @"UPDATE DetalleTorneo
                          SET IdTorneo=@torneoNuevo,
                              IdEquipo=@equipoNuevo
                          WHERE IdTorneo=@torneo AND IdEquipo=@equipo";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue("@torneoNuevo", cmbTorneo.SelectedValue);
-                cmd.Parameters.AddWithValue("@equipoNuevo", cmbEquipo.SelectedValue);
-                cmd.Parameters.AddWithValue("@torneo", idTorneo);
-                cmd.Parameters.AddWithValue("@equipo", idEquipo);
+                    cmd.Parameters.AddWithValue("@torneoNuevo", cmbTorneo.SelectedValue);
+                    cmd.Parameters.AddWithValue("@equipoNuevo", cmbEquipo.SelectedValue);
+                    cmd.Parameters.AddWithValue("@torneo", idTorneo);
+                    cmd.Parameters.AddWithValue("@equipo", idEquipo);
 
-                cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                MessageBox.Show("Registro modificado");
+                    MessageBox.Show("Registro modificado");
 
-                CargarDetalleTorneo();
+                    CargarDetalleTorneo();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
             }
         }
 
@@ -201,25 +230,42 @@ namespace ProyectoBD
             }
             using (SqlConnection conn = con.conectar())
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                int idTorneo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdTorneo"].Value);
-                int idEquipo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdEquipo"].Value);
+                    int idTorneo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdTorneo"].Value);
+                    int idEquipo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdEquipo"].Value);
 
-                string query = @"DELETE FROM DetalleTorneo
+                    string query = @"DELETE FROM DetalleTorneo
                          WHERE IdTorneo=@torneo AND IdEquipo=@equipo";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue("@torneo", idTorneo);
-                cmd.Parameters.AddWithValue("@equipo", idEquipo);
+                    cmd.Parameters.AddWithValue("@torneo", idTorneo);
+                    cmd.Parameters.AddWithValue("@equipo", idEquipo);
 
-                cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                MessageBox.Show("Registro eliminado");
+                    MessageBox.Show("Registro eliminado");
 
-                CargarDetalleTorneo();
+                    CargarDetalleTorneo();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
             }
+        }
+
+        private void cmbTorneo_DropDown(object sender, EventArgs e)
+        {
+            CargarTorneos();
+        }
+
+        private void cmbEquipo_DropDown(object sender, EventArgs e)
+        {
+            CargarEquipos();
         }
     }
 }
