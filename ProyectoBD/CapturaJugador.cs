@@ -68,7 +68,7 @@ namespace ProyectoBD
                     string query = "SELECT " +
                         "p.IdParticipante," +
                         "j.IdJugador," +
-                        "CONCAT(p.NombreParticipante, ' (', p.Edad, ')') AS NombreConEdad, " +
+                        "CONCAT(p.NombreParticipante, ' (', p.Edad, ' años)') AS NombreConEdad, " +
                         "j.Posicion," +
                         "j.Numero," +
                         "j.TipoSangre," +
@@ -89,7 +89,7 @@ namespace ProyectoBD
                     dgvJugador.Columns["IdJugador"].HeaderText = "ID Jugador";
                     dgvJugador.Columns["NombreConEdad"].HeaderText = "Nombre del Jugador (Edad)";
                     dgvJugador.Columns["Posicion"].HeaderText = "Posición";
-                    dgvJugador.Columns["Numero"].HeaderText = "Dorsal";
+                    dgvJugador.Columns["Numero"].HeaderText = "Número (dorsal)";
                     dgvJugador.Columns["TipoSangre"].HeaderText = "Tipo de sangre";
                     dgvJugador.Columns["AcumuladorAmarillas"].HeaderText = "Acumulador de amarillas";
                     dgvJugador.Columns["Estado"].HeaderText = "Estado";
