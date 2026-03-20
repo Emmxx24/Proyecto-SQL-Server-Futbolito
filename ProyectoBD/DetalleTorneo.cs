@@ -52,6 +52,7 @@ namespace ProyectoBD
                     cmbTorneo.DataSource = dt;
                     cmbTorneo.DisplayMember = "NombreCompleto";
                     cmbTorneo.ValueMember = "IdTorneo";
+                    cmbTorneo.SelectedIndex = -1;
                 }
                 catch (Exception ex)
                 {
@@ -90,6 +91,7 @@ namespace ProyectoBD
                     cmbEquipo.DataSource = dt;
                     cmbEquipo.DisplayMember = "NombreEquipo";
                     cmbEquipo.ValueMember = "IdEquipo";
+                    cmbEquipo.SelectedIndex = -1;
 
                 }
                 catch (Exception e)
@@ -115,13 +117,30 @@ namespace ProyectoBD
             {
                 try
                 {
-
                     conn.Open();
+
+                    // 🔍 VALIDAR DUPLICADO
+                    string checkQuery = @"SELECT COUNT(*) 
+                                  FROM DetalleTorneo 
+                                  WHERE IdTorneo = @torneo AND IdEquipo = @equipo";
+
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@torneo", cmbTorneo.SelectedValue);
+                    checkCmd.Parameters.AddWithValue("@equipo", cmbEquipo.SelectedValue);
+
+                    int existe = (int)checkCmd.ExecuteScalar();
+
+                    if (existe > 0)
+                    {
+                        MessageBox.Show("Este equipo ya está inscrito en el torneo");
+                        return;
+                    }
+
+                    // ✅ INSERT
                     string query = @"INSERT INTO DetalleTorneo(IdTorneo,IdEquipo)
                              VALUES(@torneo,@equipo)";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
-
                     cmd.Parameters.AddWithValue("@torneo", cmbTorneo.SelectedValue);
                     cmd.Parameters.AddWithValue("@equipo", cmbEquipo.SelectedValue);
 
@@ -161,22 +180,29 @@ namespace ProyectoBD
 
                     conn.Open();
                     string query = @"
-                    SELECT DT.IdTorneo,
-                    DT.IdEquipo,
-                    T.NombreTorneo,
-                    E.NombreEquipo,
-                    CONCAT(CONVERT(varchar(10), J.FechaInicio, 103), ' - ', CONVERT(varchar(10), J.FechaFin, 103)) AS PeriodoJornada
-                    FROM DetalleTorneo DT
-                    INNER JOIN Juego.Torneo T ON DT.IdTorneo = T.IdTorneo
-                    INNER JOIN Club.Equipo E ON DT.IdEquipo = E.IdEquipo
-                    INNER JOIN Juego.Jornada J ON DT.IdTorneo = J.IdTorneo";
+                        SELECT 
+                        DT.IdTorneo,
+                        DT.IdEquipo,
+                        T.NombreTorneo,
+                        E.NombreEquipo,
 
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
+                        CONCAT(CONVERT(varchar(10), T.FechaInicio, 103), ' - ', 
+                        CONVERT(varchar(10), T.FechaFin, 103)) AS PeriodoTorneo,
 
-                    da.Fill(dt);
+                        T.CantidadJugadores,
+                        T.NumeroJornadas,
+                        T.CantidadEquipos
 
-                    dgvDetalleTorneo.DataSource = dt;
+                        FROM DetalleTorneo DT
+                        INNER JOIN Juego.Torneo T ON DT.IdTorneo = T.IdTorneo
+                        INNER JOIN Club.Equipo E ON DT.IdEquipo = E.IdEquipo;";
+
+                        SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                        DataTable dt = new DataTable();
+
+                        da.Fill(dt);
+
+                        dgvDetalleTorneo.DataSource = dt;
 
                 }
                 catch (Exception ex) { ManejadorErroresBD.MostrarErrorAmigable(ex); }
@@ -186,6 +212,7 @@ namespace ProyectoBD
         private void bttnModificar_Click(object sender, EventArgs e)
         {
             ClaseConexion con = new ClaseConexion();
+
             if (dgvDetalleTorneo.CurrentRow == null)
             {
                 MessageBox.Show("Seleccione un registro");
@@ -201,10 +228,32 @@ namespace ProyectoBD
                     int idTorneo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdTorneo"].Value);
                     int idEquipo = Convert.ToInt32(dgvDetalleTorneo.CurrentRow.Cells["IdEquipo"].Value);
 
+                    // 🔍 VALIDAR DUPLICADO
+                    string checkQuery = @"SELECT COUNT(*) 
+                                 FROM DetalleTorneo 
+                                 WHERE IdTorneo = @torneoNuevo 
+                                 AND IdEquipo = @equipoNuevo
+                                 AND NOT (IdTorneo = @torneo AND IdEquipo = @equipo)";
+
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@torneoNuevo", cmbTorneo.SelectedValue);
+                    checkCmd.Parameters.AddWithValue("@equipoNuevo", cmbEquipo.SelectedValue);
+                    checkCmd.Parameters.AddWithValue("@torneo", idTorneo);
+                    checkCmd.Parameters.AddWithValue("@equipo", idEquipo);
+
+                    int existe = (int)checkCmd.ExecuteScalar();
+
+                    if (existe > 0)
+                    {
+                        MessageBox.Show("Ya existe ese equipo en ese torneo");
+                        return;
+                    }
+
+                    // ✅ UPDATE
                     string query = @"UPDATE DetalleTorneo
-                         SET IdTorneo=@torneoNuevo,
-                             IdEquipo=@equipoNuevo
-                         WHERE IdTorneo=@torneo AND IdEquipo=@equipo";
+                             SET IdTorneo=@torneoNuevo,
+                                 IdEquipo=@equipoNuevo
+                             WHERE IdTorneo=@torneo AND IdEquipo=@equipo";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
 

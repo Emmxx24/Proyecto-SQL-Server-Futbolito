@@ -184,6 +184,7 @@ namespace ProyectoBD
                     cmbTorneo.DataSource = dt;
                     cmbTorneo.DisplayMember = "NombreCompleto";
                     cmbTorneo.ValueMember = "IdTorneo";
+                    cmbTorneo.SelectedIndex = -1;
                 }
                 catch (Exception ex)
                 {
@@ -351,13 +352,17 @@ namespace ProyectoBD
         }
         private void cmbTorneo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbTorneo.SelectedValue != null && !(cmbTorneo.SelectedValue is DataRowView))
-            {
-                long idTorneo = Convert.ToInt64(cmbTorneo.SelectedValue);
-                MostrarJornadasPorTorneo(idTorneo);
-                numericUpDown1.Value = ObtenerSiguienteNumeroJornada(idTorneo);
-                idJornadaSeleccionada = 0;
-            }
+            if (cmbTorneo.SelectedIndex == -1 || cmbTorneo.SelectedValue == null)
+                return;
+
+            if (cmbTorneo.SelectedValue is DataRowView)
+                return;
+
+            long idTorneo = Convert.ToInt64(cmbTorneo.SelectedValue);
+
+            MostrarJornadasPorTorneo(idTorneo);
+            numericUpDown1.Value = ObtenerSiguienteNumeroJornada(idTorneo);
+            idJornadaSeleccionada = 0;
         }
     }
 }
