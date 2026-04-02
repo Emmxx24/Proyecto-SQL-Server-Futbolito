@@ -33,6 +33,7 @@ namespace ProyectoBD
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
         }
+
         private void cargaNombreForaneo(int id)
         {
             using (SqlConnection conexion = varConexion.conectar())

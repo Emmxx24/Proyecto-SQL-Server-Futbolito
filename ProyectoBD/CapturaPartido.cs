@@ -49,7 +49,7 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     string query = "SELECT p.IdPartido, " +
-                    "t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante, " + // <-- ¡ESTA ES LA LÍNEA MÁGICA DE LOS IDs!
+                    "t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante, " +
                     "el.NombreEquipo AS eqloc, ev.NombreEquipo AS eqvisi, pa.NombreParticipante, t.NombreTorneo, " +
                     "j.NumeroJornada, l.Nombre, p.Fecha, p.HoraInicio, p.Estado " +
                     "FROM Evento.Partido p INNER JOIN Juego.Jornada j " +
@@ -68,7 +68,7 @@ namespace ProyectoBD
 
                     dgvPartidos.Columns["IdPartido"].HeaderText = "ID Partido";
                     dgvPartidos.Columns["eqloc"].HeaderText = "Equipo Local";
-                    dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Solicitante";
+                    dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Visitante";
                     dgvPartidos.Columns["NombreParticipante"].HeaderText = "Árbitro";
                     dgvPartidos.Columns["NombreTorneo"].HeaderText = "Torneo";
                     dgvPartidos.Columns["NumeroJornada"].HeaderText = "Jornada";
@@ -227,7 +227,7 @@ namespace ProyectoBD
                 DataTable tablaJornadas = new DataTable();
                 adaptador.Fill(tablaJornadas);
 
-                cbJornada.DisplayMember = "NumeroJornada"; 
+                cbJornada.DisplayMember = "NumeroJornada";
                 cbJornada.ValueMember = "IdJornada";
                 cbJornada.DataSource = tablaJornadas;
             }
@@ -235,9 +235,9 @@ namespace ProyectoBD
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            if (cbArbitro.SelectedIndex == -1 || cbJornada.SelectedIndex == -1 ||
-                cbLugar.SelectedIndex == -1 || cbLocal.SelectedIndex == -1 ||
-                cbVisitante.SelectedIndex == -1)
+            if (cbTorneo.SelectedIndex == -1 || cbArbitro.SelectedIndex == -1 ||
+                cbJornada.SelectedIndex == -1 || cbLugar.SelectedIndex == -1 ||
+                cbLocal.SelectedIndex == -1 || cbVisitante.SelectedIndex == -1)
             {
                 MessageBox.Show("Por favor complete todos los campos");
                 return;
@@ -256,7 +256,7 @@ namespace ProyectoBD
                 return;
             }
 
-            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql);
+            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql, 0);
             switch (verificaArbitro)
             {
                 case -1:
@@ -269,7 +269,7 @@ namespace ProyectoBD
                     return;
             }
 
-            int verificaLug = verificaLugar(idLugar, fecha, horaSql);
+            int verificaLug = verificaLugar(idLugar, fecha, horaSql, 0);
             switch (verificaLug)
             {
                 case -1:
@@ -279,6 +279,32 @@ namespace ProyectoBD
                     break;
                 default:
                     MessageBox.Show("El lugar seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            int verifPartInv = verificaPartidoInverso(equiLocal, equiVisitante, idJornada, 0);
+            switch (verifPartInv)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el partido.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("Ya hay un partido de estos equipos en la misma jornada");
+                    return;
+            }
+
+            int verifEquDisp = verificarEquiposDisponibles(equiLocal, equiVisitante, fecha, horaSql, 0);
+            switch (verifEquDisp)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el partido.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("Ya hay un partido de estos equipos en la misma fecha");
                     return;
             }
 
@@ -338,12 +364,12 @@ namespace ProyectoBD
                 return;
             }
 
-            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql);
+            int verificaArbitro = verificarArbitro(idArbitro, fecha, horaSql, 1);
             switch (verificaArbitro)
             {
                 case -1:
                     MessageBox.Show("Error al verificar el árbitro.");
-                    return; 
+                    return;
                 case 0:
                     break;
                 default:
@@ -351,7 +377,7 @@ namespace ProyectoBD
                     return;
             }
 
-            int verificaLug = verificaLugar(idLugar, fecha, horaSql);
+            int verificaLug = verificaLugar(idLugar, fecha, horaSql, 1);
             switch (verificaLug)
             {
                 case -1:
@@ -361,6 +387,32 @@ namespace ProyectoBD
                     break;
                 default:
                     MessageBox.Show("El lugar seleccionado ya está asignado a otro partido a la misma hora");
+                    return;
+            }
+
+            int verifPartInv = verificaPartidoInverso(equiLocal, equiVisitante, idJornada, 1);
+            switch (verifPartInv)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el partido.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("Ya hay un partido de estos equipos en la misma jornada");
+                    return;
+            }
+
+            int verifEquDisp = verificarEquiposDisponibles(equiLocal, equiVisitante, fecha, horaSql, 1);
+            switch (verifEquDisp)
+            {
+                case -1:
+                    MessageBox.Show("Error al verificar el partido.");
+                    return;
+                case 0:
+                    break;
+                default:
+                    MessageBox.Show("Ya hay un partido de estos equipos en la misma fecha");
                     return;
             }
 
@@ -377,7 +429,6 @@ namespace ProyectoBD
             using (SqlConnection conexion = varConexion.conectar())
             using (SqlCommand command = new SqlCommand(query, conexion))
             {
-                // 6. Pasar todos los parámetros
                 command.Parameters.AddWithValue("@idArbitro", idArbitro);
                 command.Parameters.AddWithValue("@idJornada", idJornada);
                 command.Parameters.AddWithValue("@idLugar", idLugar);
@@ -400,70 +451,6 @@ namespace ProyectoBD
             }
         }
 
-       
-        private int verificarArbitro(int idArbitro, DateTime fecha, TimeSpan horaInicio)
-        {
-            using (SqlConnection conexion = varConexion.conectar())
-            {
-                string query = "SELECT COUNT(*) FROM Evento.Partido " +
-                               "WHERE IdArbitro = @idArbitro " +
-                               "AND Fecha = @fecha " +
-                               "AND HoraInicio = @horaInicio " +
-                               "AND IdPartido != @idPartido";
-
-                SqlCommand command = new SqlCommand(query, conexion);
-                command.Parameters.AddWithValue("@idArbitro", idArbitro);
-                command.Parameters.AddWithValue("@fecha", fecha);
-                command.Parameters.AddWithValue("@horaInicio", horaInicio);
-                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
-
-                try
-                {
-                    conexion.Open();
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al verificar el árbitro: " + ex.Message);
-                    return -1;
-                }
-            }
-        }
-
-        private int verificaLugar(int idLugar, DateTime fecha, TimeSpan horaInicio)
-        {
-            using (SqlConnection conexion = varConexion.conectar())
-            {
-                // Contamos cuántos partidos hay en ESA cancha, ESE día y a ESA hora exacta
-                string query = "SELECT COUNT(*) FROM Evento.Partido " +
-                               "WHERE IdLugar = @idLugar " +
-                               "AND Fecha = @fecha " +
-                               "AND HoraInicio = @horaInicio " +
-                               "AND IdPartido != @idPartido";
-
-                SqlCommand command = new SqlCommand(query, conexion);
-
-                command.Parameters.AddWithValue("@idLugar", idLugar);
-                command.Parameters.AddWithValue("@fecha", fecha);
-                command.Parameters.AddWithValue("@horaInicio", horaInicio);
-                // Excluimos el partido actual por si estamos en modo "Modificar"
-                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
-
-                try
-                {
-                    conexion.Open();
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al verificar la disponibilidad del lugar: " + ex.Message);
-                    // Retornamos -1 para que tu switch sepa que hubo un error de conexión
-                    return -1;
-                }
-            }
-        }
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             if (idPartidoSeleccionado == -1)
@@ -492,6 +479,137 @@ namespace ProyectoBD
             }
         }
 
+
+        //Todas las funciones de verificación siguen la misma lógica:
+        //Se utiliza sql para primero verificar si es modificacion, si sí, ya se omite el resto del bloque
+        //si no, toma en cuenta el id del partido que se está modificando para no contarlo en la busqueda
+
+        //Verifica que el árbito no tenga otro partido asignado en la misma fecha y hora
+        private int verificarArbitro(int idArbitro, DateTime fecha, TimeSpan horaInicio, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT COUNT(*) FROM Evento.Partido " +
+                "WHERE IdArbitro = @idArbitro " +
+                "AND Fecha = @fecha " +
+                "AND HoraInicio = @horaInicio " +
+                "AND (@esModificacion = 0 OR IdPartido != @idPartido)";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idArbitro", idArbitro);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaInicio);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar el árbitro: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        //Verifica que no haya un partido en la misma fecha en la misma hora en el mismo lugar
+        private int verificaLugar(int idLugar, DateTime fecha, TimeSpan horaInicio, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT COUNT(*) FROM Evento.Partido " +
+                "WHERE IdLugar = @idLugar " +
+                "AND Fecha = @fecha " +
+                "AND HoraInicio = @horaInicio " +
+                "AND (@esModificacion = 0 OR IdPartido != @idPartido)";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idLugar", idLugar);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaInicio);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar la disponibilidad del lugar: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        //verificar partido inverso (mismos equipos pero en diferente orden) en la misma jornada
+        private int verificaPartidoInverso(int idLocal, int idVisitante, int idJornada, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = "SELECT COUNT(*) FROM Evento.Partido " +
+                "WHERE ((IdLocal = @idLocal AND IdVisitante = @idVisitante) " +
+                "OR (IdLocal = @idVisitante AND IdVisitante = @idLocal)) " +
+                "AND IdJornada = @idJornada " +
+                "AND (@esModificacion = 0 OR IdPartido != @idPartido)";
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idLocal", idLocal);
+                command.Parameters.AddWithValue("@idVisitante", idVisitante);
+                command.Parameters.AddWithValue("@idJornada", idJornada);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar el partido inverso: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        // Verifica que NINGUNO de los dos equipos esté ocupado exactamente a la misma hora
+        private int verificarEquiposDisponibles(int idLocal, int idVisitante, DateTime fecha, TimeSpan horaInicio, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = @"SELECT COUNT(*) 
+                         FROM Evento.Partido 
+                         WHERE Fecha = @fecha 
+                         AND HoraInicio = @horaInicio
+                         AND (IdLocal IN (@idLocal, @idVisitante) OR IdVisitante IN (@idLocal, @idVisitante))
+                         AND (@esModificacion = 0 OR IdPartido != @idPartido)";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idLocal", idLocal);
+                command.Parameters.AddWithValue("@idVisitante", idVisitante);
+                command.Parameters.AddWithValue("@fecha", fecha);
+                command.Parameters.AddWithValue("@horaInicio", horaInicio);
+                command.Parameters.AddWithValue("@idPartido", idPartidoSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar los equipos: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
         private void actualizaBotones(int op)
         {
             if (op == 1)
@@ -503,6 +621,21 @@ namespace ProyectoBD
             {
                 btnRegisResult.Enabled = false;
                 btnRegisResult.Visible = false;
+            }
+        }
+
+        private void btnRegisResult_Click(object sender, EventArgs e)
+        {
+            if (idPartidoSeleccionado != -1)
+            {
+                Form formulario = new CapturaResultado(idPartidoSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
             }
         }
     }

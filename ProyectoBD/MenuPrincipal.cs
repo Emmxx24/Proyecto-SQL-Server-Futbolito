@@ -103,7 +103,8 @@ namespace ProyectoBD
 
         private void resultadoPartidoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Captura Resultado";
+            AbrirFormularioHijo(new CapturaResultado());
         }
 
         private void golToolStripMenuItem_Click(object sender, EventArgs e)
