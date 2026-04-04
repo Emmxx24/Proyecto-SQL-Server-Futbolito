@@ -129,7 +129,7 @@
             dgvJornada.Name = "dgvJornada";
             dgvJornada.ReadOnly = true;
             dgvJornada.RowHeadersWidth = 51;
-            dgvJornada.Size = new Size(680, 359);
+            dgvJornada.Size = new Size(852, 359);
             dgvJornada.TabIndex = 7;
             dgvJornada.CellClick += dgvJornada_CellClick;
             // 
@@ -145,7 +145,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(706, 600);
+            ClientSize = new Size(878, 600);
             Controls.Add(numericUpDown1);
             Controls.Add(dgvJornada);
             Controls.Add(bttnAgregar);

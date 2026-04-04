@@ -15,13 +15,14 @@ namespace ProyectoBD
         public Jornada()
         {
             InitializeComponent();
+            MostrarJornadas();
         }
 
         private void Jornada_Load(object sender, EventArgs e)
         {
             CargarTorneos();
             MostrarJornadas();
-            cmbTorneo.SelectedIndexChanged += cmbTorneo_SelectedIndexChanged;
+            //Torneo.SelectedIndexChanged += cmbTorneo_SelectedIndexChanged;
         }
 
         private void bttnAgregar_Click(object sender, EventArgs e)
@@ -204,9 +205,9 @@ namespace ProyectoBD
                     conn.Open();
 
                     string query = @"SELECT J.IdJornada,
-                                        T.NombreTorneo,
+                                        T.NombreTorneo + ' (' + 
                                         CONVERT(varchar(10), T.FechaInicio, 103) + ' - ' + 
-                                        CONVERT(varchar(10), T.FechaFin, 103) AS Periodo,
+                                        CONVERT(varchar(10), T.FechaFin, 103) + ')' AS Torneo,
                                         J.NumeroJornada
                                  FROM Juego.Jornada J
                                  INNER JOIN Juego.Torneo T
@@ -218,6 +219,18 @@ namespace ProyectoBD
                     da.Fill(dt);
 
                     dgvJornada.DataSource = dt;
+                    // Ajustes visuales
+                    dgvJornada.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                    dgvJornada.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+
+                    // Columnas angostas
+                    //dgvJornada.Columns["IdJornada"].Width = 60;
+                    //dgvJornada.Columns["NumeroJornada"].Width = 80;
+                    //dgvJornada.Columns["Torneo"].Width = 250;
+
+                    // Columna de fechas más amplia
+                    if (dgvJornada.Columns.Contains("Periodo"))
+                        dgvJornada.Columns["Periodo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
                 catch (Exception ex)
                 {
@@ -301,6 +314,17 @@ namespace ProyectoBD
                     da.Fill(dt);
 
                     dgvJornada.DataSource = dt;
+                    // Ajustes visuales
+                    dgvJornada.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                    dgvJornada.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+
+                    // Columnas angostas
+                    dgvJornada.Columns["IdJornada"].Width = 60;
+                    dgvJornada.Columns["NumeroJornada"].Width = 80;
+                    dgvJornada.Columns["Torneo"].Width = 300;
+                    // Columna de fechas más amplia
+                    if (dgvJornada.Columns.Contains("Periodo"))
+                        dgvJornada.Columns["Periodo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
                 catch (Exception ex)
                 {
@@ -352,6 +376,7 @@ namespace ProyectoBD
         }
         private void cmbTorneo_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             if (cmbTorneo.SelectedIndex == -1 || cmbTorneo.SelectedValue == null)
                 return;
 
@@ -359,6 +384,7 @@ namespace ProyectoBD
                 return;
 
             long idTorneo = Convert.ToInt64(cmbTorneo.SelectedValue);
+
 
             MostrarJornadasPorTorneo(idTorneo);
             numericUpDown1.Value = ObtenerSiguienteNumeroJornada(idTorneo);
