@@ -58,9 +58,9 @@
             lblTorneo.AutoSize = true;
             lblTorneo.Location = new Point(10, 7);
             lblTorneo.Name = "lblTorneo";
-            lblTorneo.Size = new Size(47, 15);
+            lblTorneo.Size = new Size(176, 15);
             lblTorneo.TabIndex = 0;
-            lblTorneo.Text = "Torneo:";
+            lblTorneo.Text = "Torneo (fecha inicio - fecha fin):";
             // 
             // lblJornada
             // 
@@ -76,18 +76,18 @@
             lblArbitro.AutoSize = true;
             lblArbitro.Location = new Point(10, 53);
             lblArbitro.Name = "lblArbitro";
-            lblArbitro.Size = new Size(47, 15);
+            lblArbitro.Size = new Size(112, 15);
             lblArbitro.TabIndex = 2;
-            lblArbitro.Text = "Árbitro:";
+            lblArbitro.Text = "Id Árbritro - Árbitro:";
             // 
             // lblLugar
             // 
             lblLugar.AutoSize = true;
             lblLugar.Location = new Point(268, 53);
             lblLugar.Name = "lblLugar";
-            lblLugar.Size = new Size(40, 15);
+            lblLugar.Size = new Size(105, 15);
             lblLugar.TabIndex = 3;
-            lblLugar.Text = "Lugar:";
+            lblLugar.Text = "Lugar [capacidad]:";
             // 
             // cbTorneo
             // 
@@ -228,13 +228,13 @@
             dgvPartidos.ReadOnly = true;
             dgvPartidos.RowHeadersWidth = 51;
             dgvPartidos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPartidos.Size = new Size(865, 128);
+            dgvPartidos.Size = new Size(865, 412);
             dgvPartidos.TabIndex = 12;
             dgvPartidos.CellClick += dgvPartidos_CellClick;
             // 
             // btnRegisResult
             // 
-            btnRegisResult.Location = new Point(11, 351);
+            btnRegisResult.Location = new Point(10, 628);
             btnRegisResult.Margin = new Padding(3, 2, 3, 2);
             btnRegisResult.Name = "btnRegisResult";
             btnRegisResult.Size = new Size(129, 22);
@@ -283,7 +283,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(886, 382);
+            ClientSize = new Size(886, 661);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);

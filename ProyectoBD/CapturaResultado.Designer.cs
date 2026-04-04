@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             lblPartidoDetalle = new Label();
             txtPartidoDetalle = new TextBox();
             lblGolesLocal = new Label();
@@ -124,14 +124,14 @@
             dgvResultados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvResultados.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvResultados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvResultados.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvResultados.DefaultCellStyle = dataGridViewCellStyle2;
             dgvResultados.Location = new Point(12, 196);
             dgvResultados.MultiSelect = false;
             dgvResultados.Name = "dgvResultados";
@@ -186,6 +186,7 @@
             btnRegistraGoles.Text = "Registrar goles";
             btnRegistraGoles.UseVisualStyleBackColor = false;
             btnRegistraGoles.Visible = false;
+            btnRegistraGoles.Click += btnRegistraGoles_Click;
             // 
             // btnRegistraTarjetas
             // 
@@ -198,6 +199,7 @@
             btnRegistraTarjetas.Text = "Registrar tarjetas";
             btnRegistraTarjetas.UseVisualStyleBackColor = false;
             btnRegistraTarjetas.Visible = false;
+            btnRegistraTarjetas.Click += btnRegistraTarjetas_Click;
             // 
             // CapturaResultado
             // 

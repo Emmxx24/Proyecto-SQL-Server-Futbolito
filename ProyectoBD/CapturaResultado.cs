@@ -1,4 +1,6 @@
-﻿using System;
+﻿//VERIFICAR QUE CONCATENACIONES VA A PEDIR LA MAESTRA XD
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,7 +22,6 @@ namespace ProyectoBD
         public CapturaResultado(int? idPartido = null)
         {
             InitializeComponent();
-            //MessageBox.Show(idJugador.ToString());
             idResultadoSeleccionado = -1;
             varConexion = new ClaseConexion();
             cargaResultados();
@@ -319,6 +320,26 @@ namespace ProyectoBD
                 btnRegistraTarjetas.Enabled = false;
                 btnRegistraTarjetas.Visible = false;
             }
+        }
+
+        private void btnRegistraGoles_Click(object sender, EventArgs e)
+        {
+            if (idResultadoSeleccionado != -1)
+            {
+                Form formulario = new CapturaGol(idPartidoSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
+            }
+        }
+
+        private void btnRegistraTarjetas_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

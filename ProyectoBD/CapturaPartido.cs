@@ -1,4 +1,7 @@
-﻿using System;
+﻿//FALTARA ACTUALIZAR LAS CONCATENACIONES DE JORNADA Y EQUIPO CUANDO LA MAESTRA LAS AUTORICE
+//Y VERIFICAR QUE LAS CONCATENACIONES QUE PUSE ESTÁN CORRECTAS
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,14 +33,14 @@ namespace ProyectoBD
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
-                string query = "SELECT IdLugar, Nombre FROM Juego.Lugar";
+                string query = "SELECT IdLugar, CONCAT(Nombre, ' [', Capacidad, ']') AS Nombre FROM Juego.Lugar";
                 SqlCommand comando = new SqlCommand(query, conexion);
                 SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                 DataTable tablaLugares = new DataTable();
                 adaptador.Fill(tablaLugares);
 
                 cbLugar.DataSource = tablaLugares;
-                cbLugar.DisplayMember = "Nombre"; // Ojo, aquí es número o nombre según tu BD
+                cbLugar.DisplayMember = "Nombre";
                 cbLugar.ValueMember = "IdLugar";
             }
         }
@@ -48,18 +51,20 @@ namespace ProyectoBD
                 try
                 {
                     conexion.Open();
-                    string query = "SELECT p.IdPartido, " +
-                    "t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante, " +
-                    "el.NombreEquipo AS eqloc, ev.NombreEquipo AS eqvisi, pa.NombreParticipante, t.NombreTorneo, " +
-                    "j.NumeroJornada, l.Nombre, p.Fecha, p.HoraInicio, p.Estado " +
-                    "FROM Evento.Partido p INNER JOIN Juego.Jornada j " +
-                    "ON p.IdJornada = j.IdJornada INNER JOIN Club.Equipo el " +
-                    "ON p.IdLocal = el.IdEquipo INNER JOIN Club.Equipo ev " +
-                    "ON p.IdVisitante = ev.IdEquipo INNER JOIN Persona.Arbitro a " +
-                    "ON p.IdArbitro = a.IdArbitro INNER JOIN Persona.Participante pa " +
-                    "ON pa.IdParticipante = a.IdParticipante INNER JOIN Juego.Lugar l " +
-                    "ON p.IdLugar = l.IdLugar " +
-                    "INNER JOIN Juego.Torneo t ON j.IdTorneo = t.IdTorneo";
+                    string query = @"SELECT p.IdPartido, 
+                    t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante,
+                    el.NombreEquipo AS eqloc, ev.NombreEquipo AS eqvisi, 
+                    CONCAT(p.IdArbitro, ' - ',pa.NombreParticipante) AS Arbitro, 
+                    CONCAT(t.NombreTorneo, ' (', t.FechaInicio, ' - ', t.FechaFin, ')') AS DatosTorneo,  
+                    j.NumeroJornada, CONCAT(l.Nombre, ' [', Capacidad, ']') AS NombreLugar, p.Fecha, p.HoraInicio, p.Estado 
+                    FROM Evento.Partido p INNER JOIN Juego.Jornada j 
+                    ON p.IdJornada = j.IdJornada INNER JOIN Club.Equipo el 
+                    ON p.IdLocal = el.IdEquipo INNER JOIN Club.Equipo ev 
+                    ON p.IdVisitante = ev.IdEquipo INNER JOIN Persona.Arbitro a 
+                    ON p.IdArbitro = a.IdArbitro INNER JOIN Persona.Participante pa 
+                    ON pa.IdParticipante = a.IdParticipante INNER JOIN Juego.Lugar l 
+                    ON p.IdLugar = l.IdLugar 
+                    INNER JOIN Juego.Torneo t ON j.IdTorneo = t.IdTorneo";
                     SqlCommand comando = new SqlCommand(query, conexion);
                     SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                     DataTable tabla = new DataTable();
@@ -69,10 +74,10 @@ namespace ProyectoBD
                     dgvPartidos.Columns["IdPartido"].HeaderText = "ID Partido";
                     dgvPartidos.Columns["eqloc"].HeaderText = "Equipo Local";
                     dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Visitante";
-                    dgvPartidos.Columns["NombreParticipante"].HeaderText = "Árbitro";
-                    dgvPartidos.Columns["NombreTorneo"].HeaderText = "Torneo";
+                    dgvPartidos.Columns["Arbitro"].HeaderText = "Id Árbitro - Árbitro";
+                    dgvPartidos.Columns["DatosTorneo"].HeaderText = "Torneo (fecha inicio - fecha fin)";
                     dgvPartidos.Columns["NumeroJornada"].HeaderText = "Jornada";
-                    dgvPartidos.Columns["Nombre"].HeaderText = "Lugar";
+                    dgvPartidos.Columns["NombreLugar"].HeaderText = "Lugar [capacidad]";
                     dgvPartidos.Columns["Fecha"].HeaderText = "Fecha";
                     dgvPartidos.Columns["HoraInicio"].HeaderText = "Hora de inicio";
                     dgvPartidos.Columns["Estado"].HeaderText = "Estado";
@@ -96,12 +101,13 @@ namespace ProyectoBD
             {
                 try
                 {
-                    string query = "SELECT IdTorneo, NombreTorneo FROM Juego.Torneo";
+                    string query = @"SELECT IdTorneo,  
+                    CONCAT(NombreTorneo, ' (', FechaInicio, ' - ', FechaFin, ')') AS DatosTorneo FROM Juego.Torneo";
                     SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion);
                     DataTable tablaTorneos = new DataTable();
                     adaptador.Fill(tablaTorneos);
 
-                    cbTorneo.DisplayMember = "NombreTorneo"; // Lo que el usuario lee
+                    cbTorneo.DisplayMember = "DatosTorneo"; // Lo que el usuario lee
                     cbTorneo.ValueMember = "IdTorneo";       // El ID que guardas
 
                     cbTorneo.DataSource = tablaTorneos;
@@ -119,10 +125,11 @@ namespace ProyectoBD
             {
                 try
                 {
-                    string query = "SELECT a.IdArbitro, p.NombreParticipante " +
-                                   "FROM Persona.Arbitro a " +
-                                   "INNER JOIN Persona.Participante p " +
-                                   "ON a.IdParticipante = p.IdParticipante";
+                    string query =  @"SELECT a.IdArbitro,
+                                    CONCAT(a.IdArbitro, ' - ',p.NombreParticipante) AS Arbitro
+                                    FROM Persona.Arbitro a
+                                    INNER JOIN Persona.Participante p
+                                    ON a.IdParticipante = p.IdParticipante";
 
                     SqlCommand comando = new SqlCommand(query, conexion);
                     SqlDataAdapter adaptador = new SqlDataAdapter(comando);
@@ -130,7 +137,7 @@ namespace ProyectoBD
                     adaptador.Fill(tablaArbitros);
 
                     cbArbitro.ValueMember = "IdArbitro";
-                    cbArbitro.DisplayMember = "NombreParticipante";
+                    cbArbitro.DisplayMember = "Arbitro";
                     cbArbitro.DataSource = tablaArbitros;
                 }
                 catch (Exception ex)
@@ -188,6 +195,7 @@ namespace ProyectoBD
                 cargaJornadas(idTorneo);
             }
         }
+
         private void cargaEquipos(int idTorneo)
         {
             using (SqlConnection conexion = varConexion.conectar())
@@ -576,7 +584,7 @@ namespace ProyectoBD
             }
         }
 
-        // Verifica que NINGUNO de los dos equipos esté ocupado exactamente a la misma hora
+        // Verifica que ninguno de los dos equipos esté ocupado exactamente a la misma hora
         private int verificarEquiposDisponibles(int idLocal, int idVisitante, DateTime fecha, TimeSpan horaInicio, int esModificacion)
         {
             using (SqlConnection conexion = varConexion.conectar())
