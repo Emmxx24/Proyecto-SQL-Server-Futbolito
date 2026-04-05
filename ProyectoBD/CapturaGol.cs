@@ -15,6 +15,7 @@ namespace ProyectoBD
         ClaseConexion varConexion;
         int idGolSeleccionado;
         int idPartidoFK;
+        int idPartidoSeleccionado;
 
         public CapturaGol(int? idPartido = null)
         {
@@ -133,7 +134,7 @@ namespace ProyectoBD
         private void cbEquipos_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbEquipos.SelectedValue != null && int.TryParse(cbEquipos.SelectedValue.ToString(), out int idEquipo))
-                cargaJugadoresActivos(idEquipo);
+                cargaJugadores(idEquipo);
         }
 
         private void dgvGoles_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -146,8 +147,9 @@ namespace ProyectoBD
                     idGolSeleccionado = Convert.ToInt32(fila.Cells["IdGol"].Value);
                     cargaEquipos(Convert.ToInt32(fila.Cells["IdPartido"].Value));
                     cbEquipos.SelectedValue = Convert.ToInt32(fila.Cells["IdEqGol"].Value);
-                    cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
+                    idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
+                    cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
                     actualizaBotones(1);
                 }
             }
@@ -157,7 +159,7 @@ namespace ProyectoBD
             }
         }
 
-        private void cargaJugadoresActivos(int idEquipo)
+        private void cargaJugadores(int idEquipo)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -173,8 +175,7 @@ namespace ProyectoBD
                     ON j.IdJugador = de.IdJugador
                     INNER JOIN Club.Equipo e
                     ON e.IdEquipo = de.IdEquipo
-                    WHERE e.IdEquipo = @idEquipo
-                    AND j.Estado = 'Activo'; ";
+                    WHERE e.IdEquipo = @idEquipo;";
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
                         comando.Parameters.AddWithValue("@idEquipo", idEquipo);
@@ -198,6 +199,7 @@ namespace ProyectoBD
         {
             idGolSeleccionado = -1;
             idPartidoFK = -1;
+            idPartidoSeleccionado = -1;
             cbEquipos.SelectedIndex = -1;
             cbJugadores.SelectedIndex = -1;
         }
@@ -209,23 +211,20 @@ namespace ProyectoBD
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            
             if (idPartidoFK == -1)
             {
                 MessageBox.Show("Selecciona un Resultado desde el formulario de CapturaResultado");
                 return;
             }
-            if(cbEquipos.SelectedIndex == -1 || cbJugadores.SelectedIndex == -1 || numericMin.Value <=0)  
+            if (cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
             {
                 MessageBox.Show("Completa todos los campos/el minuto no puede ser 0");
                 return;
             }
+
             int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
             int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
             int minuto = Convert.ToInt32(numericMin.Value);
-            string query = @"INSERT INTO Evento.Gol
-                            (IdJugador, IdPartido, Minuto)
-                            VALUES(@idJugador, @idPartido, @minuto)";
 
             int verifMinuto = verificaMinuto(idPartidoFK, minuto);
             switch (verifMinuto)
@@ -233,30 +232,46 @@ namespace ProyectoBD
                 case -1:
                     MessageBox.Show("Error al verificar el minuto del gol.");
                     return;
-                case 0:
+                case 0: break; // 0 = Todo bien
+                default:
                     MessageBox.Show("El minuto del gol no puede ser cero ni mayor a la hora de termino");
                     return;
-                default:
-                    break;
             }
 
-            int verifGoles = verificaCantidadGoles(idPartidoFK, idEquipo);
+
+            int verifGoles = verificaCantidadGoles(idPartidoFK, idEquipo, 0);
             switch (verifGoles)
             {
-                case -1: return; // Error de BD
-                case 0:
+                case -1: return;
+                case 0: break; // 0 = Todo bien
+                default:
                     MessageBox.Show("¡Límite alcanzado! Este equipo ya no puede registrar más goles según el resultado final del partido.");
                     return;
             }
 
-            int verifDuplicado = verificaMinutoDuplicado(idPartidoFK, minuto);
+            int verifDuplicado = verificaMinutoDuplicado(idPartidoFK, minuto, 0);
             switch (verifDuplicado)
             {
                 case -1: return;
-                case 0:
-                    MessageBox.Show("Ya existe un gol registrado en ese exacto minuto para este partido. Verifica la información.");
+                case 0: break; // 0 = Todo bien
+                default:
+                    MessageBox.Show("Ya existe un gol registrado en ese exacto minuto para este partido.");
                     return;
             }
+
+            int verifEstado = verificaEstadoEnMinuto(idPartidoFK, idJugador, minuto);
+            switch (verifEstado)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("Este jugador está Suspendido, no se le puede registrar un Gol");
+                    return;
+
+            }
+
+            string query = @"INSERT INTO Evento.Gol (IdJugador, IdPartido, Minuto) 
+                     VALUES(@idJugador, @idPartido, @minuto)";
 
             using (SqlConnection conexion = varConexion.conectar())
             using (SqlCommand command = new SqlCommand(query, conexion))
@@ -280,7 +295,84 @@ namespace ProyectoBD
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
+            if (idGolSeleccionado == -1)
+            {
+                MessageBox.Show("Selecciona un Gol de la tabla para modificar");
+                return;
+            }
+            if (idPartidoSeleccionado == -1 || cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
+            {
+                MessageBox.Show("Complete todos los campos ");
+                return;
+            }
 
+            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
+            int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
+            int minuto = Convert.ToInt32(numericMin.Value);
+
+            int verifMinuto = verificaMinuto(idPartidoSeleccionado, minuto);
+            switch (verifMinuto)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("El minuto del gol no puede ser cero ni mayor a la hora de termino");
+                    return;
+            }
+
+            int verifGoles = verificaCantidadGoles(idPartidoSeleccionado, idEquipo, 1);
+            switch (verifGoles)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("¡Límite alcanzado! Este equipo ya no puede registrar más goles según el resultado final del partido.");
+                    return;
+            }
+            int verifDuplicado = verificaMinutoDuplicado(idPartidoSeleccionado, minuto, 1);
+            switch (verifDuplicado)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("Ya existe un gol registrado en ese exacto minuto para este partido.");
+                    return;
+            }
+
+            int verifEstado = verificaEstadoEnMinuto(idPartidoSeleccionado, idJugador, minuto);
+            switch (verifEstado)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("Este jugador está Suspendido, no se le puede registrar un Gol");
+                    return;
+
+            }
+
+            string query = @"UPDATE Evento.Gol 
+                     SET IdJugador = @idJugador, Minuto = @minuto 
+                     WHERE IdGol = @idGol";
+
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                command.Parameters.AddWithValue("@idJugador", idJugador);
+                command.Parameters.AddWithValue("@minuto", minuto);
+                command.Parameters.AddWithValue("@idGol", idGolSeleccionado);
+
+                try
+                {
+                    conexion.Open();
+                    command.ExecuteNonQuery();
+                    cargaGoles();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
@@ -313,15 +405,14 @@ namespace ProyectoBD
 
         private int verificaMinuto(int idPartido, int minuto)
         {
-            if (minuto <= 0) return 0;
+            if (minuto <= 0) return 1;
 
             using (SqlConnection conexion = varConexion.conectar())
             {
                 string query = @"
             SELECT DATEDIFF(MINUTE, p.HoraInicio, r.HoraFin)
             FROM Evento.Partido p
-            INNER JOIN Evento.ResultadoPartido r 
-                ON p.IdPartido = r.IdPartido
+            INNER JOIN Evento.ResultadoPartido r ON p.IdPartido = r.IdPartido
             WHERE p.IdPartido = @idPartido";
 
                 SqlCommand command = new SqlCommand(query, conexion);
@@ -331,14 +422,10 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     int duracionTotal = Convert.ToInt32(command.ExecuteScalar());
-                    if (minuto <= duracionTotal)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return 0;
-                    }
+
+                    // Adaptado a tu estilo: 0 = Todo bien, 1 = Error
+                    if (minuto <= duracionTotal) return 0;
+                    else return 1;
                 }
                 catch (Exception ex)
                 {
@@ -348,75 +435,111 @@ namespace ProyectoBD
             }
         }
 
-        private int verificaCantidadGoles(int idPartido, int idEquipo)
+        private int verificaEstadoEnMinuto(int idPartido, int idJugador, int minuto)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
-                string query = @"
-                SELECT 
-                    (SELECT CASE WHEN p.IdLocal = @idEquipo THEN r.GolesLocal ELSE r.GolesVisitante END
-                     FROM Evento.Partido p
-                     INNER JOIN Evento.ResultadoPartido r ON p.IdPartido = r.IdPartido
-                     WHERE p.IdPartido = @idPartido) 
-                    - 
-                    (SELECT COUNT(g.IdGol)
-                     FROM Evento.Gol g
-                     INNER JOIN Club.DetalleEquipo de ON g.IdJugador = de.IdJugador
-                     WHERE g.IdPartido = @idPartido AND de.IdEquipo = @idEquipo)";
-
-                SqlCommand command = new SqlCommand(query, conexion);
-                command.Parameters.AddWithValue("@idPartido", idPartido);
-                command.Parameters.AddWithValue("@idEquipo", idEquipo);
-                try
-                {
-                    conexion.Open();
-                    int golesDisponibles = Convert.ToInt32(command.ExecuteScalar());
-                    if (golesDisponibles > 0)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return 0; 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al verificar la cantidad de goles permitida: " + ex.Message);
-                    return -1;
-                }
-            }
-        }
-
-        private int verificaMinutoDuplicado(int idPartido, int minuto)
-        {
-            using (SqlConnection conexion = varConexion.conectar())
-            {
+                // Esta maravilla de consulta busca si el jugador fue expulsado ANTES o en el MISMO minuto del evento
                 string query = @"
             SELECT COUNT(*) 
-            FROM Evento.Gol 
-            WHERE IdPartido = @idPartido AND Minuto = @minuto";
+            FROM Evento.Tarjeta 
+            WHERE IdPartido = @idPartido 
+            AND IdJugador = @idJugador 
+            AND Minuto <= @minuto 
+            AND (TipoTarjeta = 'Roja' OR 
+                 (SELECT COUNT(*) FROM Evento.Tarjeta t2 
+                  WHERE t2.IdPartido = @idPartido AND t2.IdJugador = @idJugador 
+                  AND t2.TipoTarjeta = 'Amarilla' AND t2.Minuto <= @minuto) >= 2)";
 
                 SqlCommand command = new SqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@idPartido", idPartido);
+                command.Parameters.AddWithValue("@idJugador", idJugador);
                 command.Parameters.AddWithValue("@minuto", minuto);
 
                 try
                 {
                     conexion.Open();
-                    int existeGol = Convert.ToInt32(command.ExecuteScalar());
-                    if (existeGol > 0)
-                    {
-                        return 0; 
-                    }
-                    else
-                    {
-                        return 1; 
-                    }
+                    int estaExpulsado = Convert.ToInt32(command.ExecuteScalar());
+
+                    // Siguiendo tu estándar: 0 es todo bien, 1 es que ya la cagó
+                    if (estaExpulsado > 0) return 1;
+                    else return 0;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al verificar si el minuto está duplicado: " + ex.Message);
+                    MessageBox.Show("Error al verificar la línea de tiempo del jugador: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        private int verificaCantidadGoles(int idPartido, int idEquipo, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                // Aplicamos tu truco del OR IdGol != @idGol en la subconsulta de goles registrados
+                string query = @"
+            SELECT 
+                (SELECT CASE WHEN p.IdLocal = @idEquipo THEN r.GolesLocal ELSE r.GolesVisitante END
+                 FROM Evento.Partido p
+                 INNER JOIN Evento.ResultadoPartido r ON p.IdPartido = r.IdPartido
+                 WHERE p.IdPartido = @idPartido) 
+                - 
+                (SELECT COUNT(g.IdGol)
+                 FROM Evento.Gol g
+                 INNER JOIN Club.DetalleEquipo de ON g.IdJugador = de.IdJugador
+                 WHERE g.IdPartido = @idPartido AND de.IdEquipo = @idEquipo
+                 AND (@esModificacion = 0 OR g.IdGol != @idGolSeleccionado))";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idPartido", idPartido);
+                command.Parameters.AddWithValue("@idEquipo", idEquipo);
+                command.Parameters.AddWithValue("@idGolSeleccionado", idGolSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+
+                try
+                {
+                    conexion.Open();
+                    int golesDisponibles = Convert.ToInt32(command.ExecuteScalar());
+
+                    // Adaptado a tu estilo: 0 = Todo bien, 1 = Error (límite alcanzado)
+                    if (golesDisponibles > 0) return 0;
+                    else return 1;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar la cantidad de goles: " + ex.Message);
+                    return -1;
+                }
+            }
+        }
+
+        private int verificaMinutoDuplicado(int idPartido, int minuto, int esModificacion)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                // Aplicamos tu truco del OR IdGol != @idGol 
+                string query = @"
+            SELECT COUNT(*) 
+            FROM Evento.Gol 
+            WHERE IdPartido = @idPartido AND Minuto = @minuto 
+            AND (@esModificacion = 0 OR IdGol != @idGolSeleccionado)";
+
+                SqlCommand command = new SqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@idPartido", idPartido);
+                command.Parameters.AddWithValue("@minuto", minuto);
+                command.Parameters.AddWithValue("@idGolSeleccionado", idGolSeleccionado);
+                command.Parameters.AddWithValue("@esModificacion", esModificacion);
+
+                try
+                {
+                    conexion.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count; // Regresa 0 si no hay duplicados, o > 0 si hay choque
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al verificar minuto duplicado: " + ex.Message);
                     return -1;
                 }
             }
