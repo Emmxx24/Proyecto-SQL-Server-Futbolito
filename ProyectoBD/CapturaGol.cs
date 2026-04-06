@@ -150,7 +150,6 @@ namespace ProyectoBD
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
                     cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
-                    actualizaBotones(1);
                 }
             }
             catch (Exception ex)
@@ -202,11 +201,6 @@ namespace ProyectoBD
             idPartidoSeleccionado = -1;
             cbEquipos.SelectedIndex = -1;
             cbJugadores.SelectedIndex = -1;
-        }
-
-        private void actualizaBotones(int op)
-        {
-
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)

@@ -339,7 +339,17 @@ namespace ProyectoBD
 
         private void btnRegistraTarjetas_Click(object sender, EventArgs e)
         {
-
+            if (idResultadoSeleccionado != -1)
+            {
+                Form formulario = new CapturaTarjeta(idPartidoSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
+            }
         }
     }
 }

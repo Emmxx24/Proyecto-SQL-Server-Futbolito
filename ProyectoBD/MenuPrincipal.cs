@@ -116,7 +116,8 @@ namespace ProyectoBD
 
         private void tarjetaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "CapturaTarjeta";
+            AbrirFormularioHijo(new CapturaTarjeta());
         }
 
         private void equipoToolStripMenuItem_Click(object sender, EventArgs e)

@@ -56,9 +56,9 @@
             // 
             cbEquipos.DropDownStyle = ComboBoxStyle.DropDownList;
             cbEquipos.FormattingEnabled = true;
-            cbEquipos.Location = new Point(15, 27);
+            cbEquipos.Location = new Point(12, 27);
             cbEquipos.Name = "cbEquipos";
-            cbEquipos.Size = new Size(266, 23);
+            cbEquipos.Size = new Size(269, 23);
             cbEquipos.TabIndex = 1;
             cbEquipos.SelectedIndexChanged += cbEquipos_SelectedIndexChanged;
             // 
@@ -66,9 +66,9 @@
             // 
             cbJugadores.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJugadores.FormattingEnabled = true;
-            cbJugadores.Location = new Point(15, 82);
+            cbJugadores.Location = new Point(12, 82);
             cbJugadores.Name = "cbJugadores";
-            cbJugadores.Size = new Size(266, 23);
+            cbJugadores.Size = new Size(269, 23);
             cbJugadores.TabIndex = 2;
             // 
             // lblJugador
@@ -83,7 +83,7 @@
             // lblMinuto
             // 
             lblMinuto.AutoSize = true;
-            lblMinuto.Location = new Point(15, 120);
+            lblMinuto.Location = new Point(12, 120);
             lblMinuto.Name = "lblMinuto";
             lblMinuto.Size = new Size(49, 15);
             lblMinuto.TabIndex = 4;
@@ -91,7 +91,7 @@
             // 
             // numericMin
             // 
-            numericMin.Location = new Point(15, 138);
+            numericMin.Location = new Point(12, 138);
             numericMin.Maximum = new decimal(new int[] { 200, 0, 0, 0 });
             numericMin.Name = "numericMin";
             numericMin.Size = new Size(120, 23);
