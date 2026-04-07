@@ -50,6 +50,8 @@ namespace ProyectoBD
             }
         }
 
+        //Cuando aparezca como llave foránea concatenar IdJugador con NombreJugador y entre corchetes poner la Posición, un guión y su Número Dorsal. eso o que la maestra pida modificacion
+
         private void cargaJugadores(int idJugadorIncluir = -1)
         {
             using (SqlConnection conexion = varConexion.conectar())
@@ -57,15 +59,15 @@ namespace ProyectoBD
                 try
                 {
                     conexion.Open();
-                    // Solo jugadores sin equipo, o el jugador actual si viene del grid
                     string query = @"SELECT j.IdJugador, 
-                                     p.NombreParticipante + ' - ' + j.Posicion AS NombreJugador
-                                     FROM Persona.Jugador j
-                                     INNER JOIN Persona.Participante p 
-                                     ON j.IdParticipante = p.IdParticipante
-                                     WHERE j.IdJugador NOT IN 
-                                        (SELECT IdJugador FROM Club.DetalleEquipo)
-                                     OR j.IdJugador = @idIncluir";
+                         CAST(j.IdJugador AS VARCHAR) + ' - ' + p.NombreParticipante + 
+                         ' [' + j.Posicion + ' - ' + CAST(j.Numero AS VARCHAR) + ']' AS NombreJugador
+                         FROM Persona.Jugador j
+                         INNER JOIN Persona.Participante p 
+                         ON j.IdParticipante = p.IdParticipante
+                         WHERE j.IdJugador NOT IN 
+                            (SELECT IdJugador FROM Club.DetalleEquipo)
+                         OR j.IdJugador = @idIncluir";
 
                     SqlCommand comando = new SqlCommand(query, conexion);
                     comando.Parameters.AddWithValue("@idIncluir", idJugadorIncluir);

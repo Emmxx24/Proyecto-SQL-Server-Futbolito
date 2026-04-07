@@ -35,6 +35,7 @@
             btnAgregar = new Button();
             btnModificar = new Button();
             btnEliminar = new Button();
+            openFileDialog1 = new OpenFileDialog();
             tbLogo = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvEquipo).BeginInit();
             SuspendLayout();
@@ -58,7 +59,7 @@
             // lblLogo
             // 
             lblLogo.AutoSize = true;
-            lblLogo.Location = new Point(61, 150);
+            lblLogo.Location = new Point(69, 114);
             lblLogo.Name = "lblLogo";
             lblLogo.Size = new Size(73, 20);
             lblLogo.TabIndex = 2;
@@ -107,19 +108,22 @@
             btnEliminar.UseVisualStyleBackColor = false;
             btnEliminar.Click += btnEliminar_Click;
             // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
             // tbLogo
             // 
-            tbLogo.Location = new Point(61, 176);
+            tbLogo.Location = new Point(61, 137);
             tbLogo.Name = "tbLogo";
             tbLogo.Size = new Size(198, 27);
             tbLogo.TabIndex = 7;
-            tbLogo.TextChanged += tbLogo_TextChanged;
             // 
             // CapturaEquipo
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(745, 431);
+            ClientSize = new Size(744, 431);
             Controls.Add(tbLogo);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
@@ -145,6 +149,7 @@
         private Button btnAgregar;
         private Button btnModificar;
         private Button btnEliminar;
+        private OpenFileDialog openFileDialog1;
         private TextBox tbLogo;
     }
 }

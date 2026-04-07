@@ -94,7 +94,7 @@ namespace ProyectoBD
 
             string cedula = tbCedula.Text.Trim();
 
-            if (string.IsNullOrEmpty(cedula))
+            if (string.IsNullOrEmpty(cedula) || cedula.Length < 15)
             {
                 MessageBox.Show("Ingrese la Cédula Profesional");
                 return;
@@ -210,7 +210,7 @@ namespace ProyectoBD
             }
             string cedula = tbCedula.Text.Trim();
 
-            if (string.IsNullOrEmpty(cedula))
+            if (string.IsNullOrEmpty(cedula) || cedula.Length < 15)
             {
                 MessageBox.Show("Ingrese la nueva Cédula Profesional");
                 return;
