@@ -364,103 +364,89 @@ END;
 /* =========================================================
    1. PARTICIPANTES (Forzando IDs 1 al 14)
 ========================================================= */
-SET IDENTITY_INSERT Persona.Participante ON;
-INSERT INTO Persona.Participante (IdParticipante, NombreParticipante, Genero, Telefono, CorreoElectronico, FechaNacimiento)
+INSERT INTO Persona.Participante (NombreParticipante, Genero, Telefono, CorreoElectronico, FechaNacimiento)
 VALUES 
-(1, 'Marco Antonio Ortiz', 'Masculino', '5551234567', 'marco.ortiz@arbitros.mx', '1988-03-14'),
-(2, 'Cesar Arturo Ramos', 'Masculino', '5557654321', 'cesar.ramos@arbitros.mx', '1983-12-15'),
-(3, 'Guillermo Ochoa', 'Masculino', '5551112222', 'memo.ochoa@mail.com', '1985-07-13'),
-(4, 'Rafael Marquez', 'Masculino', '5553334444', 'rafa.marquez@mail.com', '1979-02-13'),
-(5, 'Edson Alvarez', 'Masculino', '5555556666', 'edson.alvarez@mail.com', '1997-10-24'),
-(6, 'Andres Guardado', 'Masculino', '5557778888', 'andres.guardado@mail.com', '1986-09-28'),
-(7, 'Hirving Lozano', 'Masculino', '5559990000', 'chucky.lozano@mail.com', '1995-07-30'),
-(8, 'Raul Jimenez', 'Masculino', '5550001111', 'raul.jimenez@mail.com', '1991-05-05'),
-(9, 'Luis Malagon', 'Masculino', '5552223333', 'luis.malagon@mail.com', '1997-03-02'),
-(10, 'Johan Vasquez', 'Masculino', '5554445555', 'johan.vasquez@mail.com', '1998-10-22'),
-(11, 'Cesar Montes', 'Masculino', '5556667777', 'cesar.montes@mail.com', '1997-02-24'),
-(12, 'Luis Chavez', 'Masculino', '5558889999', 'luis.chavez@mail.com', '1996-01-15'),
-(13, 'Orbelin Pineda', 'Masculino', '5551010101', 'orbelin.pineda@mail.com', '1996-03-24'),
-(14, 'Santiago Gimenez', 'Masculino', '5552020202', 'santi.gimenez@mail.com', '2001-04-18');
-SET IDENTITY_INSERT Persona.Participante OFF;
+('Marco Antonio Ortiz', 'Masculino', '5551234567', 'marco.ortiz@arbitros.mx', '1988-03-14'),
+('Cesar Arturo Ramos', 'Masculino', '5557654321', 'cesar.ramos@arbitros.mx', '1983-12-15'),
+('Guillermo Ochoa', 'Masculino', '5551112222', 'memo.ochoa@mail.com', '1985-07-13'),
+('Rafael Marquez', 'Masculino', '5553334444', 'rafa.marquez@mail.com', '1979-02-13'),
+('Edson Alvarez', 'Masculino', '5555556666', 'edson.alvarez@mail.com', '1997-10-24'),
+('Andres Guardado', 'Masculino', '5557778888', 'andres.guardado@mail.com', '1986-09-28'),
+('Hirving Lozano', 'Masculino', '5559990000', 'chucky.lozano@mail.com', '1995-07-30'),
+('Raul Jimenez', 'Masculino', '5550001111', 'raul.jimenez@mail.com', '1991-05-05'),
+('Luis Malagon', 'Masculino', '5552223333', 'luis.malagon@mail.com', '1997-03-02'),
+('Johan Vasquez', 'Masculino', '5554445555', 'johan.vasquez@mail.com', '1998-10-22'),
+('Cesar Montes', 'Masculino', '5556667777', 'cesar.montes@mail.com', '1997-02-24'),
+('Luis Chavez', 'Masculino', '5558889999', 'luis.chavez@mail.com', '1996-01-15'),
+('Orbelin Pineda', 'Masculino', '5551010101', 'orbelin.pineda@mail.com', '1996-03-24'),
+('Santiago Gimenez', 'Masculino', '5552020202', 'santi.gimenez@mail.com', '2001-04-18');
 GO
 
 /* =========================================================
    2. LUGARES (Forzando IDs 1 al 3)
 ========================================================= */
-SET IDENTITY_INSERT Juego.Lugar ON;
-INSERT INTO Juego.Lugar (IdLugar, Nombre, Ubicacion, Capacidad)
+INSERT INTO Juego.Lugar (Nombre, Ubicacion, Capacidad)
 VALUES 
-(1, 'Estadio Azteca', 'Ciudad de Mexico', 83264),
-(2, 'Estadio Akron', 'Jalisco', 46232),
-(3, 'Estadio BBVA', 'Nuevo Leon', 51000);
-SET IDENTITY_INSERT Juego.Lugar OFF;
+('Estadio Azteca', 'Ciudad de Mexico', 83264),
+('Estadio Akron', 'Jalisco', 46232),
+('Estadio BBVA', 'Nuevo Leon', 51000);
 GO
 
 /* =========================================================
    3. TORNEOS (Forzando IDs 1 y 2)
 ========================================================= */
-SET IDENTITY_INSERT Juego.Torneo ON;
-INSERT INTO Juego.Torneo (IdTorneo, NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin)
+INSERT INTO Juego.Torneo (NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin)
 VALUES 
-(1, 'Liga Clausura 2026', 16, 45, 'Masculino', '2026-01-10', '2026-05-30'),
-(2, 'Copa MX 2026', 18, 40, 'Mixto', '2026-08-01', '2026-12-15');
-SET IDENTITY_INSERT Juego.Torneo OFF;
+('Liga Clausura 2026', 16, 45, 'Masculino', '2026-01-10', '2026-05-30'),
+('Copa MX 2026', 18, 40, 'Mixto', '2026-08-01', '2026-12-15');
 GO
 
 /* =========================================================
    4. EQUIPOS (Forzando IDs 1 al 3)
 ========================================================= */
-SET IDENTITY_INSERT Club.Equipo ON;
-INSERT INTO Club.Equipo (IdEquipo, NombreEquipo, Logo)
+INSERT INTO Club.Equipo (NombreEquipo, Logo)
 VALUES 
-(1, 'Aguilas del Centro', 'url_aguilas.png'),
-(2, 'Chivas del Norte', 'url_chivas.png'),
-(3, 'Tigres del Sur', 'url_tigres.png');
-SET IDENTITY_INSERT Club.Equipo OFF;
+('Aguilas del Centro', 'url_aguilas.png'),
+('Chivas del Norte', 'url_chivas.png'),
+('Tigres del Sur', 'url_tigres.png');
 GO
 
 /* =========================================================
    5. ÁRBITROS (Forzando IDs 1 y 2)
 ========================================================= */
-SET IDENTITY_INSERT Persona.Arbitro ON;
-INSERT INTO Persona.Arbitro (IdArbitro, IdParticipante, CedulaArbitro)
+INSERT INTO Persona.Arbitro (IdParticipante, CedulaArbitro)
 VALUES 
-(1, 1, 'ARB-2026-001'),
-(2, 2, 'ARB-2026-002');
-SET IDENTITY_INSERT Persona.Arbitro OFF;
+(1, 'ARB-2026-001'),
+(2, 'ARB-2026-002');
 GO
 
 /* =========================================================
    6. JUGADORES (Forzando IDs 1 al 12)
 ========================================================= */
-SET IDENTITY_INSERT Persona.Jugador ON;
-INSERT INTO Persona.Jugador (IdJugador, IdParticipante, Posicion, Numero, TipoSangre)
+INSERT INTO Persona.Jugador (IdParticipante, Posicion, Numero, TipoSangre)
 VALUES 
-(1, 3, 'Portero', 13, 'O+'),
-(2, 4, 'Defensa', 4, 'O-'),
-(3, 5, 'Defensa', 19, 'A+'),
-(4, 6, 'Medio', 18, 'O+'),
-(5, 7, 'Delantero', 22, 'B+'),
-(6, 8, 'Delantero', 9, 'O+'),
-(7, 9, 'Portero', 1, 'O+'),
-(8, 10, 'Defensa', 5, 'AB+'),
-(9, 11, 'Defensa', 3, 'O-'),
-(10, 12, 'Medio', 24, 'A+'),
-(11, 13, 'Medio', 17, 'O+'),
-(12, 14, 'Delantero', 11, 'O+');
-SET IDENTITY_INSERT Persona.Jugador OFF;
+(3, 'Portero', 13, 'O+'),
+(4, 'Defensa', 4, 'O-'),
+(5, 'Defensa', 19, 'A+'),
+(6, 'Medio', 18, 'O+'),
+(7, 'Delantero', 22, 'B+'),
+(8, 'Delantero', 9, 'O+'),
+(9, 'Portero', 1, 'O+'),
+(10, 'Defensa', 5, 'AB+'),
+(11, 'Defensa', 3, 'O-'),
+(12, 'Medio', 24, 'A+'),
+(13, 'Medio', 17, 'O+'),
+(14, 'Delantero', 11, 'O+');
 GO
 
 /* =========================================================
    7. JORNADAS (Forzando IDs 1 al 3)
 ========================================================= */
-SET IDENTITY_INSERT Juego.Jornada ON;
-INSERT INTO Juego.Jornada (IdJornada, IdTorneo, NumeroJornada)
+INSERT INTO Juego.Jornada (IdTorneo, NumeroJornada)
 VALUES 
-(1, 1, 1),
-(2, 1, 2),
-(3, 1, 3);
-SET IDENTITY_INSERT Juego.Jornada OFF;
+(1, 1),
+(1, 2),
+(1, 3);
 GO
 
 /* =========================================================
@@ -485,54 +471,46 @@ GO
 /* =========================================================
    10. PARTIDOS (Forzando IDs 1 al 3)
 ========================================================= */
-SET IDENTITY_INSERT Evento.Partido ON;
-INSERT INTO Evento.Partido (IdPartido, IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio, Estado)
+INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio, Estado)
 VALUES 
-(1, 1, 1, 1, 1, 2, '2026-01-15', '19:00:00', 'Finalizado'),
-(2, 2, 2, 2, 2, 1, '2026-01-22', '20:30:00', 'Finalizado'),
-(3, 1, 3, 3, 1, 3, '2026-01-29', '17:00:00', 'Pendiente');
-SET IDENTITY_INSERT Evento.Partido OFF;
+(1, 1, 1, 1, 2, '2026-01-15', '19:00:00', 'Finalizado'),
+(2, 2, 2, 2, 1, '2026-01-22', '20:30:00', 'Finalizado'),
+(1, 3, 3, 1, 3, '2026-01-29', '17:00:00', 'Pendiente');
 GO
 
 /* =========================================================
    11. RESULTADOS (Forzando IDs 1 y 2)
 ========================================================= */
-SET IDENTITY_INSERT Evento.ResultadoPartido ON;
-INSERT INTO Evento.ResultadoPartido (IdResultado, IdPartido, GolesLocal, GolesVisitante, HoraFin)
+INSERT INTO Evento.ResultadoPartido (IdPartido, GolesLocal, GolesVisitante, HoraFin)
 VALUES 
-(1, 1, 2, 1, '20:55:00'),
-(2, 2, 2, 2, '22:25:00');
-SET IDENTITY_INSERT Evento.ResultadoPartido OFF;
+(1, 2, 1, '20:55:00'),
+(2, 2, 2, '22:25:00');
 GO
 
 /* =========================================================
    12. GOLES (Forzando IDs 1 al 7)
 ========================================================= */
-SET IDENTITY_INSERT Evento.Gol ON;
-INSERT INTO Evento.Gol (IdGol, IdJugador, IdPartido, Minuto)
+INSERT INTO Evento.Gol (IdJugador, IdPartido, Minuto)
 VALUES 
-(1, 5, 1, 12), 
-(2, 12, 1, 45), 
-(3, 6, 1, 89),  
-(4, 8, 2, 5),   
-(5, 10, 2, 33), 
-(6, 3, 2, 60),  
-(7, 4, 2, 75);  
-SET IDENTITY_INSERT Evento.Gol OFF;
+(5, 1, 12), 
+(12, 1, 45), 
+(6, 1, 89),  
+(8, 2, 5),   
+(10, 2, 33), 
+(3, 2, 60),  
+(4, 2, 75);  
 GO
 
 /* =========================================================
    13. TARJETAS (Forzando IDs 1 al 5)
 ========================================================= */
-SET IDENTITY_INSERT Evento.Tarjeta ON;
-INSERT INTO Evento.Tarjeta (IdTarjeta, IdJugador, IdPartido, TipoTarjeta, Minuto)
+INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
 VALUES 
-(1, 2, 1, 'Amarilla', 25),
-(2, 11, 1, 'Amarilla', 55),
-(3, 11, 1, 'Roja', 80),  
-(4, 5, 2, 'Amarilla', 15),
-(5, 7, 2, 'Amarilla', 40);
-SET IDENTITY_INSERT Evento.Tarjeta OFF;
+(2, 1, 'Amarilla', 25),
+(11, 1, 'Amarilla', 55),
+(11, 1, 'Roja', 80),  
+(5, 2, 'Amarilla', 15),
+(7, 2, 'Amarilla', 40);
 GO
 
 

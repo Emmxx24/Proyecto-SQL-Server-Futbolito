@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProyectoBD
 {
@@ -417,7 +418,6 @@ namespace ProyectoBD
                     conexion.Open();
                     int duracionTotal = Convert.ToInt32(command.ExecuteScalar());
 
-                    // Adaptado a tu estilo: 0 = Todo bien, 1 = Error
                     if (minuto <= duracionTotal) return 0;
                     else return 1;
                 }
@@ -433,7 +433,6 @@ namespace ProyectoBD
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
-                // Esta maravilla de consulta busca si el jugador fue expulsado ANTES o en el MISMO minuto del evento
                 string query = @"
             SELECT COUNT(*) 
             FROM Evento.Tarjeta 
@@ -538,5 +537,6 @@ namespace ProyectoBD
                 }
             }
         }
+
     }
 }

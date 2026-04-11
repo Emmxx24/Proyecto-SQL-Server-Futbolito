@@ -28,56 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             lblEquipo = new Label();
             lblJugador = new Label();
             lblMinuto = new Label();
             lblTipoTarjeta = new Label();
             cbEquipos = new ComboBox();
             cbJugadores = new ComboBox();
-            numericUpDown1 = new NumericUpDown();
-            comboBox1 = new ComboBox();
+            numericMin = new NumericUpDown();
+            cbTarjeta = new ComboBox();
             dgvTarjetas = new DataGridView();
             btnAgregar = new Button();
             btnModificar = new Button();
             btnEliminar = new Button();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericMin).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvTarjetas).BeginInit();
             SuspendLayout();
             // 
             // lblEquipo
             // 
             lblEquipo.AutoSize = true;
-            lblEquipo.Location = new Point(12, 9);
+            lblEquipo.Location = new Point(14, 12);
             lblEquipo.Name = "lblEquipo";
-            lblEquipo.Size = new Size(47, 15);
+            lblEquipo.Size = new Size(59, 20);
             lblEquipo.TabIndex = 0;
             lblEquipo.Text = "Equipo:";
             // 
             // lblJugador
             // 
             lblJugador.AutoSize = true;
-            lblJugador.Location = new Point(12, 63);
+            lblJugador.Location = new Point(14, 84);
             lblJugador.Name = "lblJugador";
-            lblJugador.Size = new Size(52, 15);
+            lblJugador.Size = new Size(65, 20);
             lblJugador.TabIndex = 1;
             lblJugador.Text = "Jugador:";
             // 
             // lblMinuto
             // 
             lblMinuto.AutoSize = true;
-            lblMinuto.Location = new Point(12, 119);
+            lblMinuto.Location = new Point(14, 159);
             lblMinuto.Name = "lblMinuto";
-            lblMinuto.Size = new Size(49, 15);
+            lblMinuto.Size = new Size(59, 20);
             lblMinuto.TabIndex = 2;
             lblMinuto.Text = "Minuto:";
             // 
             // lblTipoTarjeta
             // 
             lblTipoTarjeta.AutoSize = true;
-            lblTipoTarjeta.Location = new Point(161, 119);
+            lblTipoTarjeta.Location = new Point(184, 159);
             lblTipoTarjeta.Name = "lblTipoTarjeta";
-            lblTipoTarjeta.Size = new Size(86, 15);
+            lblTipoTarjeta.Size = new Size(110, 20);
             lblTipoTarjeta.TabIndex = 3;
             lblTipoTarjeta.Text = "Tipo de tarjeta:";
             // 
@@ -85,9 +85,10 @@
             // 
             cbEquipos.DropDownStyle = ComboBoxStyle.DropDownList;
             cbEquipos.FormattingEnabled = true;
-            cbEquipos.Location = new Point(12, 27);
+            cbEquipos.Location = new Point(14, 36);
+            cbEquipos.Margin = new Padding(3, 4, 3, 4);
             cbEquipos.Name = "cbEquipos";
-            cbEquipos.Size = new Size(269, 23);
+            cbEquipos.Size = new Size(307, 28);
             cbEquipos.TabIndex = 1;
             cbEquipos.SelectedIndexChanged += cbEquipos_SelectedIndexChanged;
             // 
@@ -95,27 +96,30 @@
             // 
             cbJugadores.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJugadores.FormattingEnabled = true;
-            cbJugadores.Location = new Point(12, 81);
+            cbJugadores.Location = new Point(14, 108);
+            cbJugadores.Margin = new Padding(3, 4, 3, 4);
             cbJugadores.Name = "cbJugadores";
-            cbJugadores.Size = new Size(269, 23);
+            cbJugadores.Size = new Size(307, 28);
             cbJugadores.TabIndex = 2;
             // 
-            // numericUpDown1
+            // numericMin
             // 
-            numericUpDown1.Location = new Point(12, 137);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 23);
-            numericUpDown1.TabIndex = 3;
+            numericMin.Location = new Point(14, 183);
+            numericMin.Margin = new Padding(3, 4, 3, 4);
+            numericMin.Name = "numericMin";
+            numericMin.Size = new Size(137, 27);
+            numericMin.TabIndex = 3;
             // 
-            // comboBox1
+            // cbTarjeta
             // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Amarilla", "Roja" });
-            comboBox1.Location = new Point(161, 137);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(120, 23);
-            comboBox1.TabIndex = 4;
+            cbTarjeta.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbTarjeta.FormattingEnabled = true;
+            cbTarjeta.Items.AddRange(new object[] { "Amarilla", "Roja" });
+            cbTarjeta.Location = new Point(184, 183);
+            cbTarjeta.Margin = new Padding(3, 4, 3, 4);
+            cbTarjeta.Name = "cbTarjeta";
+            cbTarjeta.Size = new Size(137, 28);
+            cbTarjeta.TabIndex = 4;
             // 
             // dgvTarjetas
             // 
@@ -127,63 +131,72 @@
             dgvTarjetas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTarjetas.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvTarjetas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvTarjetas.DefaultCellStyle = dataGridViewCellStyle1;
-            dgvTarjetas.Location = new Point(12, 231);
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Window;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvTarjetas.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvTarjetas.Location = new Point(14, 308);
+            dgvTarjetas.Margin = new Padding(3, 4, 3, 4);
             dgvTarjetas.MultiSelect = false;
             dgvTarjetas.Name = "dgvTarjetas";
             dgvTarjetas.ReadOnly = true;
+            dgvTarjetas.RowHeadersWidth = 51;
             dgvTarjetas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTarjetas.Size = new Size(776, 207);
+            dgvTarjetas.Size = new Size(887, 276);
             dgvTarjetas.TabIndex = 5;
+            dgvTarjetas.CellClick += dgvTarjetas_CellClick;
             // 
             // btnAgregar
             // 
             btnAgregar.BackColor = SystemColors.ActiveCaption;
-            btnAgregar.Location = new Point(547, 27);
+            btnAgregar.Location = new Point(625, 36);
+            btnAgregar.Margin = new Padding(3, 4, 3, 4);
             btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(75, 23);
+            btnAgregar.Size = new Size(86, 31);
             btnAgregar.TabIndex = 6;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = false;
+            btnAgregar.Click += btnAgregar_Click;
             // 
             // btnModificar
             // 
             btnModificar.BackColor = SystemColors.ActiveCaption;
-            btnModificar.Location = new Point(547, 81);
+            btnModificar.Location = new Point(625, 108);
+            btnModificar.Margin = new Padding(3, 4, 3, 4);
             btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(75, 23);
+            btnModificar.Size = new Size(86, 31);
             btnModificar.TabIndex = 7;
             btnModificar.Text = "Modificar";
             btnModificar.UseVisualStyleBackColor = false;
+            btnModificar.Click += btnModificar_Click;
             // 
             // btnEliminar
             // 
             btnEliminar.BackColor = SystemColors.ActiveCaption;
-            btnEliminar.Location = new Point(547, 137);
+            btnEliminar.Location = new Point(625, 183);
+            btnEliminar.Margin = new Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(75, 23);
+            btnEliminar.Size = new Size(86, 31);
             btnEliminar.TabIndex = 8;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
+            btnEliminar.Click += btnEliminar_Click;
             // 
             // CapturaTarjeta
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);
             Controls.Add(dgvTarjetas);
-            Controls.Add(comboBox1);
-            Controls.Add(numericUpDown1);
+            Controls.Add(cbTarjeta);
+            Controls.Add(numericMin);
             Controls.Add(cbJugadores);
             Controls.Add(cbEquipos);
             Controls.Add(lblTipoTarjeta);
@@ -191,9 +204,10 @@
             Controls.Add(lblJugador);
             Controls.Add(lblEquipo);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "CapturaTarjeta";
             Text = "CapturaTarjeta";
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericMin).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvTarjetas).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -207,8 +221,8 @@
         private Label lblTipoTarjeta;
         private ComboBox cbEquipos;
         private ComboBox cbJugadores;
-        private NumericUpDown numericUpDown1;
-        private ComboBox comboBox1;
+        private NumericUpDown numericMin;
+        private ComboBox cbTarjeta;
         private DataGridView dgvTarjetas;
         private Button btnAgregar;
         private Button btnModificar;
