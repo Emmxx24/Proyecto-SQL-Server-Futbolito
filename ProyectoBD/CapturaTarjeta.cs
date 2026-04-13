@@ -28,7 +28,6 @@ namespace ProyectoBD
                 idPartidoFK = (int)idPartido;
                 cargaEquipos(idPartidoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
-                MessageBox.Show(cbEquipos.SelectedIndex.ToString());
             }
         }
 
@@ -213,7 +212,7 @@ namespace ProyectoBD
                 return;
             }
             if (cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null ||
-                numericMin.Value <= 0 || cbTarjeta.SelectedValue == null)
+                numericMin.Value <= 0 || cbTarjeta.SelectedIndex < 0)
             {
                 MessageBox.Show("Completa todos los campos/el minuto no puede ser 0");
                 return;
@@ -283,12 +282,131 @@ namespace ProyectoBD
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
+            if (idTarjetaSeleccionada == -1)
+            {
+                MessageBox.Show("Selecciona una Tarjeta de la tabla para modificar");
+                return;
+            }
+            if (idPartidoSeleccionado == -1 || cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
+            {
+                MessageBox.Show("Complete todos los campos ");
+                return;
+            }
 
+            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
+            int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
+            int minuto = Convert.ToInt32(numericMin.Value);
+            string tarjeta = cbTarjeta.Text;
+
+            int idJugadorOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdJugador"].Value);
+            int idPartidoOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdPartido"].Value);
+
+            int verifTiempo = verificaTarjetasViejas(idJugadorOriginal, idPartidoOriginal);
+            switch (verifTiempo)
+            {
+                case -1: return;
+                case 1:
+                    MessageBox.Show("No puedes modificar esta tarjeta. El jugador ya participó en partidos posteriores y alterar esto corrompería su estado actual y acumulador.", "Acción Bloqueada", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+            }
+
+            int verifMinuto = verificaMinuto(idPartidoSeleccionado, minuto);
+            switch (verifMinuto)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("El minuto de la tarjeta no puede ser cero ni mayor a la hora de termino");
+                    return;
+            }
+
+            int verifDuplicado = verificaMinutoDuplicado(idPartidoSeleccionado, minuto, 1);
+            switch (verifDuplicado)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("Ya existe una tarjeta registrada en ese exacto minuto para este partido.");
+                    return;
+            }
+
+            int verifEstado = verificaEstadoEnMinuto(idPartidoSeleccionado, idJugador, minuto);
+            switch (verifEstado)
+            {
+                case -1: return;
+                case 0: break;
+                default:
+                    MessageBox.Show("Este jugador está Suspendido, no se le puede registrar una tarjeta");
+                    return;
+
+            }
+
+            string query = @"UPDATE Evento.Tarjeta 
+                            SET IdJugador = @idJugador, Minuto = @minuto, 
+                            TipoTarjeta = @tipoTarjeta 
+                            WHERE IdTarjeta = @idTarjeta";
+
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                command.Parameters.AddWithValue("@idJugador", idJugador);
+                command.Parameters.AddWithValue("@minuto", minuto);
+                command.Parameters.AddWithValue("@tipoTarjeta", tarjeta);
+                command.Parameters.AddWithValue("@idTarjeta", idTarjetaSeleccionada);
+
+                try
+                {
+                    conexion.Open();
+                    command.ExecuteNonQuery();
+                    cargaTarjetas();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
+            if (idTarjetaSeleccionada == -1)
+            {
+                MessageBox.Show("Seleccione una Tarjeta para eliminar");
+                return;
+            }
 
+           
+            int idJugadorOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdJugador"].Value);
+            int idPartidoOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdPartido"].Value);
+
+            int verifTiempo = verificaTarjetasViejas(idJugadorOriginal, idPartidoOriginal);
+            switch (verifTiempo)
+            {
+                case -1: return;
+                case 1:
+                    MessageBox.Show("No puedes eliminar esta tarjeta. El jugador ya participó en partidos posteriores y borrarla corrompería su historial y estado actual.", "Acción Bloqueada", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+            }
+
+            string query = "DELETE FROM Evento.Tarjeta WHERE IdTarjeta = @id";
+            using (SqlConnection conexion = varConexion.conectar())
+            using (SqlCommand command = new SqlCommand(query, conexion))
+            {
+                command.Parameters.AddWithValue("@id", idTarjetaSeleccionada);
+
+                try
+                {
+                    conexion.Open();
+                    command.ExecuteNonQuery();
+                    cargaTarjetas();
+                    limpiaElementos();
+                }
+                catch (Exception ex)
+                {
+                    ManejadorErroresBD.MostrarErrorAmigable(ex);
+                }
+            }
         }
 
         private int verificaMinuto(int idPartido, int minuto)
