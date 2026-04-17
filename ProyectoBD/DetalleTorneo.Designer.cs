@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             cmbTorneo = new ComboBox();
             cmbEquipo = new ComboBox();
             bttnInscribir = new Button();
@@ -41,6 +42,7 @@
             // 
             // cmbTorneo
             // 
+            cmbTorneo.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbTorneo.FormattingEnabled = true;
             cmbTorneo.Location = new Point(14, 39);
             cmbTorneo.Margin = new Padding(3, 4, 3, 4);
@@ -52,6 +54,7 @@
             // 
             // cmbEquipo
             // 
+            cmbEquipo.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbEquipo.FormattingEnabled = true;
             cmbEquipo.Location = new Point(14, 99);
             cmbEquipo.Margin = new Padding(3, 4, 3, 4);
@@ -93,17 +96,31 @@
             // 
             // dgvDetalleTorneo
             // 
+            dgvDetalleTorneo.AllowUserToAddRows = false;
+            dgvDetalleTorneo.AllowUserToDeleteRows = false;
+            dgvDetalleTorneo.AllowUserToResizeColumns = false;
+            dgvDetalleTorneo.AllowUserToResizeRows = false;
             dgvDetalleTorneo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDetalleTorneo.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvDetalleTorneo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDetalleTorneo.Location = new Point(14, 233);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvDetalleTorneo.DefaultCellStyle = dataGridViewCellStyle1;
+            dgvDetalleTorneo.Location = new Point(14, 204);
             dgvDetalleTorneo.Margin = new Padding(3, 4, 3, 4);
             dgvDetalleTorneo.MultiSelect = false;
             dgvDetalleTorneo.Name = "dgvDetalleTorneo";
             dgvDetalleTorneo.ReadOnly = true;
             dgvDetalleTorneo.RowHeadersWidth = 51;
             dgvDetalleTorneo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDetalleTorneo.Size = new Size(522, 344);
+            dgvDetalleTorneo.Size = new Size(671, 373);
             dgvDetalleTorneo.TabIndex = 5;
+            dgvDetalleTorneo.CellClick += dgvDetalleTorneo_CellClick;
             // 
             // bttnModificar
             // 
@@ -133,7 +150,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(552, 593);
+            ClientSize = new Size(697, 593);
             Controls.Add(bttnEliminar);
             Controls.Add(bttnModificar);
             Controls.Add(dgvDetalleTorneo);
