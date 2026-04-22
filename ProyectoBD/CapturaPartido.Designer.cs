@@ -29,11 +29,9 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            lblTorneo = new Label();
             lblJornada = new Label();
             lblArbitro = new Label();
             lblLugar = new Label();
-            cbTorneo = new ComboBox();
             cbJornada = new ComboBox();
             cbArbitro = new ComboBox();
             cbLugar = new ComboBox();
@@ -53,134 +51,110 @@
             ((System.ComponentModel.ISupportInitialize)dgvPartidos).BeginInit();
             SuspendLayout();
             // 
-            // lblTorneo
-            // 
-            lblTorneo.AutoSize = true;
-            lblTorneo.Location = new Point(10, 7);
-            lblTorneo.Name = "lblTorneo";
-            lblTorneo.Size = new Size(176, 15);
-            lblTorneo.TabIndex = 0;
-            lblTorneo.Text = "Torneo (fecha inicio - fecha fin):";
-            // 
             // lblJornada
             // 
             lblJornada.AutoSize = true;
-            lblJornada.Location = new Point(267, 7);
+            lblJornada.Location = new Point(11, 9);
             lblJornada.Name = "lblJornada";
-            lblJornada.Size = new Size(51, 15);
+            lblJornada.Size = new Size(288, 20);
             lblJornada.TabIndex = 1;
-            lblJornada.Text = "Jornada:";
+            lblJornada.Text = "Torneo (fecha inicio - fecha fin Jornada #):";
             // 
             // lblArbitro
             // 
             lblArbitro.AutoSize = true;
-            lblArbitro.Location = new Point(10, 53);
+            lblArbitro.Location = new Point(11, 71);
             lblArbitro.Name = "lblArbitro";
-            lblArbitro.Size = new Size(112, 15);
+            lblArbitro.Size = new Size(142, 20);
             lblArbitro.TabIndex = 2;
             lblArbitro.Text = "Id Árbritro - Árbitro:";
             // 
             // lblLugar
             // 
             lblLugar.AutoSize = true;
-            lblLugar.Location = new Point(268, 53);
+            lblLugar.Location = new Point(494, 71);
             lblLugar.Name = "lblLugar";
-            lblLugar.Size = new Size(105, 15);
+            lblLugar.Size = new Size(132, 20);
             lblLugar.TabIndex = 3;
             lblLugar.Text = "Lugar [capacidad]:";
-            // 
-            // cbTorneo
-            // 
-            cbTorneo.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbTorneo.FormattingEnabled = true;
-            cbTorneo.Location = new Point(10, 24);
-            cbTorneo.Margin = new Padding(3, 2, 3, 2);
-            cbTorneo.Name = "cbTorneo";
-            cbTorneo.Size = new Size(222, 23);
-            cbTorneo.TabIndex = 1;
-            cbTorneo.SelectedIndexChanged += cbTorneo_SelectedIndexChanged;
             // 
             // cbJornada
             // 
             cbJornada.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJornada.FormattingEnabled = true;
-            cbJornada.Location = new Point(268, 24);
-            cbJornada.Margin = new Padding(3, 2, 3, 2);
+            cbJornada.Location = new Point(11, 40);
             cbJornada.Name = "cbJornada";
-            cbJornada.Size = new Size(68, 23);
+            cbJornada.Size = new Size(438, 28);
             cbJornada.TabIndex = 2;
+            cbJornada.SelectedIndexChanged += cbJornada_SelectedIndexChanged;
             // 
             // cbArbitro
             // 
             cbArbitro.DropDownStyle = ComboBoxStyle.DropDownList;
             cbArbitro.FormattingEnabled = true;
-            cbArbitro.Location = new Point(10, 70);
-            cbArbitro.Margin = new Padding(3, 2, 3, 2);
+            cbArbitro.Location = new Point(11, 93);
             cbArbitro.Name = "cbArbitro";
-            cbArbitro.Size = new Size(222, 23);
+            cbArbitro.Size = new Size(253, 28);
             cbArbitro.TabIndex = 3;
             // 
             // cbLugar
             // 
             cbLugar.DropDownStyle = ComboBoxStyle.DropDownList;
             cbLugar.FormattingEnabled = true;
-            cbLugar.Location = new Point(267, 70);
-            cbLugar.Margin = new Padding(3, 2, 3, 2);
+            cbLugar.Location = new Point(493, 93);
             cbLugar.Name = "cbLugar";
-            cbLugar.Size = new Size(185, 23);
+            cbLugar.Size = new Size(211, 28);
             cbLugar.TabIndex = 4;
             // 
             // dtpHora
             // 
             dtpHora.Format = DateTimePickerFormat.Time;
-            dtpHora.Location = new Point(268, 173);
-            dtpHora.Margin = new Padding(3, 2, 3, 2);
+            dtpHora.Location = new Point(494, 231);
             dtpHora.Name = "dtpHora";
             dtpHora.ShowUpDown = true;
-            dtpHora.Size = new Size(120, 23);
+            dtpHora.Size = new Size(137, 27);
             dtpHora.TabIndex = 8;
             // 
             // lblFecha
             // 
             lblFecha.AutoSize = true;
-            lblFecha.Location = new Point(10, 156);
+            lblFecha.Location = new Point(11, 208);
             lblFecha.Name = "lblFecha";
-            lblFecha.Size = new Size(41, 15);
+            lblFecha.Size = new Size(50, 20);
             lblFecha.TabIndex = 9;
             lblFecha.Text = "Fecha:";
             // 
             // lblHora
             // 
             lblHora.AutoSize = true;
-            lblHora.Location = new Point(268, 156);
+            lblHora.Location = new Point(494, 208);
             lblHora.Name = "lblHora";
-            lblHora.Size = new Size(84, 15);
+            lblHora.Size = new Size(106, 20);
             lblHora.TabIndex = 10;
             lblHora.Text = "Hora de inicio:";
             // 
             // dtpFecha
             // 
-            dtpFecha.Location = new Point(11, 173);
-            dtpFecha.Margin = new Padding(3, 2, 3, 2);
+            dtpFecha.Location = new Point(13, 231);
             dtpFecha.Name = "dtpFecha";
-            dtpFecha.Size = new Size(240, 23);
+            dtpFecha.Size = new Size(274, 27);
             dtpFecha.TabIndex = 7;
             // 
             // lblLocal
             // 
             lblLocal.AutoSize = true;
-            lblLocal.Location = new Point(10, 104);
+            lblLocal.Location = new Point(11, 139);
             lblLocal.Name = "lblLocal";
-            lblLocal.Size = new Size(75, 15);
+            lblLocal.Size = new Size(95, 20);
             lblLocal.TabIndex = 12;
             lblLocal.Text = "Equipo local:";
             // 
             // lblVisitante
             // 
             lblVisitante.AutoSize = true;
-            lblVisitante.Location = new Point(268, 104);
+            lblVisitante.Location = new Point(494, 139);
             lblVisitante.Name = "lblVisitante";
-            lblVisitante.Size = new Size(94, 15);
+            lblVisitante.Size = new Size(118, 20);
             lblVisitante.TabIndex = 13;
             lblVisitante.Text = "Equipo visitante:";
             // 
@@ -188,20 +162,18 @@
             // 
             cbLocal.DropDownStyle = ComboBoxStyle.DropDownList;
             cbLocal.FormattingEnabled = true;
-            cbLocal.Location = new Point(10, 124);
-            cbLocal.Margin = new Padding(3, 2, 3, 2);
+            cbLocal.Location = new Point(11, 165);
             cbLocal.Name = "cbLocal";
-            cbLocal.Size = new Size(241, 23);
+            cbLocal.Size = new Size(275, 28);
             cbLocal.TabIndex = 5;
             // 
             // cbVisitante
             // 
             cbVisitante.DropDownStyle = ComboBoxStyle.DropDownList;
             cbVisitante.FormattingEnabled = true;
-            cbVisitante.Location = new Point(269, 124);
-            cbVisitante.Margin = new Padding(3, 2, 3, 2);
+            cbVisitante.Location = new Point(495, 165);
             cbVisitante.Name = "cbVisitante";
-            cbVisitante.Size = new Size(241, 23);
+            cbVisitante.Size = new Size(275, 28);
             cbVisitante.TabIndex = 6;
             // 
             // dgvPartidos
@@ -221,23 +193,21 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvPartidos.DefaultCellStyle = dataGridViewCellStyle1;
-            dgvPartidos.Location = new Point(10, 212);
-            dgvPartidos.Margin = new Padding(3, 2, 3, 2);
+            dgvPartidos.Location = new Point(11, 283);
             dgvPartidos.MultiSelect = false;
             dgvPartidos.Name = "dgvPartidos";
             dgvPartidos.ReadOnly = true;
             dgvPartidos.RowHeadersWidth = 51;
             dgvPartidos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPartidos.Size = new Size(865, 412);
+            dgvPartidos.Size = new Size(1236, 549);
             dgvPartidos.TabIndex = 12;
             dgvPartidos.CellClick += dgvPartidos_CellClick;
             // 
             // btnRegisResult
             // 
-            btnRegisResult.Location = new Point(10, 628);
-            btnRegisResult.Margin = new Padding(3, 2, 3, 2);
+            btnRegisResult.Location = new Point(11, 837);
             btnRegisResult.Name = "btnRegisResult";
-            btnRegisResult.Size = new Size(129, 22);
+            btnRegisResult.Size = new Size(147, 29);
             btnRegisResult.TabIndex = 13;
             btnRegisResult.Text = "Registrar resultado";
             btnRegisResult.UseVisualStyleBackColor = true;
@@ -246,10 +216,9 @@
             // btnAgregar
             // 
             btnAgregar.BackColor = SystemColors.ActiveCaption;
-            btnAgregar.Location = new Point(592, 70);
-            btnAgregar.Margin = new Padding(3, 2, 3, 2);
+            btnAgregar.Location = new Point(1110, 92);
             btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(82, 22);
+            btnAgregar.Size = new Size(94, 29);
             btnAgregar.TabIndex = 9;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = false;
@@ -258,10 +227,9 @@
             // btnModificar
             // 
             btnModificar.BackColor = SystemColors.ActiveCaption;
-            btnModificar.Location = new Point(592, 124);
-            btnModificar.Margin = new Padding(3, 2, 3, 2);
+            btnModificar.Location = new Point(1110, 164);
             btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(82, 22);
+            btnModificar.Size = new Size(94, 29);
             btnModificar.TabIndex = 10;
             btnModificar.Text = "Modificar";
             btnModificar.UseVisualStyleBackColor = false;
@@ -270,10 +238,9 @@
             // btnEliminar
             // 
             btnEliminar.BackColor = SystemColors.ActiveCaption;
-            btnEliminar.Location = new Point(592, 173);
-            btnEliminar.Margin = new Padding(3, 2, 3, 2);
+            btnEliminar.Location = new Point(1110, 230);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(82, 22);
+            btnEliminar.Size = new Size(94, 29);
             btnEliminar.TabIndex = 11;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -281,9 +248,9 @@
             // 
             // CapturaPartido
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(886, 661);
+            ClientSize = new Size(1259, 881);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);
@@ -300,13 +267,10 @@
             Controls.Add(cbLugar);
             Controls.Add(cbArbitro);
             Controls.Add(cbJornada);
-            Controls.Add(cbTorneo);
             Controls.Add(lblLugar);
             Controls.Add(lblArbitro);
             Controls.Add(lblJornada);
-            Controls.Add(lblTorneo);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 2, 3, 2);
             Name = "CapturaPartido";
             Text = "CapturaPartido";
             ((System.ComponentModel.ISupportInitialize)dgvPartidos).EndInit();
@@ -315,12 +279,9 @@
         }
 
         #endregion
-
-        private Label lblTorneo;
         private Label lblJornada;
         private Label lblArbitro;
         private Label lblLugar;
-        private ComboBox cbTorneo;
         private ComboBox cbJornada;
         private ComboBox cbArbitro;
         private ComboBox cbLugar;

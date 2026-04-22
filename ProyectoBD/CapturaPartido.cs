@@ -17,13 +17,13 @@ namespace ProyectoBD
     {
         private ClaseConexion varConexion;
         private int idPartidoSeleccionado = -1;
+        private int idJornadaSeleccuionada = -1;
         public CapturaPartido()
         {
             varConexion = new ClaseConexion();
             InitializeComponent();
             cargaPartidos();
-
-            cargaTorneos();
+            cargaJornadas();
             cargaArbitros();
             cargaLugares();
             limpiaElementos();
@@ -55,8 +55,9 @@ namespace ProyectoBD
                     t.IdTorneo, p.IdJornada, p.IdArbitro, p.IdLugar, p.IdLocal, p.IdVisitante,
                     el.NombreEquipo AS eqloc, ev.NombreEquipo AS eqvisi, 
                     CONCAT(p.IdArbitro, ' - ',pa.NombreParticipante) AS Arbitro, 
-                    CONCAT(t.NombreTorneo, ' (', t.FechaInicio, ' - ', t.FechaFin, ')') AS DatosTorneo,  
-                    j.NumeroJornada, CONCAT(l.Nombre, ' [', Capacidad, ']') AS NombreLugar, p.Fecha, p.HoraInicio, p.Estado 
+                    /*CONCAT(t.NombreTorneo, ' (', t.FechaInicio, ' - ', t.FechaFin, ')') AS DatosTorneo,*/  
+                    CONCAT(t.NombreTorneo, ' (', t.FechaInicio, ' - ', t.FechaFin, ' Jornada ', j.NumeroJornada, ')') AS Jornada, 
+                    CONCAT(l.Nombre, ' [', Capacidad, ']') AS NombreLugar, p.Fecha, p.HoraInicio, p.Estado 
                     FROM Evento.Partido p INNER JOIN Juego.Jornada j 
                     ON p.IdJornada = j.IdJornada INNER JOIN Club.Equipo el 
                     ON p.IdLocal = el.IdEquipo INNER JOIN Club.Equipo ev 
@@ -75,8 +76,8 @@ namespace ProyectoBD
                     dgvPartidos.Columns["eqloc"].HeaderText = "Equipo Local";
                     dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Visitante";
                     dgvPartidos.Columns["Arbitro"].HeaderText = "Id Árbitro - Árbitro";
-                    dgvPartidos.Columns["DatosTorneo"].HeaderText = "Torneo (fecha inicio - fecha fin)";
-                    dgvPartidos.Columns["NumeroJornada"].HeaderText = "Jornada";
+                    //dgvPartidos.Columns["DatosTorneo"].HeaderText = "Torneo (fecha inicio - fecha fin)";
+                    dgvPartidos.Columns["Jornada"].HeaderText = "Torneo (fecha inicio - fecha fin Jornada #)";
                     dgvPartidos.Columns["NombreLugar"].HeaderText = "Lugar [capacidad]";
                     dgvPartidos.Columns["Fecha"].HeaderText = "Fecha";
                     dgvPartidos.Columns["HoraInicio"].HeaderText = "Hora de inicio";
@@ -95,37 +96,14 @@ namespace ProyectoBD
                 }
             }
         }
-        private void cargaTorneos()
-        {
-            using (SqlConnection conexion = varConexion.conectar())
-            {
-                try
-                {
-                    string query = @"SELECT IdTorneo,  
-                    CONCAT(NombreTorneo, ' (', FechaInicio, ' - ', FechaFin, ')') AS DatosTorneo FROM Juego.Torneo";
-                    SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion);
-                    DataTable tablaTorneos = new DataTable();
-                    adaptador.Fill(tablaTorneos);
 
-                    cbTorneo.DisplayMember = "DatosTorneo"; // Lo que el usuario lee
-                    cbTorneo.ValueMember = "IdTorneo";       // El ID que guardas
-
-                    cbTorneo.DataSource = tablaTorneos;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al cargar Torneos: " + ex.Message);
-                }
-
-            }
-        }
         private void cargaArbitros()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
                 try
                 {
-                    string query =  @"SELECT a.IdArbitro,
+                    string query = @"SELECT a.IdArbitro,
                                     CONCAT(a.IdArbitro, ' - ',p.NombreParticipante) AS Arbitro
                                     FROM Persona.Arbitro a
                                     INNER JOIN Persona.Participante p
@@ -148,7 +126,6 @@ namespace ProyectoBD
         }
         private void limpiaElementos()
         {
-            cbTorneo.SelectedIndex = -1;
             cbJornada.SelectedIndex = -1;
             cbArbitro.SelectedIndex = -1;
             cbLugar.SelectedIndex = -1;
@@ -168,7 +145,8 @@ namespace ProyectoBD
                 {
                     DataGridViewRow fila = dgvPartidos.Rows[e.RowIndex];
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
-                    cbTorneo.SelectedValue = Convert.ToInt32(fila.Cells["IdTorneo"].Value);
+                    //obtener id de torneo, con algun inner join de la jornada
+
                     cbJornada.SelectedValue = Convert.ToInt32(fila.Cells["IdJornada"].Value);
                     cbLocal.SelectedValue = Convert.ToInt32(fila.Cells["IdLocal"].Value);
                     cbVisitante.SelectedValue = Convert.ToInt32(fila.Cells["IdVisitante"].Value);
@@ -187,27 +165,43 @@ namespace ProyectoBD
             }
         }
 
-        private void cbTorneo_SelectedIndexChanged(object sender, EventArgs e)
+        //hacer lo mismo pero para jornada (cargar los equipos nada más)
+        private void cbJornada_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbTorneo.SelectedValue != null && int.TryParse(cbTorneo.SelectedValue.ToString(), out int idTorneo))
+            if (cbJornada.SelectedValue != null && int.TryParse(cbJornada.SelectedValue.ToString(), out int idJornada))
             {
-                cargaEquipos(idTorneo);
-                cargaJornadas(idTorneo);
+                MessageBox.Show(idJornada.ToString());
+                cargaEquipos(idJornada);
+                
             }
-        }
 
-        private void cargaEquipos(int idTorneo)
+                
+        }
+        //private void cbTorneo_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (cbTorneo.SelectedValue != null && int.TryParse(cbTorneo.SelectedValue.ToString(), out int idTorneo))
+        //    {
+        //        cargaEquipos(idTorneo);
+        //cargaJornadas(idTorneo);
+        //    }
+        //}
+
+        private void cargaEquipos(int idJornada)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
-                string query = "SELECT e.IdEquipo, e.NombreEquipo " +
-                               "FROM Club.Equipo e " +
-                               "INNER JOIN Juego.DetalleTorneo dt " +
-                               "ON e.IdEquipo = dt.IdEquipo " +
-                               "WHERE dt.IdTorneo = @IdTorneo";
+                string query = @"SELECT e.IdEquipo, e.NombreEquipo 
+                               FROM Club.Equipo e
+                               INNER JOIN Juego.DetalleTorneo dt
+                               ON e.IdEquipo = dt.IdEquipo
+                               INNER JOIN Juego.Torneo t
+                               ON t.IdTorneo = dt.IdTorneo
+                               INNER JOIN Juego.Jornada j
+                               ON j.IdTorneo = dt.IdTorneo
+                               WHERE j.IdJornada = @idJornada";
 
                 SqlCommand comando = new SqlCommand(query, conexion);
-                comando.Parameters.AddWithValue("@IdTorneo", idTorneo);
+                comando.Parameters.AddWithValue("@idJornada", idJornada);
 
                 SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                 DataTable tablaEquipos = new DataTable();
@@ -223,27 +217,33 @@ namespace ProyectoBD
                 cbVisitante.DataSource = tablaVisitantes;
             }
         }
-        private void cargaJornadas(int idTorneo)
+        private void cargaJornadas()
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
-                string query = "SELECT IdJornada, NumeroJornada FROM Juego.Jornada WHERE IdTorneo = @IdTorneo";
+                string query = @"SELECT j.IdJornada, 
+                                CONCAT(t.NombreTorneo, ' (', t.FechaInicio, ' - ', 
+                                t.FechaFin, ' Jornada ', j.NumeroJornada, ')') 
+                                AS Jornada 
+                                FROM Juego.Jornada j
+                                INNER JOIN Juego.Torneo t
+                                ON j.IdTorneo = t.IdTorneo";
                 SqlCommand comando = new SqlCommand(query, conexion);
-                comando.Parameters.AddWithValue("@IdTorneo", idTorneo);
+                //comando.Parameters.AddWithValue("@IdTorneo", idTorneo);
 
                 SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                 DataTable tablaJornadas = new DataTable();
                 adaptador.Fill(tablaJornadas);
 
-                cbJornada.DisplayMember = "NumeroJornada";
-                cbJornada.ValueMember = "IdJornada";
+                cbJornada.DisplayMember = "Jornada";
+                cbJornada.ValueMember = "j.IdJornada";
                 cbJornada.DataSource = tablaJornadas;
             }
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            if (cbTorneo.SelectedIndex == -1 || cbArbitro.SelectedIndex == -1 ||
+            if (cbArbitro.SelectedIndex == -1 ||
                 cbJornada.SelectedIndex == -1 || cbLugar.SelectedIndex == -1 ||
                 cbLocal.SelectedIndex == -1 || cbVisitante.SelectedIndex == -1)
             {
@@ -646,5 +646,7 @@ namespace ProyectoBD
                 return;
             }
         }
+
+
     }
 }

@@ -408,7 +408,14 @@ INSERT INTO Club.Equipo (NombreEquipo, Logo)
 VALUES 
 ('Aguilas del Centro', 'url_aguilas.png'),
 ('Chivas del Norte', 'url_chivas.png'),
-('Tigres del Sur', 'url_tigres.png');
+('Tigres del Sur', 'url_tigres.png'),
+('Equipo 4', 'Equipo_4.png'),
+('Equipo 5', 'Equipo_5.png'),
+('Equipo 6', 'Equipo_6.png'),
+('Equipo 7', 'Equipo_7.png'),
+('Equipo 8', 'Equipo_8.png'),
+('Equipo 9', 'Equipo_9.png'),
+('Equipo 10', 'Equipo_10.png');
 GO
 
 /* =========================================================
@@ -446,7 +453,11 @@ INSERT INTO Juego.Jornada (IdTorneo, NumeroJornada)
 VALUES 
 (1, 1),
 (1, 2),
-(1, 3);
+(1, 3),
+(1, 4),
+(2, 1),
+(2, 2),
+(2, 3);
 GO
 
 /* =========================================================
@@ -465,18 +476,25 @@ INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo)
 VALUES 
 (1, 1),
 (1, 2),
-(1, 3);
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(2, 7),
+(2, 8),
+(2, 9),
+(2, 10);
 GO
 
 /* =========================================================
    10. PARTIDOS (Forzando IDs 1 al 3)
 ========================================================= */
-INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio, Estado)
+/*INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio, Estado)
 VALUES 
 (1, 1, 1, 1, 2, '2026-01-15', '19:00:00', 'Finalizado'),
 (2, 2, 2, 2, 1, '2026-01-22', '20:30:00', 'Finalizado'),
 (1, 3, 3, 1, 3, '2026-01-29', '17:00:00', 'Pendiente');
-GO
+GO*/
 
 /* =========================================================
    11. RESULTADOS (Forzando IDs 1 y 2)
