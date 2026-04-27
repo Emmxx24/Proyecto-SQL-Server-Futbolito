@@ -62,6 +62,8 @@ namespace ProyectoBD
             }
         }
 
+       
+
         private void dgvDetalleTorneo_CellClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -166,6 +168,14 @@ namespace ProyectoBD
                     cmbEquipo.SelectedIndex = -1;
 
                     CargarDetalleTorneo();
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        if (f is Jornada jornadaForm)
+                        {
+                            jornadaForm.RefrescarJornadas();
+                            break;
+                        }
+                    }
                     //dgvDetalleTorneo.Refresh();
                 }
                 catch (Exception ex)
@@ -221,9 +231,13 @@ namespace ProyectoBD
                     da.Fill(dt);
 
                     dgvDetalleTorneo.DataSource = dt;
+                    dgvDetalleTorneo.Columns["IdTorneo"].Visible = false;
+                    dgvDetalleTorneo.Columns["IdEquipo"].Visible = false;
+                    dgvDetalleTorneo.Columns["Número de Jornadas"].Visible = false;
+                    dgvDetalleTorneo.Columns["Cantidad de Equipos"].Visible = false;
+                    dgvDetalleTorneo.Columns["Nombre Equipo"].HeaderText = "Equipo";
 
-                    
-                    
+
                 }
                 catch (Exception ex) { ManejadorErroresBD.MostrarErrorAmigable(ex); }
             }
@@ -295,6 +309,14 @@ namespace ProyectoBD
                     //MessageBox.Show("Registro modificado");
 
                     CargarDetalleTorneo();
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        if (f is Jornada jornadaForm)
+                        {
+                            jornadaForm.RefrescarJornadas();
+                            break;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -348,6 +370,14 @@ namespace ProyectoBD
                     //MessageBox.Show("Registro eliminado");
 
                     CargarDetalleTorneo();
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        if (f is Jornada jornadaForm)
+                        {
+                            jornadaForm.RefrescarJornadas();
+                            break;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

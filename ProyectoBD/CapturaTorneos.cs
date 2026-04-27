@@ -117,9 +117,9 @@ namespace ProyectoBD
                     return;
                 }
             }
-            string query = "INSERT INTO Juego.Torneo" +
-                           "(NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin) " +
-                           "VALUES (@nombre, @edadMin, @edadMax, @genero, @fechaIni, @fechaFin)";
+            string query = @"INSERT INTO Juego.Torneo
+                           (NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin, CantEquipos, NumJornadas)
+                           VALUES (@nombre, @edadMin, @edadMax, @genero, @fechaIni, @fechaFin, 0, 0)";
             using (SqlConnection conexion = varConexion.conectar())
             using (SqlCommand command = new SqlCommand(query, conexion))
             {

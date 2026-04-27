@@ -20,6 +20,8 @@ GO
 CREATE SCHEMA Club;
 GO
 
+insert into club.equipo
+
 CREATE TABLE Persona.Participante 
 (
 	IdParticipante BIGINT IDENTITY(1,1) NOT NULL,
@@ -235,32 +237,95 @@ EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
 
 /*Trigger Actualizar CantEquipos y NumJornadas en la tabla Torneo al inscribir un equipo.*/
-CREATE TRIGGER TR_ActualizarTorneo
-ON DetalleTorneo
-AFTER INSERT
+USE Futbolito
+GO
+
+DROP TRIGGER IF EXISTS Juego.TR_ActualizarTorneo
+GO
+
+CREATE TRIGGER Juego.TR_ActualizarTorneo
+ON Juego.DetalleTorneo
+AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
+    SET NOCOUNT ON;
 
-    DECLARE @torneo INT
-
-    SELECT @torneo = IdTorneo FROM inserted
-
-    DECLARE @totalEquipos INT
-
-    SELECT @totalEquipos = COUNT(*)
-    FROM DetalleTorneo
-    WHERE IdTorneo = @torneo
-
+    DECLARE @idTorneo BIGINT
+    DECLARE @total INT
     DECLARE @jornadas INT
+    DECLARE @jornadasActuales INT
 
-    IF @totalEquipos > 1
-        SET @jornadas = @totalEquipos - 1
+    SELECT TOP 1 @idTorneo = IdTorneo FROM inserted
+    IF @idTorneo IS NULL
+        SELECT TOP 1 @idTorneo = IdTorneo FROM deleted
+
+    -- Contar equipos actuales
+    SELECT @total = COUNT(*)
+    FROM Juego.DetalleTorneo
+    WHERE IdTorneo = @idTorneo
+
+    -- Calcular jornadas
+    IF @total % 2 = 0
+        SET @jornadas = @total - 1
     ELSE
-        SET @jornadas = 0
+        SET @jornadas = @total
 
-    UPDATE Torneo
-    SET CantEquipos = @totalEquipos,
+    -- Actualizar Torneo
+    UPDATE Juego.Torneo
+    SET CantEquipos = @total,
         NumJornadas = @jornadas
-    WHERE IdTorneo = @torneo
+    WHERE IdTorneo = @idTorneo
+
+    -- Contar jornadas actuales en Juego.Jornada
+    SELECT @jornadasActuales = COUNT(*)
+    FROM Juego.Jornada
+    WHERE IdTorneo = @idTorneo
+
+    -- Insertar jornadas faltantes
+    IF @jornadas > @jornadasActuales
+    BEGIN
+        DECLARE @i INT = @jornadasActuales + 1
+        WHILE @i <= @jornadas
+        BEGIN
+            INSERT INTO Juego.Jornada(IdTorneo, NumeroJornada)
+            VALUES (@idTorneo, @i)
+            SET @i = @i + 1
+        END
+    END
+
+    -- Eliminar jornadas sobrantes
+    IF @jornadas < @jornadasActuales
+    BEGIN
+        DELETE FROM Juego.Jornada
+        WHERE IdTorneo = @idTorneo
+          AND NumeroJornada > @jornadas
+    END
 
 END
+GO
+
+UPDATE Juego.Torneo SET NumJornadas = 7 WHERE IdTorneo = 1
+
+UPDATE Juego.Torneo
+SET NumJornadas = 7
+WHERE IdTorneo = 1
+
+INSERT INTO Club.Equipo(NombreEquipo, Logo)
+VALUES
+('Real Madrid', 'a'),
+('Barcelona', 'b'),
+('AC Millan', 'c'),
+('Liverpool', 'd');
+
+USE Futbolito
+GO
+
+SELECT * FROM Juego.Jornada
+SELECT * FROM Juego.DetalleTorneo
+
+
+-- Corrección manual
+UPDATE Juego.Torneo
+SET NumJornadas = 5
+WHERE IdTorneo = 1
+SELECT IdTorneo, CantEquipos, NumJornadas FROM Juego.Torneo
