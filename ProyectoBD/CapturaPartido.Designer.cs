@@ -56,9 +56,9 @@
             lblJornada.AutoSize = true;
             lblJornada.Location = new Point(11, 9);
             lblJornada.Name = "lblJornada";
-            lblJornada.Size = new Size(288, 20);
+            lblJornada.Size = new Size(64, 20);
             lblJornada.TabIndex = 1;
-            lblJornada.Text = "Torneo (fecha inicio - fecha fin Jornada #):";
+            lblJornada.Text = "Jornada:";
             // 
             // lblArbitro
             // 

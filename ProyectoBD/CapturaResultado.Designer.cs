@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             lblPartidoDetalle = new Label();
             txtPartidoDetalle = new TextBox();
             lblGolesLocal = new Label();
@@ -51,102 +51,107 @@
             // lblPartidoDetalle
             // 
             lblPartidoDetalle.AutoSize = true;
-            lblPartidoDetalle.Location = new Point(12, 9);
+            lblPartidoDetalle.Location = new Point(14, 12);
             lblPartidoDetalle.Name = "lblPartidoDetalle";
-            lblPartidoDetalle.Size = new Size(236, 15);
+            lblPartidoDetalle.Size = new Size(59, 20);
             lblPartidoDetalle.TabIndex = 0;
-            lblPartidoDetalle.Text = "Partido (local vs visitante - jornada - fecha):";
+            lblPartidoDetalle.Text = "Partido:";
             // 
             // txtPartidoDetalle
             // 
-            txtPartidoDetalle.Location = new Point(12, 27);
+            txtPartidoDetalle.Location = new Point(14, 36);
+            txtPartidoDetalle.Margin = new Padding(3, 4, 3, 4);
             txtPartidoDetalle.Name = "txtPartidoDetalle";
             txtPartidoDetalle.ReadOnly = true;
-            txtPartidoDetalle.Size = new Size(444, 23);
+            txtPartidoDetalle.Size = new Size(507, 27);
             txtPartidoDetalle.TabIndex = 1;
             // 
             // lblGolesLocal
             // 
             lblGolesLocal.AutoSize = true;
-            lblGolesLocal.Location = new Point(12, 65);
+            lblGolesLocal.Location = new Point(14, 87);
             lblGolesLocal.Name = "lblGolesLocal";
-            lblGolesLocal.Size = new Size(107, 15);
+            lblGolesLocal.Size = new Size(136, 20);
             lblGolesLocal.TabIndex = 2;
             lblGolesLocal.Text = "Goles equipo local:";
             // 
             // numericGolesLocal
             // 
-            numericGolesLocal.Location = new Point(12, 83);
+            numericGolesLocal.Location = new Point(14, 111);
+            numericGolesLocal.Margin = new Padding(3, 4, 3, 4);
             numericGolesLocal.Name = "numericGolesLocal";
-            numericGolesLocal.Size = new Size(120, 23);
+            numericGolesLocal.Size = new Size(137, 27);
             numericGolesLocal.TabIndex = 3;
             // 
             // lblGolesVisitante
             // 
             lblGolesVisitante.AutoSize = true;
-            lblGolesVisitante.Location = new Point(152, 65);
+            lblGolesVisitante.Location = new Point(174, 87);
             lblGolesVisitante.Name = "lblGolesVisitante";
-            lblGolesVisitante.Size = new Size(126, 15);
+            lblGolesVisitante.Size = new Size(159, 20);
             lblGolesVisitante.TabIndex = 4;
             lblGolesVisitante.Text = "Goles equipo visitante:";
             // 
             // numericGolesVisitante
             // 
-            numericGolesVisitante.Location = new Point(152, 83);
+            numericGolesVisitante.Location = new Point(174, 111);
+            numericGolesVisitante.Margin = new Padding(3, 4, 3, 4);
             numericGolesVisitante.Name = "numericGolesVisitante";
-            numericGolesVisitante.Size = new Size(120, 23);
+            numericGolesVisitante.Size = new Size(137, 27);
             numericGolesVisitante.TabIndex = 5;
             // 
             // lblHoraFin
             // 
             lblHoraFin.AutoSize = true;
-            lblHoraFin.Location = new Point(12, 118);
+            lblHoraFin.Location = new Point(14, 157);
             lblHoraFin.Name = "lblHoraFin";
-            lblHoraFin.Size = new Size(97, 15);
+            lblHoraFin.Size = new Size(122, 20);
             lblHoraFin.TabIndex = 6;
-            lblHoraFin.Text = "Hora de termino:";
+            lblHoraFin.Text = "Hora de término:";
             // 
             // dtpHoraTermino
             // 
             dtpHoraTermino.Format = DateTimePickerFormat.Time;
-            dtpHoraTermino.Location = new Point(12, 136);
+            dtpHoraTermino.Location = new Point(14, 181);
+            dtpHoraTermino.Margin = new Padding(3, 4, 3, 4);
             dtpHoraTermino.Name = "dtpHoraTermino";
             dtpHoraTermino.ShowUpDown = true;
-            dtpHoraTermino.Size = new Size(120, 23);
+            dtpHoraTermino.Size = new Size(137, 27);
             dtpHoraTermino.TabIndex = 7;
             // 
             // dgvResultados
             // 
             dgvResultados.AllowUserToAddRows = false;
             dgvResultados.AllowUserToDeleteRows = false;
-            dgvResultados.AllowUserToResizeColumns = false;
             dgvResultados.AllowUserToResizeRows = false;
-            dgvResultados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvResultados.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvResultados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvResultados.DefaultCellStyle = dataGridViewCellStyle2;
-            dgvResultados.Location = new Point(12, 196);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvResultados.DefaultCellStyle = dataGridViewCellStyle1;
+            dgvResultados.Location = new Point(14, 261);
+            dgvResultados.Margin = new Padding(3, 4, 3, 4);
             dgvResultados.MultiSelect = false;
             dgvResultados.Name = "dgvResultados";
             dgvResultados.ReadOnly = true;
+            dgvResultados.RowHeadersWidth = 51;
             dgvResultados.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvResultados.Size = new Size(776, 150);
+            dgvResultados.Size = new Size(1144, 375);
             dgvResultados.TabIndex = 8;
             dgvResultados.CellClick += dgvResultados_CellClick;
             // 
             // btnAgregar
             // 
             btnAgregar.BackColor = SystemColors.ActiveCaption;
-            btnAgregar.Location = new Point(655, 27);
+            btnAgregar.Location = new Point(749, 36);
+            btnAgregar.Margin = new Padding(3, 4, 3, 4);
             btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(75, 23);
+            btnAgregar.Size = new Size(86, 31);
             btnAgregar.TabIndex = 9;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = false;
@@ -155,9 +160,10 @@
             // btnModificar
             // 
             btnModificar.BackColor = SystemColors.ActiveCaption;
-            btnModificar.Location = new Point(655, 94);
+            btnModificar.Location = new Point(749, 125);
+            btnModificar.Margin = new Padding(3, 4, 3, 4);
             btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(75, 23);
+            btnModificar.Size = new Size(86, 31);
             btnModificar.TabIndex = 10;
             btnModificar.Text = "Modificar";
             btnModificar.UseVisualStyleBackColor = false;
@@ -166,9 +172,10 @@
             // btnEliminar
             // 
             btnEliminar.BackColor = SystemColors.ActiveCaption;
-            btnEliminar.Location = new Point(655, 155);
+            btnEliminar.Location = new Point(749, 207);
+            btnEliminar.Margin = new Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(75, 23);
+            btnEliminar.Size = new Size(86, 31);
             btnEliminar.TabIndex = 11;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -179,9 +186,10 @@
             btnRegistraGoles.BackColor = Color.SeaGreen;
             btnRegistraGoles.Enabled = false;
             btnRegistraGoles.ForeColor = SystemColors.ButtonHighlight;
-            btnRegistraGoles.Location = new Point(12, 352);
+            btnRegistraGoles.Location = new Point(14, 644);
+            btnRegistraGoles.Margin = new Padding(3, 4, 3, 4);
             btnRegistraGoles.Name = "btnRegistraGoles";
-            btnRegistraGoles.Size = new Size(134, 23);
+            btnRegistraGoles.Size = new Size(153, 31);
             btnRegistraGoles.TabIndex = 12;
             btnRegistraGoles.Text = "Registrar goles";
             btnRegistraGoles.UseVisualStyleBackColor = false;
@@ -192,9 +200,10 @@
             // 
             btnRegistraTarjetas.BackColor = Color.FromArgb(255, 128, 128);
             btnRegistraTarjetas.Enabled = false;
-            btnRegistraTarjetas.Location = new Point(152, 352);
+            btnRegistraTarjetas.Location = new Point(174, 644);
+            btnRegistraTarjetas.Margin = new Padding(3, 4, 3, 4);
             btnRegistraTarjetas.Name = "btnRegistraTarjetas";
-            btnRegistraTarjetas.Size = new Size(155, 23);
+            btnRegistraTarjetas.Size = new Size(177, 31);
             btnRegistraTarjetas.TabIndex = 13;
             btnRegistraTarjetas.Text = "Registrar tarjetas";
             btnRegistraTarjetas.UseVisualStyleBackColor = false;
@@ -203,9 +212,9 @@
             // 
             // CapturaResultado
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 387);
+            ClientSize = new Size(1170, 688);
             Controls.Add(btnRegistraTarjetas);
             Controls.Add(btnRegistraGoles);
             Controls.Add(btnEliminar);
@@ -221,6 +230,7 @@
             Controls.Add(txtPartidoDetalle);
             Controls.Add(lblPartidoDetalle);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "CapturaResultado";
             Text = "CapturaResultado";
             ((System.ComponentModel.ISupportInitialize)numericGolesLocal).EndInit();

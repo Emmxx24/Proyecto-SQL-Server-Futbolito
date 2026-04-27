@@ -41,12 +41,9 @@ namespace ProyectoBD
                 try
                 {
                     conexion.Open();
-                    string query = @"SELECT 
-                    rp.IdResultado, rp.IdPartido, CONCAT(el.NombreEquipo, ' - ', rp.GolesLocal) AS EquipoLocal, 
-                    CONCAT(ev.NombreEquipo, ' - ', rp.GolesVisitante) AS EquipoVisitante, 
-                    p.Fecha, p.HoraInicio, rp.HoraFin, j.NumeroJornada,
-                    rp.GolesLocal, rp.GolesVisitante
-
+                    string query = @"SELECT rp.IdResultado, 
+                    CONCAT('EL: ', el.NombreEquipo, ' - Ev: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS Partido,
+                    rp.IdPartido, rp.GolesLocal, rp.GolesVisitante, rp.HoraFin
                     FROM Evento.ResultadoPartido rp
                     INNER JOIN Evento.Partido p
                     ON rp.IdPartido = p.IdPartido
@@ -54,24 +51,19 @@ namespace ProyectoBD
                     ON p.IdLocal = el.IdEquipo
                     INNER JOIN Club.Equipo ev
                     ON p.IdVisitante = ev.IdEquipo
-                    INNER JOIN Juego.Jornada j
-                    ON p.IdJornada = j.IdJornada";
+                    INNER JOIN Juego.Lugar l
+                    ON p.IdLugar = l.IdLugar";
                     SqlCommand comando = new SqlCommand(query, conexion);
                     SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                     DataTable tabla = new DataTable();
                     adaptador.Fill(tabla);
                     dgvResultados.DataSource = tabla;
                     dgvResultados.Columns["IdResultado"].HeaderText = "ID Resultado";
-                    dgvResultados.Columns["EquipoLocal"].HeaderText = "Equipo Local";
-                    dgvResultados.Columns["EquipoVisitante"].HeaderText = "Equipo Visitante";
                     dgvResultados.Columns["IdPartido"].HeaderText = "ID Partido";
-                    dgvResultados.Columns["Fecha"].HeaderText = "Fecha";
-                    dgvResultados.Columns["HoraInicio"].HeaderText = "Hora de inicio";
+                    dgvResultados.Columns["GolesLocal"].HeaderText = "Goles Local";
+                    dgvResultados.Columns["GolesVisitante"].HeaderText = "Goles Visitante";
                     dgvResultados.Columns["HoraFin"].HeaderText = "Hora de término";
-                    dgvResultados.Columns["NumeroJornada"].HeaderText = "Jornada";
                     dgvResultados.Columns["IdPartido"].Visible = false;
-                    dgvResultados.Columns["GolesLocal"].Visible = false;
-                    dgvResultados.Columns["GolesVisitante"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -88,16 +80,15 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     string query = @"SELECT 
-                                CONCAT(el.NombreEquipo, ' vs ', ev.NombreEquipo, ' - ', 
-                                j.NumeroJornada, ' - ', p.Fecha) AS DatosPartido
-                                FROM Evento.Partido p
-                                INNER JOIN Club.Equipo el
-                                ON p.IdLocal = el.IdEquipo
-                                INNER JOIN Club.Equipo ev
-                                ON p.IdVisitante = ev.IdEquipo
-                                INNER JOIN Juego.Jornada j
-                                ON j.IdJornada = p.IdJornada
-                                WHERE p.IdPartido = @idPartido;";
+                    CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS Partido
+                    FROM Evento.Partido p
+                    INNER JOIN Club.Equipo el
+                    ON p.IdLocal = el.IdEquipo
+                    INNER JOIN Club.Equipo ev
+                    ON p.IdVisitante = ev.IdEquipo
+                    INNER JOIN Juego.Lugar l
+                    ON p.IdLugar = l.IdLugar
+                    WHERE p.IdPartido = @idPartido;";
                     SqlCommand comando = new SqlCommand(query, conexion);
                     comando.Parameters.AddWithValue("@idPartido", idPartido);
                     object result = comando.ExecuteScalar();

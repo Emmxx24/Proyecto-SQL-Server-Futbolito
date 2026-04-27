@@ -77,7 +77,7 @@ namespace ProyectoBD
                     dgvPartidos.Columns["eqvisi"].HeaderText = "Equipo Visitante";
                     dgvPartidos.Columns["Arbitro"].HeaderText = "Id Árbitro - Árbitro";
                     //dgvPartidos.Columns["DatosTorneo"].HeaderText = "Torneo (fecha inicio - fecha fin)";
-                    dgvPartidos.Columns["Jornada"].HeaderText = "Torneo (fecha inicio - fecha fin Jornada #)";
+                    dgvPartidos.Columns["Jornada"].HeaderText = "Jornada";
                     dgvPartidos.Columns["NombreLugar"].HeaderText = "Lugar [capacidad]";
                     dgvPartidos.Columns["Fecha"].HeaderText = "Fecha";
                     dgvPartidos.Columns["HoraInicio"].HeaderText = "Hora de inicio";
@@ -170,7 +170,7 @@ namespace ProyectoBD
         {
             if (cbJornada.SelectedValue != null && int.TryParse(cbJornada.SelectedValue.ToString(), out int idJornada))
             {
-                MessageBox.Show(idJornada.ToString());
+                //MessageBox.Show(idJornada.ToString());
                 cargaEquipos(idJornada);
                 
             }
