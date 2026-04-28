@@ -61,17 +61,17 @@
             lblLogo.AutoSize = true;
             lblLogo.Location = new Point(69, 114);
             lblLogo.Name = "lblLogo";
-            lblLogo.Size = new Size(73, 20);
+            lblLogo.Size = new Size(125, 20);
             lblLogo.TabIndex = 2;
-            lblLogo.Text = "Logotipo:";
+            lblLogo.Text = "URL del logotipo:";
             // 
             // dgvEquipo
             // 
             dgvEquipo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEquipo.Location = new Point(59, 239);
+            dgvEquipo.Location = new Point(12, 239);
             dgvEquipo.Name = "dgvEquipo";
             dgvEquipo.RowHeadersWidth = 51;
-            dgvEquipo.Size = new Size(669, 188);
+            dgvEquipo.Size = new Size(720, 624);
             dgvEquipo.TabIndex = 3;
             dgvEquipo.CellClick += dgvEquipo_CellClick;
             // 
@@ -123,7 +123,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(744, 431);
+            ClientSize = new Size(744, 875);
             Controls.Add(tbLogo);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
