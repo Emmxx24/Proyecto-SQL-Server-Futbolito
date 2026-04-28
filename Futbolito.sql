@@ -38,6 +38,26 @@ CREATE TABLE Persona.Participante
 );
 GO
 
+/*Disparador para calcular la edad del Participante*/
+CREATE TRIGGER Persona.TR_PARTICIPANTE_CALCULAR_EDAD
+ON Persona.Participante
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE p
+    SET p.Edad = 
+        DATEDIFF(YEAR, i.FechaNacimiento, GETDATE()) - 
+        CASE 
+            WHEN MONTH(i.FechaNacimiento) > MONTH(GETDATE()) THEN 1
+            WHEN MONTH(i.FechaNacimiento) = MONTH(GETDATE()) 
+             AND DAY(i.FechaNacimiento)  > DAY(GETDATE()) THEN 1
+            ELSE 0
+        END
+    FROM Persona.Participante p
+    INNER JOIN inserted i ON p.IdParticipante = i.IdParticipante;
+END;
+
 CREATE TABLE Juego.Lugar
 (
 	IdLugar BIGINT IDENTITY(1,1) NOT NULL,
@@ -73,8 +93,8 @@ CREATE TABLE Club.Equipo
 (
 	IdEquipo BIGINT IDENTITY(1,1) NOT NULL,
 	NombreEquipo VARCHAR(50) NOT NULL,
-	Logo VARCHAR(50) NOT NULL, /*Guardaría la URL de la imagen*/
-	CantJugadores INT, /*La calculan los disparadores*/
+	Logo VARCHAR(500) NOT NULL, 
+	CantJugadores INT, 
 
 	CONSTRAINT PK_EQUIPO PRIMARY KEY (IdEquipo),
 	CONSTRAINT UQ_EQUIPO_NOMBRE UNIQUE (NombreEquipo)
@@ -136,6 +156,31 @@ CREATE TABLE Club.DetalleEquipo
 );
 GO
 
+/*Disparador para actualizar el numero de jugadores de algun equipo*/
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
+ON Club.DetalleEquipo
+AFTER INSERT, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE e
+    SET e.CantJugadores = (
+        SELECT COUNT(*) 
+        FROM Club.DetalleEquipo d 
+        WHERE d.IdEquipo = e.IdEquipo
+    )
+    FROM Club.Equipo e
+    WHERE e.IdEquipo IN (SELECT IdEquipo FROM inserted);
+    UPDATE e
+    SET e.CantJugadores = (
+        SELECT COUNT(*) 
+        FROM Club.DetalleEquipo d 
+        WHERE d.IdEquipo = e.IdEquipo
+    )
+    FROM Club.Equipo e
+    WHERE e.IdEquipo IN (SELECT IdEquipo FROM deleted);
+END;
+
 CREATE TABLE Juego.DetalleTorneo
 (
 	IdTorneo BIGINT NOT NULL,
@@ -146,6 +191,45 @@ CREATE TABLE Juego.DetalleTorneo
 	CONSTRAINT FK_DETALLETORNEO_TORNEO FOREIGN KEY (IdTorneo)
 	REFERENCES Juego.Torneo (IdTorneo)
 );
+GO
+
+/*Disparador para validad el genero, edad y equipo de un jugador al registrarse en DetalleEquipo*/
+
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_VALIDAR_JUGADOR
+ON Club.DetalleEquipo
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Juego.DetalleTorneo dt
+            WHERE dt.IdEquipo = i.IdEquipo
+        )
+    )
+    BEGIN
+        RAISERROR('Error: El equipo no está inscrito en ningún torneo.',16,1);
+        RETURN;
+    END
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Club.DetalleEquipo de
+            ON de.IdEquipo = i.IdEquipo
+           AND de.IdJugador = i.IdJugador
+    )
+    BEGIN
+        RAISERROR('Error: El jugador ya está inscrito en ese equipo.',16,1);
+        RETURN;
+    END
+
+    INSERT INTO Club.DetalleEquipo(IdEquipo, IdJugador)
+    SELECT IdEquipo, IdJugador
+    FROM inserted;
+END;
 GO
 
 CREATE TABLE Evento.Partido

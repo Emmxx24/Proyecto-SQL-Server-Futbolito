@@ -75,7 +75,8 @@ namespace ProyectoBD
 
         private void arbitroToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Arbitro";
+            AbrirFormularioHijo(new CapturaArbitro());
         }
 
         private void torneoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -119,7 +120,8 @@ namespace ProyectoBD
 
         private void equipoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Equipo";
+            AbrirFormularioHijo(new CapturaEquipo());
         }
 
         private void detalleTorneoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -130,7 +132,8 @@ namespace ProyectoBD
 
         private void detalleEquipoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "DetalleEquipo";
+            AbrirFormularioHijo(new DetalleEquipo());
         }
     }
 }
