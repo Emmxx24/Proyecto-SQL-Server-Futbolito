@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             lblNombre = new Label();
             txtNombre = new TextBox();
             lblPosicion = new Label();
@@ -122,14 +123,23 @@
             dgvJugador.AllowUserToResizeColumns = false;
             dgvJugador.AllowUserToResizeRows = false;
             dgvJugador.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvJugador.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvJugador.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvJugador.DefaultCellStyle = dataGridViewCellStyle1;
             dgvJugador.Location = new Point(12, 279);
             dgvJugador.MultiSelect = false;
             dgvJugador.Name = "dgvJugador";
             dgvJugador.ReadOnly = true;
             dgvJugador.RowHeadersWidth = 51;
             dgvJugador.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvJugador.Size = new Size(837, 188);
+            dgvJugador.Size = new Size(893, 307);
             dgvJugador.TabIndex = 8;
             dgvJugador.CellClick += dgvJugador_CellClick;
             // 
@@ -170,7 +180,8 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(861, 481);
+            AutoSize = true;
+            ClientSize = new Size(917, 598);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);

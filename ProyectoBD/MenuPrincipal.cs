@@ -100,22 +100,27 @@ namespace ProyectoBD
 
         private void partidoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "Partido";
+            AbrirFormularioHijo(new CapturaPartido());
         }
 
         private void resultadoPartidoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "CapturaResultado";
+            AbrirFormularioHijo(new CapturaResultado());
         }
 
         private void golToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.Text = "CapturaGol";
+            AbrirFormularioHijo(new CapturaGol());
 
         }
 
         private void tarjetaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "CapturaTarjeta";
+            AbrirFormularioHijo(new CapturaTarjeta());
         }
 
         private void equipoToolStripMenuItem_Click(object sender, EventArgs e)

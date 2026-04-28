@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             lblNombreTorneo = new Label();
             txtNombreTorneo = new TextBox();
             lblEdadMin = new Label();
@@ -83,7 +84,16 @@
             dgvTorneo.AllowUserToResizeColumns = false;
             dgvTorneo.AllowUserToResizeRows = false;
             dgvTorneo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTorneo.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvTorneo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvTorneo.DefaultCellStyle = dataGridViewCellStyle1;
             dgvTorneo.Location = new Point(13, 220);
             dgvTorneo.Margin = new Padding(3, 2, 3, 2);
             dgvTorneo.MultiSelect = false;
@@ -92,7 +102,7 @@
             dgvTorneo.RowHeadersWidth = 51;
             dgvTorneo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvTorneo.Size = new Size(858, 128);
-            dgvTorneo.TabIndex = 4;
+            dgvTorneo.TabIndex = 10;
             dgvTorneo.CellClick += dgvTorneo_CellClick;
             // 
             // lblEdadMax
@@ -122,7 +132,7 @@
             cbGenero.Margin = new Padding(3, 2, 3, 2);
             cbGenero.Name = "cbGenero";
             cbGenero.Size = new Size(133, 23);
-            cbGenero.TabIndex = 8;
+            cbGenero.TabIndex = 4;
             // 
             // lblFechaIni
             // 
@@ -139,7 +149,7 @@
             numericEdadMin.Margin = new Padding(3, 2, 3, 2);
             numericEdadMin.Name = "numericEdadMin";
             numericEdadMin.Size = new Size(131, 23);
-            numericEdadMin.TabIndex = 11;
+            numericEdadMin.TabIndex = 2;
             // 
             // numericEdadMax
             // 
@@ -147,14 +157,14 @@
             numericEdadMax.Margin = new Padding(3, 2, 3, 2);
             numericEdadMax.Name = "numericEdadMax";
             numericEdadMax.Size = new Size(131, 23);
-            numericEdadMax.TabIndex = 12;
+            numericEdadMax.TabIndex = 3;
             // 
             // mcFechaIni
             // 
             mcFechaIni.Location = new Point(220, 34);
             mcFechaIni.Margin = new Padding(8, 7, 8, 7);
             mcFechaIni.Name = "mcFechaIni";
-            mcFechaIni.TabIndex = 13;
+            mcFechaIni.TabIndex = 5;
             // 
             // lblFechaFin
             // 
@@ -170,7 +180,7 @@
             mcFechaFin.Location = new Point(498, 34);
             mcFechaFin.Margin = new Padding(8, 7, 8, 7);
             mcFechaFin.Name = "mcFechaFin";
-            mcFechaFin.TabIndex = 15;
+            mcFechaFin.TabIndex = 6;
             // 
             // btnAgregar
             // 
@@ -179,7 +189,7 @@
             btnAgregar.Margin = new Padding(3, 2, 3, 2);
             btnAgregar.Name = "btnAgregar";
             btnAgregar.Size = new Size(82, 22);
-            btnAgregar.TabIndex = 16;
+            btnAgregar.TabIndex = 7;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = false;
             btnAgregar.Click += btnAgregar_Click;
@@ -191,7 +201,7 @@
             btnModif.Margin = new Padding(3, 2, 3, 2);
             btnModif.Name = "btnModif";
             btnModif.Size = new Size(82, 22);
-            btnModif.TabIndex = 17;
+            btnModif.TabIndex = 8;
             btnModif.Text = "Modificar";
             btnModif.UseVisualStyleBackColor = false;
             btnModif.Click += btnModif_Click;
@@ -203,7 +213,7 @@
             btnElim.Margin = new Padding(3, 2, 3, 2);
             btnElim.Name = "btnElim";
             btnElim.Size = new Size(82, 22);
-            btnElim.TabIndex = 18;
+            btnElim.TabIndex = 9;
             btnElim.Text = "Eliminar";
             btnElim.UseVisualStyleBackColor = false;
             btnElim.Click += btnElim_Click;
