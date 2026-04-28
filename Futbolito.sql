@@ -91,8 +91,8 @@ CREATE TABLE Club.Equipo
 (
 	IdEquipo BIGINT IDENTITY(1,1) NOT NULL,
 	NombreEquipo VARCHAR(50) NOT NULL,
-	Logo VARCHAR(500) NOT NULL, /*Guardaría la URL de la imagen*/
-	CantJugadores INT, /*La calculan los disparadores*/
+	Logo VARCHAR(500) NOT NULL, 
+	CantJugadores INT, 
 
 	CONSTRAINT PK_EQUIPO PRIMARY KEY (IdEquipo),
 	CONSTRAINT UQ_EQUIPO_NOMBRE UNIQUE (NombreEquipo)
@@ -191,8 +191,44 @@ CREATE TABLE Juego.DetalleTorneo
 );
 GO
 
-/*Disparador para validar el registro de los equipos al torneo de acuerdo a su genero y edad*/
+/*Disparador para validad el genero, edad y equipo de un jugador al registrarse en DetalleEquipo*/
 
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_VALIDAR_JUGADOR
+ON Club.DetalleEquipo
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Juego.DetalleTorneo dt
+            WHERE dt.IdEquipo = i.IdEquipo
+        )
+    )
+    BEGIN
+        RAISERROR('Error: El equipo no está inscrito en ningún torneo.',16,1);
+        RETURN;
+    END
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Club.DetalleEquipo de
+            ON de.IdEquipo = i.IdEquipo
+           AND de.IdJugador = i.IdJugador
+    )
+    BEGIN
+        RAISERROR('Error: El jugador ya está inscrito en ese equipo.',16,1);
+        RETURN;
+    END
+
+    INSERT INTO Club.DetalleEquipo(IdEquipo, IdJugador)
+    SELECT IdEquipo, IdJugador
+    FROM inserted;
+END;
+GO
 
 CREATE TABLE Evento.Partido
 (
@@ -281,3 +317,22 @@ GO
 
 EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
+
+
+/*Prueba para verificar que todo este bien*/
+SELECT IdTorneo, NombreTorneo FROM Juego.Torneo;
+SELECT IdEquipo, NombreEquipo FROM Club.Equipo;
+
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 18); -- America
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 19); -- Chivas
+
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (3, 18)
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (3, 19)
+
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (4, 18)
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (4, 19)
+
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 20)
+INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 21)
+
+INSERT INTO 

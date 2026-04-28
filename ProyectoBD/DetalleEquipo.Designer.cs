@@ -2,15 +2,8 @@
 {
     partial class DetalleEquipo
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,10 +15,6 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             lblEquipo = new Label();
@@ -42,43 +31,45 @@
             // lblEquipo
             // 
             lblEquipo.AutoSize = true;
-            lblEquipo.Location = new Point(33, 43);
+            lblEquipo.Location = new Point(33, 15);
             lblEquipo.Name = "lblEquipo";
             lblEquipo.Size = new Size(59, 20);
-            lblEquipo.TabIndex = 0;
+            lblEquipo.TabIndex = 1;
             lblEquipo.Text = "Equipo:";
+            // 
+            // cbEquipo
+            // 
+            cbEquipo.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbEquipo.FormattingEnabled = true;
+            cbEquipo.Location = new Point(33, 38);
+            cbEquipo.Name = "cbEquipo";
+            cbEquipo.Size = new Size(327, 28);
+            cbEquipo.TabIndex = 0;
+            cbEquipo.SelectedIndexChanged += cbEquipo_SelectedIndexChanged;
             // 
             // lblJugador
             // 
             lblJugador.AutoSize = true;
-            lblJugador.Location = new Point(33, 129);
+            lblJugador.Location = new Point(33, 86);
             lblJugador.Name = "lblJugador";
             lblJugador.Size = new Size(65, 20);
-            lblJugador.TabIndex = 1;
+            lblJugador.TabIndex = 3;
             lblJugador.Text = "Jugador:";
-            // 
-            // cbEquipo
-            // 
-            cbEquipo.FormattingEnabled = true;
-            cbEquipo.Location = new Point(33, 66);
-            cbEquipo.Name = "cbEquipo";
-            cbEquipo.Size = new Size(214, 28);
-            cbEquipo.TabIndex = 2;
-            cbEquipo.SelectedIndexChanged += cbEquipo_SelectedIndexChanged;
             // 
             // cbJugador
             // 
+            cbJugador.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJugador.FormattingEnabled = true;
-            cbJugador.Location = new Point(33, 152);
+            cbJugador.Location = new Point(33, 109);
             cbJugador.Name = "cbJugador";
-            cbJugador.Size = new Size(214, 28);
-            cbJugador.TabIndex = 3;
+            cbJugador.Size = new Size(327, 28);
+            cbJugador.TabIndex = 2;
             cbJugador.SelectedIndexChanged += cbJugador_SelectedIndexChanged;
             // 
             // btnAgregar
             // 
             btnAgregar.BackColor = SystemColors.ActiveCaption;
-            btnAgregar.Location = new Point(33, 226);
+            btnAgregar.Location = new Point(33, 170);
             btnAgregar.Name = "btnAgregar";
             btnAgregar.Size = new Size(94, 29);
             btnAgregar.TabIndex = 4;
@@ -89,7 +80,7 @@
             // btnModificar
             // 
             btnModificar.BackColor = SystemColors.ActiveCaption;
-            btnModificar.Location = new Point(153, 226);
+            btnModificar.Location = new Point(153, 170);
             btnModificar.Name = "btnModificar";
             btnModificar.Size = new Size(94, 29);
             btnModificar.TabIndex = 5;
@@ -100,7 +91,7 @@
             // btnEliminar
             // 
             btnEliminar.BackColor = SystemColors.ActiveCaption;
-            btnEliminar.Location = new Point(286, 226);
+            btnEliminar.Location = new Point(286, 170);
             btnEliminar.Name = "btnEliminar";
             btnEliminar.Size = new Size(94, 29);
             btnEliminar.TabIndex = 6;
@@ -111,24 +102,25 @@
             // dgvDetalleEquipo
             // 
             dgvDetalleEquipo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDetalleEquipo.Location = new Point(37, 281);
+            dgvDetalleEquipo.Location = new Point(33, 225);
             dgvDetalleEquipo.Name = "dgvDetalleEquipo";
             dgvDetalleEquipo.RowHeadersWidth = 51;
             dgvDetalleEquipo.Size = new Size(720, 188);
             dgvDetalleEquipo.TabIndex = 7;
+            dgvDetalleEquipo.CellClick += dgvDetalleEquipo_CellClick;
             // 
             // DetalleEquipo
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(773, 476);
+            ClientSize = new Size(773, 430);
             Controls.Add(dgvDetalleEquipo);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);
             Controls.Add(cbJugador);
-            Controls.Add(cbEquipo);
             Controls.Add(lblJugador);
+            Controls.Add(cbEquipo);
             Controls.Add(lblEquipo);
             MaximizeBox = false;
             MinimizeBox = false;
