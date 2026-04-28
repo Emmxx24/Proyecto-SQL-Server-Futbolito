@@ -272,8 +272,71 @@ BEGIN
     FROM Persona.Participante p
     INNER JOIN inserted i ON p.IdParticipante = i.IdParticipante;
 END;
+GO
 
-/*2.- Disparador para actualizar el numero de jugadores de algun equipo*/
+/*2.- Disparador para actualizar CantEquipos y NumJornadas en la tabla Torneo al inscribir un equipo.*/
+CREATE TRIGGER Juego.TR_ActualizarTorneo
+ON Juego.DetalleTorneo
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @idTorneo BIGINT
+    DECLARE @total INT
+    DECLARE @jornadas INT
+    DECLARE @jornadasActuales INT
+
+    SELECT TOP 1 @idTorneo = IdTorneo FROM inserted
+    IF @idTorneo IS NULL
+        SELECT TOP 1 @idTorneo = IdTorneo FROM deleted
+
+    -- Contar equipos actuales
+    SELECT @total = COUNT(*)
+    FROM Juego.DetalleTorneo
+    WHERE IdTorneo = @idTorneo
+
+    -- Calcular jornadas
+    IF @total % 2 = 0
+        SET @jornadas = @total - 1
+    ELSE
+        SET @jornadas = @total
+
+    -- Actualizar Torneo
+    UPDATE Juego.Torneo
+    SET CantEquipos = @total,
+        NumJornadas = @jornadas
+    WHERE IdTorneo = @idTorneo
+
+    -- Contar jornadas actuales en Juego.Jornada
+    SELECT @jornadasActuales = COUNT(*)
+    FROM Juego.Jornada
+    WHERE IdTorneo = @idTorneo
+
+    -- Insertar jornadas faltantes
+    IF @jornadas > @jornadasActuales
+    BEGIN
+        DECLARE @i INT = @jornadasActuales + 1
+        WHILE @i <= @jornadas
+        BEGIN
+            INSERT INTO Juego.Jornada(IdTorneo, NumeroJornada)
+            VALUES (@idTorneo, @i)
+            SET @i = @i + 1
+        END
+    END
+
+    -- Eliminar jornadas sobrantes
+    IF @jornadas < @jornadasActuales
+    BEGIN
+        DELETE FROM Juego.Jornada
+        WHERE IdTorneo = @idTorneo
+          AND NumeroJornada > @jornadas
+    END
+
+END
+GO
+
+/*3.- Disparador para actualizar el numero de jugadores de algun equipo*/
 CREATE TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
 ON Club.DetalleEquipo
 AFTER INSERT, DELETE
@@ -297,28 +360,7 @@ BEGIN
     FROM Club.Equipo e
     WHERE e.IdEquipo IN (SELECT IdEquipo FROM deleted);
 END;
-
-/*3.- Trigger Actualizar CantEquipos y NumJornadas en la tabla Torneo al inscribir un equipo.*/
-CREATE TRIGGER Juego.TR_ActualizarTorneo
-ON Juego.DetalleTorneo
-AFTER INSERT, UPDATE, DELETE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    UPDATE p
-    SET p.Estado = 'Jugado'
-    FROM Evento.Partido p
-    INNER JOIN inserted i ON p.IdPartido = i.IdPartido;
-
-    UPDATE j
-    SET j.Estado = 'Activo'
-    FROM Persona.Jugador j
-    INNER JOIN Club.DetalleEquipo de ON j.IdJugador = de.IdJugador
-    INNER JOIN Evento.Partido p ON (de.IdEquipo = p.IdLocal OR de.IdEquipo = p.IdVisitante)
-    INNER JOIN inserted i ON p.IdPartido = i.IdPartido
-    WHERE j.Estado = 'Suspendido';
-END;
+GO
 
 /*4.- Disparador para validad el genero, edad y equipo de un jugador al registrarse en DetalleEquipo*/
 CREATE TRIGGER Club.TR_DETALLEEQUIPO_VALIDAR_JUGADOR
@@ -357,8 +399,6 @@ BEGIN
     FROM inserted;
 END;
 GO
-
-
 
 /*5.- Disparador para actualizar el estado de los jugadores despues de las inserciones de tarjetas, 
 asi como para reiniciar su acumulador de tarjetas amarillas*/
@@ -443,3 +483,21 @@ GO
 CREATE TRIGGER Evento.TR_RESULTADO_ACTUALIZAR_ESTADOS
 ON Evento.ResultadoPartido
 AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE p
+    SET p.Estado = 'Jugado'
+    FROM Evento.Partido p
+    INNER JOIN inserted i ON p.IdPartido = i.IdPartido;
+
+    UPDATE j
+    SET j.Estado = 'Activo'
+    FROM Persona.Jugador j
+    INNER JOIN Club.DetalleEquipo de ON j.IdJugador = de.IdJugador
+    INNER JOIN Evento.Partido p ON (de.IdEquipo = p.IdLocal OR de.IdEquipo = p.IdVisitante)
+    INNER JOIN inserted i ON p.IdPartido = i.IdPartido
+    WHERE j.Estado = 'Suspendido';
+END;
+GO
