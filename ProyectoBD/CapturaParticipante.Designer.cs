@@ -227,6 +227,7 @@
             // 
             // btnRegistrarArbitro
             // 
+            btnRegistrarArbitro.BackColor = Color.OliveDrab;
             btnRegistrarArbitro.Enabled = false;
             btnRegistrarArbitro.Location = new Point(145, 382);
             btnRegistrarArbitro.Margin = new Padding(3, 2, 3, 2);
@@ -234,8 +235,9 @@
             btnRegistrarArbitro.Size = new Size(113, 22);
             btnRegistrarArbitro.TabIndex = 18;
             btnRegistrarArbitro.Text = "Registrar Arbitro";
-            btnRegistrarArbitro.UseVisualStyleBackColor = true;
+            btnRegistrarArbitro.UseVisualStyleBackColor = false;
             btnRegistrarArbitro.Visible = false;
+            btnRegistrarArbitro.Click += btnRegistrarArbitro_Click;
             // 
             // frmParticipante
             // 

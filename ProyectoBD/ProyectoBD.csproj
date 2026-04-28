@@ -9,6 +9,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resource\107-1074573_el-club-de-fútbol-atlas-de-guadalajara-ya-ha-elegido-atlas-de.png" />
+    <None Remove="Resource\12-126572_cf-monterrey-crest-c-f-monterrey-hd-png-download.png" />
+    <None Remove="Resource\326-3269792_fc-cartagena-escudo-logo-cartagena-club-de-futbol.png" />
+    <None Remove="Resource\478-4783299_torneo-lunes-huayagol-logo-torneo-futbol-png.png" />
+    <None Remove="Resource\atletico-san-luis-logo.png" />
+    <None Remove="Resource\chivas-guadalajara-logo-png_seeklogo-474960.png" />
+    <None Remove="Resource\Club-America-Logo.png" />
+    <None Remove="Resource\Club_de_Futbol_Cruz_Azul.svg.png" />
+    <None Remove="Resource\federacion-de-futbol-de-chile-logo-png_seeklogo-53345.png" />
+    <None Remove="Resource\Logo-FC-barcelona-vector-transparent-PNG.png" />
+    <None Remove="Resource\png-clipart-deutscher-fussball-bund-logo-germany-national-football-team-germany-women-s-national-football-team-2014-fifa-world-cup-brazil-v-germany-german-football-associatio.png" />
+    <None Remove="Resource\png-transparent-football-team-logo-association-football-manager-sport-football-game-team-grass.png" />
+    <None Remove="Resource\pngtree-star-fc-logo-football-vector-png-image_13773351.png" />
+    <None Remove="Resource\pumas-unam-vector-logo-free-download-11574061906spgl7clpgb.png" />
+    <None Remove="Resource\real-madrid.81d3d699.png" />
+    <None Remove="Resource\Seleccion-de-futbol-de-Ecuador-Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
   </ItemGroup>
 

@@ -20,6 +20,8 @@ GO
 CREATE SCHEMA Club;
 GO
 
+insert into club.equipo
+
 CREATE TABLE Persona.Participante 
 (
 	IdParticipante BIGINT IDENTITY(1,1) NOT NULL,
@@ -35,6 +37,26 @@ CREATE TABLE Persona.Participante
 	CONSTRAINT UQ_PARTICIPANTE_CORREO UNIQUE(CorreoElectronico)
 );
 GO
+
+/*Disparador para calcular la edad del Participante*/
+CREATE TRIGGER Persona.TR_PARTICIPANTE_CALCULAR_EDAD
+ON Persona.Participante
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE p
+    SET p.Edad = 
+        DATEDIFF(YEAR, i.FechaNacimiento, GETDATE()) - 
+        CASE 
+            WHEN MONTH(i.FechaNacimiento) > MONTH(GETDATE()) THEN 1
+            WHEN MONTH(i.FechaNacimiento) = MONTH(GETDATE()) 
+             AND DAY(i.FechaNacimiento)  > DAY(GETDATE()) THEN 1
+            ELSE 0
+        END
+    FROM Persona.Participante p
+    INNER JOIN inserted i ON p.IdParticipante = i.IdParticipante;
+END;
 
 CREATE TABLE Juego.Lugar
 (
@@ -71,8 +93,8 @@ CREATE TABLE Club.Equipo
 (
 	IdEquipo BIGINT IDENTITY(1,1) NOT NULL,
 	NombreEquipo VARCHAR(50) NOT NULL,
-	Logo VARCHAR(50) NOT NULL, /*Guardaría la URL de la imagen*/
-	CantJugadores INT, /*La calculan los disparadores*/
+	Logo VARCHAR(500) NOT NULL, 
+	CantJugadores INT, 
 
 	CONSTRAINT PK_EQUIPO PRIMARY KEY (IdEquipo),
 	CONSTRAINT UQ_EQUIPO_NOMBRE UNIQUE (NombreEquipo)
@@ -135,6 +157,31 @@ CREATE TABLE Club.DetalleEquipo
 );
 GO
 
+/*Disparador para actualizar el numero de jugadores de algun equipo*/
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
+ON Club.DetalleEquipo
+AFTER INSERT, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE e
+    SET e.CantJugadores = (
+        SELECT COUNT(*) 
+        FROM Club.DetalleEquipo d 
+        WHERE d.IdEquipo = e.IdEquipo
+    )
+    FROM Club.Equipo e
+    WHERE e.IdEquipo IN (SELECT IdEquipo FROM inserted);
+    UPDATE e
+    SET e.CantJugadores = (
+        SELECT COUNT(*) 
+        FROM Club.DetalleEquipo d 
+        WHERE d.IdEquipo = e.IdEquipo
+    )
+    FROM Club.Equipo e
+    WHERE e.IdEquipo IN (SELECT IdEquipo FROM deleted);
+END;
+
 CREATE TABLE Juego.DetalleTorneo
 (
 	IdTorneo BIGINT NOT NULL,
@@ -146,6 +193,45 @@ CREATE TABLE Juego.DetalleTorneo
 	REFERENCES Juego.Torneo (IdTorneo),
 	CONSTRAINT UQ_TORNEO_EQUIPO UNIQUE (IdTorneo, IdEquipo)
 );
+GO
+
+/*Disparador para validad el genero, edad y equipo de un jugador al registrarse en DetalleEquipo*/
+
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_VALIDAR_JUGADOR
+ON Club.DetalleEquipo
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Juego.DetalleTorneo dt
+            WHERE dt.IdEquipo = i.IdEquipo
+        )
+    )
+    BEGIN
+        RAISERROR('Error: El equipo no está inscrito en ningún torneo.',16,1);
+        RETURN;
+    END
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Club.DetalleEquipo de
+            ON de.IdEquipo = i.IdEquipo
+           AND de.IdJugador = i.IdJugador
+    )
+    BEGIN
+        RAISERROR('Error: El jugador ya está inscrito en ese equipo.',16,1);
+        RETURN;
+    END
+
+    INSERT INTO Club.DetalleEquipo(IdEquipo, IdJugador)
+    SELECT IdEquipo, IdJugador
+    FROM inserted;
+END;
 GO
 
 CREATE TABLE Evento.Partido
@@ -342,6 +428,16 @@ GO
 CREATE TRIGGER Evento.TR_RESULTADO_ACTUALIZAR_ESTADOS
 ON Evento.ResultadoPartido
 AFTER INSERT
+/*Trigger Actualizar CantEquipos y NumJornadas en la tabla Torneo al inscribir un equipo.*/
+USE Futbolito
+GO
+
+DROP TRIGGER IF EXISTS Juego.TR_ActualizarTorneo
+GO
+
+CREATE TRIGGER Juego.TR_ActualizarTorneo
+ON Juego.DetalleTorneo
+AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -363,7 +459,6 @@ END;
 
 /* =========================================================
    1. PARTICIPANTES (Forzando IDs 1 al 14)
-========================================================= */
 INSERT INTO Persona.Participante (NombreParticipante, Genero, Telefono, CorreoElectronico, FechaNacimiento)
 VALUES 
 ('Marco Antonio Ortiz', 'Masculino', '5551234567', 'marco.ortiz@arbitros.mx', '1988-03-14'),
@@ -384,7 +479,6 @@ GO
 
 /* =========================================================
    2. LUGARES (Forzando IDs 1 al 3)
-========================================================= */
 INSERT INTO Juego.Lugar (Nombre, Ubicacion, Capacidad)
 VALUES 
 ('Estadio Azteca', 'Ciudad de Mexico', 83264),
@@ -394,7 +488,6 @@ GO
 
 /* =========================================================
    3. TORNEOS (Forzando IDs 1 y 2)
-========================================================= */
 INSERT INTO Juego.Torneo (NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin)
 VALUES 
 ('Liga Clausura 2026', 16, 45, 'Masculino', '2026-01-10', '2026-05-30'),
@@ -403,7 +496,6 @@ GO
 
 /* =========================================================
    4. EQUIPOS (Forzando IDs 1 al 3)
-========================================================= */
 INSERT INTO Club.Equipo (NombreEquipo, Logo)
 VALUES 
 ('Aguilas del Centro', 'url_aguilas.png'),
@@ -420,7 +512,6 @@ GO
 
 /* =========================================================
    5. ÁRBITROS (Forzando IDs 1 y 2)
-========================================================= */
 INSERT INTO Persona.Arbitro (IdParticipante, CedulaArbitro)
 VALUES 
 (1, 'ARB-2026-001'),
@@ -429,7 +520,6 @@ GO
 
 /* =========================================================
    6. JUGADORES (Forzando IDs 1 al 12)
-========================================================= */
 INSERT INTO Persona.Jugador (IdParticipante, Posicion, Numero, TipoSangre)
 VALUES 
 (3, 'Portero', 13, 'O+'),
@@ -448,7 +538,6 @@ GO
 
 /* =========================================================
    7. JORNADAS (Forzando IDs 1 al 3)
-========================================================= */
 INSERT INTO Juego.Jornada (IdTorneo, NumeroJornada)
 VALUES 
 (1, 1),
@@ -462,7 +551,6 @@ GO
 
 /* =========================================================
    8. DETALLE DE EQUIPOS (No usa Identity)
-========================================================= */
 INSERT INTO Club.DetalleEquipo (IdEquipo, IdJugador)
 VALUES 
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6),
@@ -471,7 +559,6 @@ GO
 
 /* =========================================================
    9. DETALLE DE TORNEO (No usa Identity)
-========================================================= */
 INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo)
 VALUES 
 (1, 1),
@@ -488,7 +575,6 @@ GO
 
 /* =========================================================
    10. PARTIDOS (Forzando IDs 1 al 3)
-========================================================= */
 /*INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio, Estado)
 VALUES 
 (1, 1, 1, 1, 2, '2026-01-15', '19:00:00', 'Finalizado'),
@@ -498,7 +584,6 @@ GO*/
 
 /* =========================================================
    11. RESULTADOS (Forzando IDs 1 y 2)
-========================================================= */
 INSERT INTO Evento.ResultadoPartido (IdPartido, GolesLocal, GolesVisitante, HoraFin)
 VALUES 
 (1, 2, 1, '20:55:00'),
@@ -507,7 +592,6 @@ GO
 
 /* =========================================================
    12. GOLES (Forzando IDs 1 al 7)
-========================================================= */
 INSERT INTO Evento.Gol (IdJugador, IdPartido, Minuto)
 VALUES 
 (5, 1, 12), 
@@ -521,7 +605,6 @@ GO
 
 /* =========================================================
    13. TARJETAS (Forzando IDs 1 al 5)
-========================================================= */
 INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
 VALUES 
 (2, 1, 'Amarilla', 25),
@@ -536,7 +619,6 @@ GO
 /*
 /* =========================================================
    1. PRUEBA DE DISPARADOR 1 (Calculo de Edad)
-========================================================= */
 -- Metemos participantes con diferentes fechas de nacimiento para ver si tu trigger calcula bien la edad.
 INSERT INTO Persona.Participante (NombreParticipante, Genero, Telefono, CorreoElectronico, FechaNacimiento)
 VALUES 
@@ -552,7 +634,6 @@ GO
 
 /* =========================================================
    2. INFRAESTRUCTURA BÁSICA (Torneos, Lugares, Equipos)
-========================================================= */
 -- Regla probada: Capacidad > 1000
 INSERT INTO Juego.Lugar (Nombre, Ubicacion, Capacidad) VALUES ('Estadio Central', 'CDMX', 50000);
 INSERT INTO Juego.Torneo (NombreTorneo, EdadMin, EdadMax, Genero, FechaInicio, FechaFin) VALUES ('Torneo Verano', 18, 40, 'Masculino', '2026-06-01', '2026-12-01');
@@ -563,7 +644,6 @@ GO
 
 /* =========================================================
    3. PREPARACIÓN PARA EL DISPARADOR 6 (Estados)
-========================================================= */
 -- Vamos a meter a los jugadores. OJO: Al jugador 1 lo vamos a meter como 'Suspendido' a propósito.
 INSERT INTO Persona.Jugador (IdParticipante, Posicion, Numero, TipoSangre, Estado)
 VALUES 
@@ -579,7 +659,6 @@ GO
 
 /* =========================================================
    4. CREACIÓN DEL PARTIDO 
-========================================================= */
 -- El partido entra por defecto como 'Pendiente' (IdLocal=1, IdVisitante=2)
 INSERT INTO Evento.Partido (IdArbitro, IdJornada, IdLugar, IdLocal, IdVisitante, Fecha, HoraInicio)
 VALUES (1, 1, 1, 1, 2, GETDATE(), '16:00:00');
@@ -593,7 +672,6 @@ GO
 
 /* =========================================================
    5. ¡EL MOMENTO DE LA VERDAD! (Prueba del Trigger 6)
-========================================================= */
 -- Al insertar el resultado, el Trigger debe dispararse solo.
 INSERT INTO Evento.ResultadoPartido (IdPartido, GolesLocal, GolesVisitante, HoraFin)
 VALUES (1, 2, 1, '18:00:00'); -- Partido 1 termina 2 a 1.
@@ -607,7 +685,6 @@ GO
 
 /* =========================================================
    6. PRUEBA DE TARJETAS: PRIMERA AMARILLA (INSERT)
-========================================================= */
 -- Al Jugador 2 (el delantero del equipo 1) le sacan su primera amarilla.
 INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
 VALUES (2, 1, 'Amarilla', 15);
@@ -620,7 +697,6 @@ GO
 
 /* =========================================================
    7. PRUEBA DE TARJETAS: LA SEGUNDA AMARILLA (INSERT EXTREMO)
-========================================================= */
 -- Al mismo Jugador 2 le sacan otra amarilla en el mismo partido.
 INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
 VALUES (2, 1, 'Amarilla', 40);
@@ -633,7 +709,6 @@ GO
 
 /* =========================================================
    8. PRUEBA DE TARJETAS: ROJA DIRECTA (INSERT)
-========================================================= */
 -- Al Jugador 3 (el portero del equipo 2) le sacan roja directa.
 INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
 VALUES (3, 1, 'Roja', 60);
@@ -646,7 +721,6 @@ GO
 
 /* =========================================================
    9. PRUEBA DEL "CTRL+Z" (DELETE - ELIMINACIÓN DE ERROR)
-========================================================= */
 -- Imagina que el árbitro se equivocó. Borramos la SEGUNDA amarilla del Jugador 2.
 -- En esta base limpia, esa tarjeta tiene el IdTarjeta = 2.
 DELETE FROM Evento.Tarjeta WHERE IdTarjeta = 2;
@@ -659,7 +733,6 @@ GO
 
 /* =========================================================
    10. PRUEBA DEL ESCUDO (UPDATE - CAMBIO DE OPINIÓN)
-========================================================= */
 -- Al Jugador 2 le modifican su única amarilla (IdTarjeta = 1) y se la cambian por Roja.
 UPDATE Evento.Tarjeta 
 SET TipoTarjeta = 'Roja' 
@@ -673,7 +746,6 @@ GO
 
 /* =========================================================
    11. LA PRUEBA FINAL: RESURRECCIÓN BLOQUEADA (DELETE)
-========================================================= */
 -- El Jugador 3 está suspendido por la Roja del paso 8.
 -- Vamos a meterle una Amarilla a la fuerza (IdTarjeta = 4).
 INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, TipoTarjeta, Minuto)
@@ -688,3 +760,82 @@ GO
 SELECT 'Prueba de Blindaje' AS Test, IdJugador, Estado, AcumuladorAmarillas 
 FROM Persona.Jugador WHERE IdJugador = 3;
 GO*/
+    DECLARE @idTorneo BIGINT
+    DECLARE @total INT
+    DECLARE @jornadas INT
+    DECLARE @jornadasActuales INT
+
+    SELECT TOP 1 @idTorneo = IdTorneo FROM inserted
+    IF @idTorneo IS NULL
+        SELECT TOP 1 @idTorneo = IdTorneo FROM deleted
+
+    -- Contar equipos actuales
+    SELECT @total = COUNT(*)
+    FROM Juego.DetalleTorneo
+    WHERE IdTorneo = @idTorneo
+
+    -- Calcular jornadas
+    IF @total % 2 = 0
+        SET @jornadas = @total - 1
+    ELSE
+        SET @jornadas = @total
+
+    -- Actualizar Torneo
+    UPDATE Juego.Torneo
+    SET CantEquipos = @total,
+        NumJornadas = @jornadas
+    WHERE IdTorneo = @idTorneo
+
+    -- Contar jornadas actuales en Juego.Jornada
+    SELECT @jornadasActuales = COUNT(*)
+    FROM Juego.Jornada
+    WHERE IdTorneo = @idTorneo
+
+    -- Insertar jornadas faltantes
+    IF @jornadas > @jornadasActuales
+    BEGIN
+        DECLARE @i INT = @jornadasActuales + 1
+        WHILE @i <= @jornadas
+        BEGIN
+            INSERT INTO Juego.Jornada(IdTorneo, NumeroJornada)
+            VALUES (@idTorneo, @i)
+            SET @i = @i + 1
+        END
+    END
+
+    -- Eliminar jornadas sobrantes
+    IF @jornadas < @jornadasActuales
+    BEGIN
+        DELETE FROM Juego.Jornada
+        WHERE IdTorneo = @idTorneo
+          AND NumeroJornada > @jornadas
+    END
+
+END
+GO
+
+UPDATE Juego.Torneo SET NumJornadas = 7 WHERE IdTorneo = 1
+
+UPDATE Juego.Torneo
+SET NumJornadas = 7
+WHERE IdTorneo = 1
+
+INSERT INTO Club.Equipo(NombreEquipo, Logo)
+VALUES
+('Real Madrid', 'a'),
+('Barcelona', 'b'),
+('AC Millan', 'c'),
+('Liverpool', 'd');
+
+USE Futbolito
+GO
+
+SELECT * FROM Juego.Jornada
+SELECT * FROM Juego.DetalleTorneo
+
+
+-- Corrección manual
+UPDATE Juego.Torneo
+SET NumJornadas = 5
+WHERE IdTorneo = 1
+SELECT IdTorneo, CantEquipos, NumJornadas FROM Juego.Torneo

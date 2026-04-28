@@ -315,6 +315,21 @@ namespace ProyectoBD
         }
 
         //Función para habilitar/deshabilitar los botones de registrar como árbitro y jugador
+        private void btnRegistrarArbitro_Click(object sender, EventArgs e)
+        {
+            if (idParticipanteSeleccionado != -1)
+            {
+                Form formulario = new CapturaArbitro(idParticipanteSeleccionado);
+                formulario.ShowDialog();
+                limpiaElementos();
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un Participante");
+                return;
+            }
+        }
+
         private void actualizaBotones(int op)
         {
             if (op == 1)
