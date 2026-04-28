@@ -27,7 +27,8 @@ namespace ProyectoBD
             if (idPartido != null)
             {
                 idPartidoFK = (int)idPartido;
-                cargaEquipos(idPartidoFK);
+                cargaJugadores(idPartidoFK);
+                //cargaEquipos(idPartidoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
         }
@@ -44,13 +45,10 @@ namespace ProyectoBD
                     string query = @"
                 SELECT 
                     g.IdGol, 
-                    jug.IdJugador, 
-                    CONCAT(par.NombreParticipante, ' - ', jug.Numero) AS Jugador, 
-                    g.Minuto, 
-                    CONCAT(el.NombreEquipo, ' vs ', ev.NombreEquipo) AS DatosPartido, 
-                    p.IdPartido, 
-                    p.Fecha, 
-                    j.NumeroJornada, 
+                    jug.IdJugador, p.IdPartido,
+                    CONCAT(jug.IdJugador, ' ', par.NombreParticipante, ' [', jug.Posicion, ' - ', jug.Numero, ']') AS Jugador, 
+                    CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS Partido,
+                    g.Minuto,  
                     eqAnotador.IdEquipo AS IdEqGol,
                     eqAnotador.NombreEquipo AS EquipoAnotador
                 FROM Evento.Gol g
@@ -64,13 +62,13 @@ namespace ProyectoBD
                     ON p.IdLocal = el.IdEquipo
                 INNER JOIN Club.Equipo ev 
                     ON p.IdVisitante = ev.IdEquipo
-                INNER JOIN Juego.Jornada j 
-                    ON j.IdJornada = p.IdJornada
                 INNER JOIN Club.DetalleEquipo de 
                     ON de.IdJugador = jug.IdJugador 
                     AND (de.IdEquipo = p.IdLocal OR de.IdEquipo = p.IdVisitante)
                 INNER JOIN Club.Equipo eqAnotador 
                     ON eqAnotador.IdEquipo = de.IdEquipo 
+                INNER JOIN Juego.Lugar l 
+                    ON p.IdLugar = l.IdLugar
                 ORDER BY g.IdGol";
 
                     SqlCommand comando = new SqlCommand(query, conexion);
@@ -82,12 +80,10 @@ namespace ProyectoBD
 
                     // Nombres de las columnas que sí ve el usuario
                     dgvGoles.Columns["IdGol"].HeaderText = "ID Gol";
-                    dgvGoles.Columns["Jugador"].HeaderText = "Jugador (Dorsal)";
+                    dgvGoles.Columns["Jugador"].HeaderText = "Jugador";
                     dgvGoles.Columns["EquipoAnotador"].HeaderText = "Equipo Anotador"; // ¡Columna nueva!
-                    dgvGoles.Columns["DatosPartido"].HeaderText = "Partido";
-                    dgvGoles.Columns["Fecha"].HeaderText = "Fecha";
+                    dgvGoles.Columns["Partido"].HeaderText = "Partido";
                     dgvGoles.Columns["Minuto"].HeaderText = "Minuto";
-                    dgvGoles.Columns["NumeroJornada"].HeaderText = "Jornada";
 
                     // Ocultar IDs internos que el usuario no necesita ver
                     dgvGoles.Columns["IdJugador"].Visible = false;
@@ -101,6 +97,7 @@ namespace ProyectoBD
             }
         }
 
+        /*
         private void cargaEquipos(int idPartido)
         {
             using (SqlConnection conexion = varConexion.conectar())
@@ -130,13 +127,14 @@ namespace ProyectoBD
                     MessageBox.Show("Error al cargar los equipos del partido: " + ex.Message);
                 }
             }
-        }
+        }*/
 
+        /*
         private void cbEquipos_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbEquipos.SelectedValue != null && int.TryParse(cbEquipos.SelectedValue.ToString(), out int idEquipo))
-                cargaJugadores(idEquipo);
-        }
+                cargaJugadores(idPartido);
+        }*/
 
         private void dgvGoles_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -146,8 +144,11 @@ namespace ProyectoBD
                 {
                     DataGridViewRow fila = dgvGoles.Rows[e.RowIndex];
                     idGolSeleccionado = Convert.ToInt32(fila.Cells["IdGol"].Value);
-                    cargaEquipos(Convert.ToInt32(fila.Cells["IdPartido"].Value));
-                    cbEquipos.SelectedValue = Convert.ToInt32(fila.Cells["IdEqGol"].Value);
+                    cargaJugadores(Convert.ToInt32(fila.Cells["IdPartido"].Value));
+                    //DEBE DE VENIR cargaJugadores EN VEZ DE cargaEquipos
+                    //cargaEquipos(Convert.ToInt32(fila.Cells["IdPartido"].Value));
+
+                    //cbEquipos.SelectedValue = Convert.ToInt32(fila.Cells["IdEqGol"].Value);
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
                     cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
@@ -159,7 +160,7 @@ namespace ProyectoBD
             }
         }
 
-        private void cargaJugadores(int idEquipo)
+        private void cargaJugadores(int idPartido)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -167,7 +168,7 @@ namespace ProyectoBD
                 {
                     string query = @"
                     SELECT
-                    j.IdJugador, CONCAT(p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, ']') AS Jugador
+                    j.IdJugador, CONCAT(p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, '] - ', e.NombreEquipo) AS Jugador
                     FROM Persona.Jugador j
                     INNER JOIN Persona.Participante p
                     ON p.IdParticipante = j.IdParticipante
@@ -175,10 +176,12 @@ namespace ProyectoBD
                     ON j.IdJugador = de.IdJugador
                     INNER JOIN Club.Equipo e
                     ON e.IdEquipo = de.IdEquipo
-                    WHERE e.IdEquipo = @idEquipo;";
+                    INNER JOIN Evento.Partido pa
+                    ON (e.IdEquipo = pa.IdLocal OR e.IdEquipo = pa.IdVisitante) 
+                    WHERE pa.IdPartido = @idPartido;";
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@idEquipo", idEquipo);
+                        comando.Parameters.AddWithValue("@idPartido", idPartido);
                         SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                         DataTable tablaJugadores = new DataTable();
                         adaptador.Fill(tablaJugadores);
@@ -195,13 +198,44 @@ namespace ProyectoBD
             }
         }
 
+        private int buscaEquipo(int idJugador)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                string query = @"
+                    SELECT e.IdEquipo
+                    FROM Club.Equipo e
+                    INNER JOIN Club.DetalleEquipo de ON e.IdEquipo = de.IdEquipo
+                    WHERE de.IdJugador = @idJugador";
+                using (SqlCommand comando = new SqlCommand(query, conexion))
+                {
+                    comando.Parameters.AddWithValue("@idJugador", idJugador);
+                    try
+                    {
+                        conexion.Open();
+                        object result = comando.ExecuteScalar();
+                        if (result != null && int.TryParse(result.ToString(), out int idEquipo))
+                            return idEquipo;
+                        else
+                            return -1; // No se encontró el equipo
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al buscar el equipo del jugador: " + ex.Message);
+                        return -1;
+                    }
+                }
+            }
+        }
+
         private void limpiaElementos()
         {
             idGolSeleccionado = -1;
-            idPartidoFK = -1;
+            //idPartidoFK = -1;
             idPartidoSeleccionado = -1;
-            cbEquipos.SelectedIndex = -1;
+            //cbEquipos.SelectedIndex = -1;
             cbJugadores.SelectedIndex = -1;
+            numericMin.Value = 0;
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
@@ -211,15 +245,16 @@ namespace ProyectoBD
                 MessageBox.Show("Selecciona un Resultado desde el formulario de CapturaResultado");
                 return;
             }
-            if (cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
+            if (cbJugadores.SelectedValue == null || numericMin.Value <= 0)
             {
                 MessageBox.Show("Completa todos los campos/el minuto no puede ser 0");
                 return;
             }
-
-            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
+            //Verificar esto:
+            //int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
             int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
             int minuto = Convert.ToInt32(numericMin.Value);
+            int idEquipo = buscaEquipo(idJugador);
 
             int verifMinuto = verificaMinuto(idPartidoFK, minuto);
             switch (verifMinuto)
@@ -233,7 +268,7 @@ namespace ProyectoBD
                     return;
             }
 
-
+            //Verificar esto
             int verifGoles = verificaCantidadGoles(idPartidoFK, idEquipo, 0);
             switch (verifGoles)
             {
@@ -295,15 +330,17 @@ namespace ProyectoBD
                 MessageBox.Show("Selecciona un Gol de la tabla para modificar");
                 return;
             }
-            if (idPartidoSeleccionado == -1 || cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
+            if (idPartidoSeleccionado == -1 || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
             {
                 MessageBox.Show("Complete todos los campos ");
                 return;
             }
 
-            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
+            //Verificar esto
+            //int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
             int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
             int minuto = Convert.ToInt32(numericMin.Value);
+            int idEquipo = buscaEquipo(idJugador);
 
             int verifMinuto = verificaMinuto(idPartidoSeleccionado, minuto);
             switch (verifMinuto)
@@ -314,7 +351,7 @@ namespace ProyectoBD
                     MessageBox.Show("El minuto del gol no puede ser cero ni mayor a la hora de termino");
                     return;
             }
-
+            //Verificar esto:
             int verifGoles = verificaCantidadGoles(idPartidoSeleccionado, idEquipo, 1);
             switch (verifGoles)
             {
@@ -324,6 +361,7 @@ namespace ProyectoBD
                     MessageBox.Show("¡Límite alcanzado! Este equipo ya no puede registrar más goles según el resultado final del partido.");
                     return;
             }
+
             int verifDuplicado = verificaMinutoDuplicado(idPartidoSeleccionado, minuto, 1);
             switch (verifDuplicado)
             {
