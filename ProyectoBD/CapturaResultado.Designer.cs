@@ -123,7 +123,9 @@
             // 
             dgvResultados.AllowUserToAddRows = false;
             dgvResultados.AllowUserToDeleteRows = false;
+            dgvResultados.AllowUserToResizeColumns = false;
             dgvResultados.AllowUserToResizeRows = false;
+            dgvResultados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvResultados.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvResultados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;

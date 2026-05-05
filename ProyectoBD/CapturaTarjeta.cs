@@ -26,7 +26,7 @@ namespace ProyectoBD
             if (idPartido != null)
             {
                 idPartidoFK = (int)idPartido;
-                cargaEquipos(idPartidoFK);
+                cargaJugadores(idPartidoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
         }
@@ -77,17 +77,15 @@ namespace ProyectoBD
 
                     dgvTarjetas.DataSource = tabla;
 
-                    // Nombres de las columnas que sí ve el usuario
                     dgvTarjetas.Columns["IdTarjeta"].HeaderText = "ID Tarjeta";
                     dgvTarjetas.Columns["TipoTarjeta"].HeaderText = "Tipo Tarjeta";
                     dgvTarjetas.Columns["Jugador"].HeaderText = "Jugador (Dorsal)";
-                    dgvTarjetas.Columns["EquipoAfectado"].HeaderText = "Equipo del jugador"; // ¡Columna nueva!
+                    dgvTarjetas.Columns["EquipoAfectado"].HeaderText = "Equipo del jugador";
                     dgvTarjetas.Columns["DatosPartido"].HeaderText = "Partido";
                     dgvTarjetas.Columns["Fecha"].HeaderText = "Fecha";
                     dgvTarjetas.Columns["Minuto"].HeaderText = "Minuto";
                     dgvTarjetas.Columns["NumeroJornada"].HeaderText = "Jornada";
 
-                    // Ocultar IDs internos que el usuario no necesita ver
                     dgvTarjetas.Columns["IdJugador"].Visible = false;
                     dgvTarjetas.Columns["IdPartido"].Visible = false;
                     dgvTarjetas.Columns["IdEqAfec"].Visible = false;
@@ -104,48 +102,10 @@ namespace ProyectoBD
             idTarjetaSeleccionada = -1;
             idPartidoFK = -1;
             idPartidoSeleccionado = -1;
-            cbEquipos.SelectedIndex = -1;
             cbJugadores.SelectedIndex = -1;
         }
 
-        private void cargaEquipos(int idPartido)
-        {
-            using (SqlConnection conexion = varConexion.conectar())
-            {
-                try
-                {
-                    string query = @"
-                    SELECT e.IdEquipo, e.NombreEquipo
-                    FROM Club.Equipo e
-                    INNER JOIN Evento.Partido p 
-                        ON e.IdEquipo = p.IdLocal OR e.IdEquipo = p.IdVisitante
-                    WHERE p.IdPartido = @IdPartido";
-                    using (SqlCommand comando = new SqlCommand(query, conexion))
-                    {
-                        comando.Parameters.AddWithValue("@IdPartido", idPartido);
-                        SqlDataAdapter adaptador = new SqlDataAdapter(comando);
-                        DataTable tablaEquipos = new DataTable();
-                        adaptador.Fill(tablaEquipos);
-                        cbEquipos.DisplayMember = "NombreEquipo"; // Lo que el usuario lee 
-                        cbEquipos.ValueMember = "IdEquipo";       // El ID que guarda
-                        cbEquipos.DataSource = tablaEquipos;
-                        cbEquipos.SelectedIndex = -1;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al cargar los equipos del partido: " + ex.Message);
-                }
-            }
-        }
-
-        private void cbEquipos_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbEquipos.SelectedValue != null && int.TryParse(cbEquipos.SelectedValue.ToString(), out int idEquipo))
-                cargaJugadores(idEquipo);
-        }
-
-        private void cargaJugadores(int idEquipo)
+        private void cargaJugadores(int idPartido)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -153,7 +113,7 @@ namespace ProyectoBD
                 {
                     string query = @"
                     SELECT
-                    j.IdJugador, CONCAT(p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, ']') AS Jugador
+                    j.IdJugador, CONCAT(p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, '] - ', e.NombreEquipo) AS Jugador
                     FROM Persona.Jugador j
                     INNER JOIN Persona.Participante p
                     ON p.IdParticipante = j.IdParticipante
@@ -161,22 +121,25 @@ namespace ProyectoBD
                     ON j.IdJugador = de.IdJugador
                     INNER JOIN Club.Equipo e
                     ON e.IdEquipo = de.IdEquipo
-                    WHERE e.IdEquipo = @idEquipo;";
+                    INNER JOIN Evento.Partido pa
+                    ON (e.IdEquipo = pa.IdLocal OR e.IdEquipo = pa.IdVisitante) 
+                    WHERE pa.IdPartido = @idPartido;";
+
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@idEquipo", idEquipo);
+                        comando.Parameters.AddWithValue("@idPartido", idPartido);
                         SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                         DataTable tablaJugadores = new DataTable();
                         adaptador.Fill(tablaJugadores);
-                        cbJugadores.DisplayMember = "Jugador"; // Lo que el usuario lee 
-                        cbJugadores.ValueMember = "IdJugador";       // El ID que guarda
+                        cbJugadores.DisplayMember = "Jugador";
+                        cbJugadores.ValueMember = "IdJugador";
                         cbJugadores.DataSource = tablaJugadores;
                         cbJugadores.SelectedIndex = -1;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al cargar los equipos del partido: " + ex.Message);
+                    MessageBox.Show("Error al cargar los jugadores del partido: " + ex.Message);
                 }
             }
         }
@@ -189,8 +152,9 @@ namespace ProyectoBD
                 {
                     DataGridViewRow fila = dgvTarjetas.Rows[e.RowIndex];
                     idTarjetaSeleccionada = Convert.ToInt32(fila.Cells["IdTarjeta"].Value);
-                    cargaEquipos(Convert.ToInt32(fila.Cells["IdPartido"].Value));
-                    cbEquipos.SelectedValue = Convert.ToInt32(fila.Cells["IdEqAfec"].Value);
+
+                    cargaJugadores(Convert.ToInt32(fila.Cells["IdPartido"].Value));
+
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
                     cbTarjeta.Text = fila.Cells["TipoTarjeta"].Value.ToString();
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
@@ -211,14 +175,12 @@ namespace ProyectoBD
                 MessageBox.Show("Selecciona un Resultado desde el formulario de CapturaResultado");
                 return;
             }
-            if (cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null ||
-                numericMin.Value <= 0 || cbTarjeta.SelectedIndex < 0)
+            if (cbJugadores.SelectedValue == null || numericMin.Value <= 0 || cbTarjeta.SelectedIndex < 0)
             {
                 MessageBox.Show("Completa todos los campos/el minuto no puede ser 0");
                 return;
             }
 
-            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
             int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
             int minuto = Convert.ToInt32(numericMin.Value);
             string tarjeta = cbTarjeta.Text;
@@ -229,7 +191,7 @@ namespace ProyectoBD
                 case -1:
                     MessageBox.Show("Error al verificar el minuto de la tarjeta.");
                     return;
-                case 0: break; // 0 = Todo bien
+                case 0: break;
                 default:
                     MessageBox.Show("El minuto de la tarjeta no puede ser cero ni mayor a la hora de termino");
                     return;
@@ -239,13 +201,14 @@ namespace ProyectoBD
             switch (verifDuplicado)
             {
                 case -1: return;
-                case 0: break; // 0 = Todo bien
+                case 0: break;
                 default:
                     MessageBox.Show("Ya existe una tarjeta registrada en ese exacto minuto para este partido.");
                     return;
             }
 
-            int verifEstado = verificaEstadoEnMinuto(idPartidoFK, idJugador, minuto);
+            // AQUI ESTA EL CAMBIO PARA EL INSERT: Pasamos -1 porque no hay tarjeta previa que ignorar
+            int verifEstado = verificaEstadoEnMinuto(idPartidoFK, idJugador, minuto, -1);
             switch (verifEstado)
             {
                 case -1: return;
@@ -253,7 +216,6 @@ namespace ProyectoBD
                 default:
                     MessageBox.Show("Este jugador está Suspendido, no se le puede registrar una tarjeta");
                     return;
-
             }
 
             string query = @"INSERT INTO Evento.Tarjeta (IdJugador, IdPartido, Minuto, TipoTarjeta) 
@@ -287,13 +249,12 @@ namespace ProyectoBD
                 MessageBox.Show("Selecciona una Tarjeta de la tabla para modificar");
                 return;
             }
-            if (idPartidoSeleccionado == -1 || cbEquipos.SelectedValue == null || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
+            if (idPartidoSeleccionado == -1 || cbJugadores.SelectedValue == null || numericMin.Value <= 0)
             {
                 MessageBox.Show("Complete todos los campos ");
                 return;
             }
 
-            int idEquipo = Convert.ToInt32(cbEquipos.SelectedValue);
             int idJugador = Convert.ToInt32(cbJugadores.SelectedValue);
             int minuto = Convert.ToInt32(numericMin.Value);
             string tarjeta = cbTarjeta.Text;
@@ -330,7 +291,8 @@ namespace ProyectoBD
                     return;
             }
 
-            int verifEstado = verificaEstadoEnMinuto(idPartidoSeleccionado, idJugador, minuto);
+            // AQUI ESTA EL CAMBIO PARA EL UPDATE: Pasamos el idTarjetaSeleccionada para ignorarlo
+            int verifEstado = verificaEstadoEnMinuto(idPartidoSeleccionado, idJugador, minuto, idTarjetaSeleccionada);
             switch (verifEstado)
             {
                 case -1: return;
@@ -338,7 +300,6 @@ namespace ProyectoBD
                 default:
                     MessageBox.Show("Este jugador está Suspendido, no se le puede registrar una tarjeta");
                     return;
-
             }
 
             string query = @"UPDATE Evento.Tarjeta 
@@ -376,7 +337,6 @@ namespace ProyectoBD
                 return;
             }
 
-           
             int idJugadorOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdJugador"].Value);
             int idPartidoOriginal = Convert.ToInt32(dgvTarjetas.CurrentRow.Cells["IdPartido"].Value);
 
@@ -460,7 +420,7 @@ namespace ProyectoBD
                 {
                     conexion.Open();
                     int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count; // Regresa 0 si no hay duplicados, o > 0 si hay choque
+                    return count;
                 }
                 catch (Exception ex)
                 {
@@ -470,7 +430,8 @@ namespace ProyectoBD
             }
         }
 
-        private int verificaEstadoEnMinuto(int idPartido, int idJugador, int minuto)
+        // AQUI ESTA EL METODO MODIFICADO PARA IGNORAR LA TARJETA
+        private int verificaEstadoEnMinuto(int idPartido, int idJugador, int minuto, int idTarjetaIgnorar = -1)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -480,22 +441,24 @@ namespace ProyectoBD
             WHERE IdPartido = @idPartido 
             AND IdJugador = @idJugador 
             AND Minuto <= @minuto 
+            AND IdTarjeta != @idTarjetaIgnorar
             AND (TipoTarjeta = 'Roja' OR 
                  (SELECT COUNT(*) FROM Evento.Tarjeta t2 
                   WHERE t2.IdPartido = @idPartido AND t2.IdJugador = @idJugador 
-                  AND t2.TipoTarjeta = 'Amarilla' AND t2.Minuto <= @minuto) >= 2)";
+                  AND t2.TipoTarjeta = 'Amarilla' AND t2.Minuto <= @minuto
+                  AND t2.IdTarjeta != @idTarjetaIgnorar) >= 2)";
 
                 SqlCommand command = new SqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@idPartido", idPartido);
                 command.Parameters.AddWithValue("@idJugador", idJugador);
                 command.Parameters.AddWithValue("@minuto", minuto);
+                command.Parameters.AddWithValue("@idTarjetaIgnorar", idTarjetaIgnorar);
 
                 try
                 {
                     conexion.Open();
                     int estaExpulsado = Convert.ToInt32(command.ExecuteScalar());
 
-                    // Siguiendo tu estándar: 0 es todo bien, 1 es que ya la cagó
                     if (estaExpulsado > 0) return 1;
                     else return 0;
                 }
@@ -535,7 +498,6 @@ namespace ProyectoBD
                     conexion.Open();
                     int hayPartidosFuturos = Convert.ToInt32(command.ExecuteScalar());
 
-                    // Si hayPartidosFuturos es > 0, significa que el tiempo ya avanzó y no se puede tocar
                     if (hayPartidosFuturos > 0) return 1;
                     else return 0;
                 }
