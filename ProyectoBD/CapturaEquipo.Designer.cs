@@ -68,10 +68,10 @@
             // dgvEquipo
             // 
             dgvEquipo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEquipo.Location = new Point(59, 239);
+            dgvEquipo.Location = new Point(59, 212);
             dgvEquipo.Name = "dgvEquipo";
             dgvEquipo.RowHeadersWidth = 51;
-            dgvEquipo.Size = new Size(669, 188);
+            dgvEquipo.Size = new Size(669, 324);
             dgvEquipo.TabIndex = 3;
             dgvEquipo.CellClick += dgvEquipo_CellClick;
             // 
@@ -123,7 +123,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(744, 431);
+            ClientSize = new Size(744, 506);
             Controls.Add(tbLogo);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);

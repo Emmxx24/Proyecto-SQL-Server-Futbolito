@@ -154,10 +154,10 @@ CREATE TABLE Club.DetalleEquipo
 );
 GO
 
-/*Disparador para actualizar el numero de jugadores de algun equipo*/
-CREATE TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
+/*Disparador para la cantidad de jugadores ingresados en un equipo*/
+CREATE OR ALTER TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
 ON Club.DetalleEquipo
-AFTER INSERT, DELETE
+AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -168,15 +168,11 @@ BEGIN
         WHERE d.IdEquipo = e.IdEquipo
     )
     FROM Club.Equipo e
-    WHERE e.IdEquipo IN (SELECT IdEquipo FROM inserted);
-    UPDATE e
-    SET e.CantJugadores = (
-        SELECT COUNT(*) 
-        FROM Club.DetalleEquipo d 
-        WHERE d.IdEquipo = e.IdEquipo
-    )
-    FROM Club.Equipo e
-    WHERE e.IdEquipo IN (SELECT IdEquipo FROM deleted);
+    WHERE e.IdEquipo IN (
+        SELECT IdEquipo FROM inserted
+        UNION
+        SELECT IdEquipo FROM deleted
+    );
 END;
 
 CREATE TABLE Juego.DetalleTorneo
@@ -315,24 +311,7 @@ GO
 CREATE RULE RL_CAPACIDAD AS @CAPACIDAD > 1000;
 GO
 
+/*Regla con restricción de cadena*/
 EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
 
-
-/*Prueba para verificar que todo este bien*/
-SELECT IdTorneo, NombreTorneo FROM Juego.Torneo;
-SELECT IdEquipo, NombreEquipo FROM Club.Equipo;
-
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 18); -- America
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 19); -- Chivas
-
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (3, 18)
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (3, 19)
-
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (4, 18)
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (4, 19)
-
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 20)
-INSERT INTO Juego.DetalleTorneo (IdTorneo, IdEquipo) VALUES (1, 21)
-
-INSERT INTO 

@@ -12,7 +12,7 @@ namespace ProyectoBD
     public partial class DetalleEquipo : Form
     {
         private ClaseConexion varConexion;
-        private int idTorneoSeleccionado = -1; // se llena desde el combo de equipos
+        private int idTorneoSeleccionado = -1; 
         private int idEquipoSeleccionado = -1;
         private int idJugadorSeleccionado = -1;
         private bool cargandoDesdeGrid = false;
@@ -29,8 +29,6 @@ namespace ProyectoBD
             cargaDetalleEquipo();
         }
 
-        // El combo muestra "NombreEquipo (NombreTorneo)" y trae IdTorneo
-        // para usarlo internamente en las validaciones sin necesitar un combo extra.
         private void cargaEquipos()
         {
             using (SqlConnection conexion = varConexion.conectar())
@@ -58,7 +56,7 @@ namespace ProyectoBD
                     cbEquipo.SelectedIndex = -1;
                 }
                 catch (Exception ex)
-                {
+                { 
                     MessageBox.Show("Error al cargar equipos: " + ex.Message);
                 }
             }
@@ -129,8 +127,11 @@ namespace ProyectoBD
                     dgvDetalleEquipo.Columns["IdJugador"].Visible = false;
                     dgvDetalleEquipo.Columns["DetalleJugador"].HeaderText = "Jugador";
 
+                    dgvDetalleEquipo.Columns["NombreEquipo"].AutoSizeMode =
+                        DataGridViewAutoSizeColumnMode.AllCells;
 
-                    //dgvDetalleEquipo.Columns["NombreEquipo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dgvDetalleEquipo.Columns["DetalleJugador"].AutoSizeMode =
+                        DataGridViewAutoSizeColumnMode.Fill;
                 }
                 catch (Exception ex)
                 {
@@ -150,8 +151,6 @@ namespace ProyectoBD
                 try
                 {
                     conexion.Open();
-
-                    // 1. ¿El jugador ya está inscrito en este equipo?
                     string qDup = esModificacion
                         ? @"SELECT COUNT(*) FROM Club.DetalleEquipo
                             WHERE IdEquipo=@e AND IdJugador=@j
@@ -171,8 +170,6 @@ namespace ProyectoBD
                             return false;
                         }
                     }
-
-                    // 2. ¿Dorsal duplicado en el equipo?
                     string qDorsal = esModificacion
                         ? @"SELECT COUNT(*) FROM Club.DetalleEquipo de
                             INNER JOIN Persona.Jugador j ON de.IdJugador=j.IdJugador
@@ -198,8 +195,6 @@ namespace ProyectoBD
                             return false;
                         }
                     }
-
-                    // 3. ¿El jugador ya está en otro equipo del mismo torneo?
                     string qTorneo = esModificacion
                         ? @"SELECT TOP 1 eOtro.NombreEquipo
                             FROM Club.DetalleEquipo deOtro
@@ -257,8 +252,6 @@ namespace ProyectoBD
                             }
                         }
                     }
-
-                    // 5. ¿La edad del jugador está dentro del rango del torneo?
                     string qEdad = @"
                         SELECT TOP 1 t.NombreTorneo, t.EdadMin, t.EdadMax, p.Edad
                         FROM Juego.Torneo t
@@ -294,8 +287,6 @@ namespace ProyectoBD
             }
         }
 
-        // ─── Eventos de combos ────────────────────────────────────────────────
-
         private void cbEquipo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cargandoDesdeGrid) return;
@@ -322,8 +313,6 @@ namespace ProyectoBD
                 idJugadorSeleccionado = Convert.ToInt32(fila["IdJugador"]);
             }
         }
-
-        // ─── CRUD ─────────────────────────────────────────────────────────────
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
@@ -391,10 +380,11 @@ namespace ProyectoBD
             int idEquipo = Convert.ToInt32(dgvDetalleEquipo.CurrentRow.Cells["IdEquipo"].Value);
             int idJugador = Convert.ToInt32(dgvDetalleEquipo.CurrentRow.Cells["IdJugador"].Value);
 
-            if (MessageBox.Show("¿Está seguro de eliminar este jugador del equipo?",
+            /*
+             if (MessageBox.Show("¿Está seguro de eliminar este jugador del equipo?",
                 "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 return;
-
+            */
             string query = "DELETE FROM Club.DetalleEquipo WHERE IdEquipo=@e AND IdJugador=@j";
             using (SqlConnection conexion = varConexion.conectar())
             using (SqlCommand cmd = new SqlCommand(query, conexion))
@@ -429,7 +419,6 @@ namespace ProyectoBD
                 idEquipoAnterior = idEquipo;
                 idJugadorAnterior = idJugador;
 
-                // Obtenemos el IdTorneo del equipo para las validaciones
                 using (SqlConnection conexion = varConexion.conectar())
                 {
                     conexion.Open();
@@ -442,16 +431,12 @@ namespace ProyectoBD
                     }
                 }
 
-                // Seleccionar equipo en el combo (buscamos por IdEquipo e IdTorneo
-                // para elegir la fila correcta si el equipo está en varios torneos)
                 foreach (DataRowView item in cbEquipo.Items)
                 {
                     if (Convert.ToInt32(item["IdEquipo"]) == idEquipo &&
                         Convert.ToInt32(item["IdTorneo"]) == idTorneoSeleccionado)
                     { cbEquipo.SelectedItem = item; break; }
                 }
-
-                // Seleccionar jugador en el combo
                 foreach (DataRowView item in cbJugador.Items)
                 {
                     if (Convert.ToInt32(item["IdJugador"]) == idJugador)
