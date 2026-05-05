@@ -87,6 +87,8 @@ namespace ProyectoBD
 
         private void jornadaToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.Text = "Jornada";
+            AbrirFormularioHijo(new Jornada());
 
         }
 
@@ -124,7 +126,8 @@ namespace ProyectoBD
 
         private void detalleTorneoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Text = "DetalleTorneo";
+            AbrirFormularioHijo(new DetalleTorneo());
         }
 
         private void detalleEquipoToolStripMenuItem_Click(object sender, EventArgs e)
