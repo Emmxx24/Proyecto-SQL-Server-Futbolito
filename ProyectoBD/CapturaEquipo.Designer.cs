@@ -61,9 +61,9 @@
             lblLogo.AutoSize = true;
             lblLogo.Location = new Point(69, 114);
             lblLogo.Name = "lblLogo";
-            lblLogo.Size = new Size(73, 20);
+            lblLogo.Size = new Size(125, 20);
             lblLogo.TabIndex = 2;
-            lblLogo.Text = "Logotipo:";
+            lblLogo.Text = "URL del logotipo:";
             // 
             // dgvEquipo
             // 

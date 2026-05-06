@@ -21,8 +21,16 @@ namespace ProyectoBD
             InitializeComponent();
             varConexion = new ClaseConexion();
             inicializaGrid();
-            cargaEquipos();
             limpiaElementos();
+
+            // ESTA LÍNEA ES LA MAGIA: Obliga a Windows a ejecutar tu evento al abrir la ventana
+            this.Shown += CapturaEquipo_Shown;
+        }
+
+        private void CapturaEquipo_Shown(object sender, EventArgs e)
+        {
+            // Esto se ejecuta cuando la ventana ya apareció en pantalla
+            cargaEquipos();
         }
 
         private void inicializaGrid()
@@ -70,8 +78,11 @@ namespace ProyectoBD
             });
         }
 
-        private void cargaEquipos()
+        // 1. Agregamos la palabra 'async' aquí
+        private async void cargaEquipos()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             using (SqlConnection conexion = varConexion.conectar())
             {
                 try
@@ -85,28 +96,39 @@ namespace ProyectoBD
 
                     dgvEquipo.DataSource = tabla;
 
-                    // Aqui se captura la imagen
+                    // Aquí descargamos las imágenes DE FORMA ASÍNCRONA
+                    // Aquí descargamos las imágenes DE FORMA ASÍNCRONA
                     foreach (DataGridViewRow fila in dgvEquipo.Rows)
                     {
                         if (fila.IsNewRow) continue;
+
+                        // 1. BLINDAJE: Si por alguna razón la columna no existe en este instante, nos la saltamos para que no explote.
+                        if (!dgvEquipo.Columns.Contains("ImagenLogo")) continue;
+
                         string url = fila.Cells["Logo"].Value?.ToString();
+
                         if (!string.IsNullOrEmpty(url))
                         {
+                            // 2. BLINDAJE: Guardamos la referencia exacta a la celda ANTES de la descarga.
+                            // Así, si el grid se resetea o cambias de pestaña, sabe exactamente dónde iba la imagen.
+                            DataGridViewCell celdaImagen = fila.Cells["ImagenLogo"];
+
                             try
                             {
                                 using (WebClient wc = new WebClient())
                                 {
-                                    wc.Headers.Add("User-Agent", "Mozilla/5.0");
-                                    byte[] data = wc.DownloadData(url); // Aqui descarga la imagen de internet
-                                    using (MemoryStream ms = new MemoryStream(data))
-                                    {
-                                        fila.Cells["ImagenLogo"].Value = Image.FromStream(ms); // Aqui la imagen se muestra en el grid
-                                    }
+                                    wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
+                                    // Usamos 'await' para no congelar la pantalla
+                                    byte[] data = await wc.DownloadDataTaskAsync(new Uri(url));
+                                    MemoryStream ms = new MemoryStream(data); // No uses 'using' aquí para probar
+                                    fila.Cells["ImagenLogo"].Value = Image.FromStream(ms);
                                 }
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                fila.Cells["ImagenLogo"].Value = null;
+                                Console.WriteLine("Error descargando imagen de " + url + ": " + ex.Message);
+                                celdaImagen.Value = null;
                             }
                         }
                     }
