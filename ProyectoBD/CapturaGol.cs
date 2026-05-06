@@ -28,6 +28,7 @@ namespace ProyectoBD
             {
                 idPartidoFK = (int)idPartido;
                 cargaJugadores(idPartidoFK);
+                cargaDatosPartidoForaneo(idPartidoFK);
                 //cargaEquipos(idPartidoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
@@ -136,6 +137,40 @@ namespace ProyectoBD
                 cargaJugadores(idPartido);
         }*/
 
+        private void cargaDatosPartidoForaneo(int idPartido)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    conexion.Open();
+                    string query = @"SELECT 
+                    CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS Partido
+                    FROM Evento.Partido p
+                    INNER JOIN Club.Equipo el
+                    ON p.IdLocal = el.IdEquipo
+                    INNER JOIN Club.Equipo ev
+                    ON p.IdVisitante = ev.IdEquipo
+                    INNER JOIN Juego.Lugar l
+                    ON p.IdLugar = l.IdLugar
+                    WHERE p.IdPartido = @idPartido;";
+                    SqlCommand comando = new SqlCommand(query, conexion);
+                    comando.Parameters.AddWithValue("@idPartido", idPartido);
+                    object result = comando.ExecuteScalar();
+                    //MessageBox.Show("Nombre de participante" + result.ToString());
+                    if (result != null)
+                    {
+                        txtPartidoDetalle.Text = result.ToString();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar el nombre del participante: " + ex.Message);
+                }
+            }
+        }
+
         private void dgvGoles_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -152,6 +187,7 @@ namespace ProyectoBD
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
                     cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
+                    cargaDatosPartidoForaneo(Convert.ToInt32(fila.Cells["IdPartido"].Value));
                 }
             }
             catch (Exception ex)

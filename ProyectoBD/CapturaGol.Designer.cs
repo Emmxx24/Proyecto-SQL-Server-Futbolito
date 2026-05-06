@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             cbJugadores = new ComboBox();
             lblJugador = new Label();
             lblMinuto = new Label();
@@ -37,6 +37,8 @@
             btnModificar = new Button();
             btnEliminar = new Button();
             dgvGoles = new DataGridView();
+            label1 = new Label();
+            txtPartidoDetalle = new TextBox();
             ((System.ComponentModel.ISupportInitialize)numericMin).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvGoles).BeginInit();
             SuspendLayout();
@@ -45,7 +47,7 @@
             // 
             cbJugadores.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJugadores.FormattingEnabled = true;
-            cbJugadores.Location = new Point(14, 33);
+            cbJugadores.Location = new Point(14, 88);
             cbJugadores.Margin = new Padding(3, 4, 3, 4);
             cbJugadores.Name = "cbJugadores";
             cbJugadores.Size = new Size(602, 28);
@@ -54,7 +56,7 @@
             // lblJugador
             // 
             lblJugador.AutoSize = true;
-            lblJugador.Location = new Point(14, 9);
+            lblJugador.Location = new Point(14, 64);
             lblJugador.Name = "lblJugador";
             lblJugador.Size = new Size(65, 20);
             lblJugador.TabIndex = 3;
@@ -63,7 +65,7 @@
             // lblMinuto
             // 
             lblMinuto.AutoSize = true;
-            lblMinuto.Location = new Point(14, 84);
+            lblMinuto.Location = new Point(14, 139);
             lblMinuto.Name = "lblMinuto";
             lblMinuto.Size = new Size(59, 20);
             lblMinuto.TabIndex = 4;
@@ -71,7 +73,7 @@
             // 
             // numericMin
             // 
-            numericMin.Location = new Point(14, 108);
+            numericMin.Location = new Point(14, 163);
             numericMin.Margin = new Padding(3, 4, 3, 4);
             numericMin.Maximum = new decimal(new int[] { 200, 0, 0, 0 });
             numericMin.Name = "numericMin";
@@ -123,14 +125,14 @@
             dgvGoles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvGoles.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvGoles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvGoles.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvGoles.DefaultCellStyle = dataGridViewCellStyle2;
             dgvGoles.Location = new Point(14, 243);
             dgvGoles.Margin = new Padding(3, 4, 3, 4);
             dgvGoles.MultiSelect = false;
@@ -142,11 +144,30 @@
             dgvGoles.TabIndex = 9;
             dgvGoles.CellClick += dgvGoles_CellClick;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(14, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 20);
+            label1.TabIndex = 10;
+            label1.Text = "Partido:";
+            // 
+            // txtPartidoDetalle
+            // 
+            txtPartidoDetalle.Location = new Point(14, 37);
+            txtPartidoDetalle.Name = "txtPartidoDetalle";
+            txtPartidoDetalle.ReadOnly = true;
+            txtPartidoDetalle.Size = new Size(602, 27);
+            txtPartidoDetalle.TabIndex = 11;
+            // 
             // CapturaGol
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1096, 679);
+            Controls.Add(txtPartidoDetalle);
+            Controls.Add(label1);
             Controls.Add(dgvGoles);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
@@ -175,5 +196,7 @@
         private Button btnModificar;
         private Button btnEliminar;
         private DataGridView dgvGoles;
+        private Label label1;
+        private TextBox txtPartidoDetalle;
     }
 }

@@ -26,6 +26,7 @@ namespace ProyectoBD
             if (idPartido != null)
             {
                 idPartidoFK = (int)idPartido;
+                cargaDatosPartidoForaneo(idPartidoFK);
                 cargaJugadores(idPartidoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
@@ -41,13 +42,10 @@ namespace ProyectoBD
                     string query = @"
                 SELECT 
                     tar.IdTarjeta, tar.TipoTarjeta,
-                    jug.IdJugador, 
-                    CONCAT(par.NombreParticipante, ' - ', jug.Numero) AS Jugador, 
+                    jug.IdJugador, p.IdPartido, 
+                    CONCAT(jug.IdJugador, ' ', par.NombreParticipante, ' [', jug.Posicion, ' - ', jug.Numero, ']') AS Jugador,  
+                    CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS DatosPartido,
                     tar.Minuto, 
-                    CONCAT(el.NombreEquipo, ' vs ', ev.NombreEquipo) AS DatosPartido, 
-                    p.IdPartido, 
-                    p.Fecha, 
-                    j.NumeroJornada, 
                     eqAfectado.IdEquipo AS IdEqAfec,
                     eqAfectado.NombreEquipo AS EquipoAfectado
                 FROM Evento.Tarjeta tar
@@ -57,12 +55,12 @@ namespace ProyectoBD
                     ON par.IdParticipante = jug.IdParticipante
                 INNER JOIN Evento.Partido p 
                     ON tar.IdPartido = p.IdPartido
+                INNER JOIN Juego.Lugar l
+                    ON p.IdLugar = l.IdLugar
                 INNER JOIN Club.Equipo el 
                     ON p.IdLocal = el.IdEquipo
                 INNER JOIN Club.Equipo ev 
                     ON p.IdVisitante = ev.IdEquipo
-                INNER JOIN Juego.Jornada j 
-                    ON j.IdJornada = p.IdJornada
                 INNER JOIN Club.DetalleEquipo de 
                     ON de.IdJugador = jug.IdJugador 
                     AND (de.IdEquipo = p.IdLocal OR de.IdEquipo = p.IdVisitante)
@@ -79,16 +77,17 @@ namespace ProyectoBD
 
                     dgvTarjetas.Columns["IdTarjeta"].HeaderText = "ID Tarjeta";
                     dgvTarjetas.Columns["TipoTarjeta"].HeaderText = "Tipo Tarjeta";
-                    dgvTarjetas.Columns["Jugador"].HeaderText = "Jugador (Dorsal)";
-                    dgvTarjetas.Columns["EquipoAfectado"].HeaderText = "Equipo del jugador";
+                    dgvTarjetas.Columns["Jugador"].HeaderText = "Jugador";
+                    //dgvTarjetas.Columns["EquipoAfectado"].HeaderText = "Equipo del jugador";
                     dgvTarjetas.Columns["DatosPartido"].HeaderText = "Partido";
-                    dgvTarjetas.Columns["Fecha"].HeaderText = "Fecha";
+                    //dgvTarjetas.Columns["Fecha"].HeaderText = "Fecha";
                     dgvTarjetas.Columns["Minuto"].HeaderText = "Minuto";
-                    dgvTarjetas.Columns["NumeroJornada"].HeaderText = "Jornada";
+                    //dgvTarjetas.Columns["NumeroJornada"].HeaderText = "Jornada";
 
                     dgvTarjetas.Columns["IdJugador"].Visible = false;
                     dgvTarjetas.Columns["IdPartido"].Visible = false;
                     dgvTarjetas.Columns["IdEqAfec"].Visible = false;
+                    dgvTarjetas.Columns["EquipoAfectado"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -103,6 +102,42 @@ namespace ProyectoBD
             idPartidoFK = -1;
             idPartidoSeleccionado = -1;
             cbJugadores.SelectedIndex = -1;
+            numericMin.Value = 0;
+            cbTarjeta.SelectedIndex = -1;
+        }
+
+        private void cargaDatosPartidoForaneo(int idPartido)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    conexion.Open();
+                    string query = @"SELECT 
+                    CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS Partido
+                    FROM Evento.Partido p
+                    INNER JOIN Club.Equipo el
+                    ON p.IdLocal = el.IdEquipo
+                    INNER JOIN Club.Equipo ev
+                    ON p.IdVisitante = ev.IdEquipo
+                    INNER JOIN Juego.Lugar l
+                    ON p.IdLugar = l.IdLugar
+                    WHERE p.IdPartido = @idPartido;";
+                    SqlCommand comando = new SqlCommand(query, conexion);
+                    comando.Parameters.AddWithValue("@idPartido", idPartido);
+                    object result = comando.ExecuteScalar();
+                    //MessageBox.Show("Nombre de participante" + result.ToString());
+                    if (result != null)
+                    {
+                        txtPartidoDetalle.Text = result.ToString();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar el nombre del participante: " + ex.Message);
+                }
+            }
         }
 
         private void cargaJugadores(int idPartido)
@@ -113,7 +148,7 @@ namespace ProyectoBD
                 {
                     string query = @"
                     SELECT
-                    j.IdJugador, CONCAT(p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, '] - ', e.NombreEquipo) AS Jugador
+                    j.IdJugador, CONCAT(j.IdJugador, ' ', p.NombreParticipante, ' [', j.Posicion, ' - ', j.Numero, '] - ', e.NombreEquipo) AS Jugador
                     FROM Persona.Jugador j
                     INNER JOIN Persona.Participante p
                     ON p.IdParticipante = j.IdParticipante
@@ -160,6 +195,7 @@ namespace ProyectoBD
                     idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
                     cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
                     idJugadorSeleccionado = Convert.ToInt32(fila.Cells["IdJugador"].Value);
+                    cargaDatosPartidoForaneo(Convert.ToInt32(fila.Cells["IdPartido"].Value));
                 }
             }
             catch (Exception ex)

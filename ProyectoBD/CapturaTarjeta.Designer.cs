@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             lblJugador = new Label();
             lblMinuto = new Label();
             lblTipoTarjeta = new Label();
@@ -39,6 +39,8 @@
             btnAgregar = new Button();
             btnModificar = new Button();
             btnEliminar = new Button();
+            label1 = new Label();
+            txtPartidoDetalle = new TextBox();
             ((System.ComponentModel.ISupportInitialize)numericMin).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvTarjetas).BeginInit();
             SuspendLayout();
@@ -46,7 +48,7 @@
             // lblJugador
             // 
             lblJugador.AutoSize = true;
-            lblJugador.Location = new Point(14, 9);
+            lblJugador.Location = new Point(14, 68);
             lblJugador.Name = "lblJugador";
             lblJugador.Size = new Size(65, 20);
             lblJugador.TabIndex = 1;
@@ -55,7 +57,7 @@
             // lblMinuto
             // 
             lblMinuto.AutoSize = true;
-            lblMinuto.Location = new Point(14, 84);
+            lblMinuto.Location = new Point(14, 143);
             lblMinuto.Name = "lblMinuto";
             lblMinuto.Size = new Size(59, 20);
             lblMinuto.TabIndex = 2;
@@ -64,7 +66,7 @@
             // lblTipoTarjeta
             // 
             lblTipoTarjeta.AutoSize = true;
-            lblTipoTarjeta.Location = new Point(184, 84);
+            lblTipoTarjeta.Location = new Point(184, 143);
             lblTipoTarjeta.Name = "lblTipoTarjeta";
             lblTipoTarjeta.Size = new Size(110, 20);
             lblTipoTarjeta.TabIndex = 3;
@@ -74,7 +76,7 @@
             // 
             cbJugadores.DropDownStyle = ComboBoxStyle.DropDownList;
             cbJugadores.FormattingEnabled = true;
-            cbJugadores.Location = new Point(14, 33);
+            cbJugadores.Location = new Point(14, 92);
             cbJugadores.Margin = new Padding(3, 4, 3, 4);
             cbJugadores.Name = "cbJugadores";
             cbJugadores.Size = new Size(307, 28);
@@ -82,7 +84,7 @@
             // 
             // numericMin
             // 
-            numericMin.Location = new Point(14, 108);
+            numericMin.Location = new Point(14, 167);
             numericMin.Margin = new Padding(3, 4, 3, 4);
             numericMin.Name = "numericMin";
             numericMin.Size = new Size(137, 27);
@@ -93,7 +95,7 @@
             cbTarjeta.DropDownStyle = ComboBoxStyle.DropDownList;
             cbTarjeta.FormattingEnabled = true;
             cbTarjeta.Items.AddRange(new object[] { "Amarilla", "Roja" });
-            cbTarjeta.Location = new Point(184, 108);
+            cbTarjeta.Location = new Point(184, 167);
             cbTarjeta.Margin = new Padding(3, 4, 3, 4);
             cbTarjeta.Name = "cbTarjeta";
             cbTarjeta.Size = new Size(137, 28);
@@ -109,14 +111,14 @@
             dgvTarjetas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTarjetas.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvTarjetas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvTarjetas.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvTarjetas.DefaultCellStyle = dataGridViewCellStyle4;
             dgvTarjetas.Location = new Point(14, 308);
             dgvTarjetas.Margin = new Padding(3, 4, 3, 4);
             dgvTarjetas.MultiSelect = false;
@@ -124,7 +126,7 @@
             dgvTarjetas.ReadOnly = true;
             dgvTarjetas.RowHeadersWidth = 51;
             dgvTarjetas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTarjetas.Size = new Size(887, 276);
+            dgvTarjetas.Size = new Size(1222, 276);
             dgvTarjetas.TabIndex = 5;
             dgvTarjetas.CellClick += dgvTarjetas_CellClick;
             // 
@@ -164,11 +166,30 @@
             btnEliminar.UseVisualStyleBackColor = false;
             btnEliminar.Click += btnEliminar_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(14, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 20);
+            label1.TabIndex = 9;
+            label1.Text = "Partido:";
+            // 
+            // txtPartidoDetalle
+            // 
+            txtPartidoDetalle.Location = new Point(14, 38);
+            txtPartidoDetalle.Name = "txtPartidoDetalle";
+            txtPartidoDetalle.ReadOnly = true;
+            txtPartidoDetalle.Size = new Size(580, 27);
+            txtPartidoDetalle.TabIndex = 10;
+            // 
             // CapturaTarjeta
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 600);
+            ClientSize = new Size(1248, 600);
+            Controls.Add(txtPartidoDetalle);
+            Controls.Add(label1);
             Controls.Add(btnEliminar);
             Controls.Add(btnModificar);
             Controls.Add(btnAgregar);
@@ -200,5 +221,7 @@
         private Button btnAgregar;
         private Button btnModificar;
         private Button btnEliminar;
+        private Label label1;
+        private TextBox txtPartidoDetalle;
     }
 }
