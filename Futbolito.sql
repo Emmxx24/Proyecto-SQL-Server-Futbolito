@@ -145,6 +145,27 @@ CREATE TABLE Club.DetalleEquipo
 );
 GO
 
+/*Disparador para la cantidad de jugadores ingresados en un equipo*/
+CREATE OR ALTER TRIGGER Club.TR_DETALLEEQUIPO_CANTIDAD
+ON Club.DetalleEquipo
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE e
+    SET e.CantJugadores = (
+        SELECT COUNT(*) 
+        FROM Club.DetalleEquipo d 
+        WHERE d.IdEquipo = e.IdEquipo
+    )
+    FROM Club.Equipo e
+    WHERE e.IdEquipo IN (
+        SELECT IdEquipo FROM inserted
+        UNION
+        SELECT IdEquipo FROM deleted
+    );
+END;
+
 CREATE TABLE Juego.DetalleTorneo
 (
 	IdTorneo BIGINT NOT NULL,
@@ -156,6 +177,44 @@ CREATE TABLE Juego.DetalleTorneo
 	REFERENCES Juego.Torneo (IdTorneo),
 	CONSTRAINT UQ_TORNEO_EQUIPO UNIQUE (IdTorneo, IdEquipo)
 );
+GO
+
+/*Disparador para validad el genero, edad y equipo de un jugador al registrarse en DetalleEquipo*/
+
+CREATE TRIGGER Club.TR_DETALLEEQUIPO_VALIDAR_JUGADOR
+ON Club.DetalleEquipo
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Juego.DetalleTorneo dt
+            WHERE dt.IdEquipo = i.IdEquipo
+        )
+    )
+    BEGIN
+        RAISERROR('Error: El equipo no está inscrito en ningún torneo.',16,1);
+        RETURN;
+    END
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Club.DetalleEquipo de
+            ON de.IdEquipo = i.IdEquipo
+           AND de.IdJugador = i.IdJugador
+    )
+    BEGIN
+        RAISERROR('Error: El jugador ya está inscrito en ese equipo.',16,1);
+        RETURN;
+    END
+    INSERT INTO Club.DetalleEquipo(IdEquipo, IdJugador)
+    SELECT IdEquipo, IdJugador
+    FROM inserted;
+END;
 GO
 
 CREATE TABLE Evento.Partido
@@ -246,6 +305,7 @@ GO
 CREATE RULE RL_CAPACIDAD AS @CAPACIDAD > 1000;
 GO
 
+/*Regla con restricción de cadena*/
 EXEC sp_bindrule 'RL_CAPACIDAD', 'Juego.Lugar.Capacidad';
 GO
 
