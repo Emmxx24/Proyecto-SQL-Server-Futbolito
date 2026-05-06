@@ -14,8 +14,9 @@ namespace ProyectoBD
         ClaseConexion varConexion;
         int idTarjetaSeleccionada;
         int idPartidoFK;
+        int idTorneoFK;
         int idPartidoSeleccionado;
-        int idJugadorSeleccionado;
+        int idTorneoSeleccionado;
 
         public CapturaTarjeta(int? idPartido = null)
         {
@@ -26,9 +27,44 @@ namespace ProyectoBD
             if (idPartido != null)
             {
                 idPartidoFK = (int)idPartido;
+                idTorneoFK = obtenTorneo(idPartidoFK);
                 cargaDatosPartidoForaneo(idPartidoFK);
-                cargaJugadores(idPartidoFK);
+                cargaJugadores(idPartidoFK, idTorneoFK);
                 this.FormBorderStyle = FormBorderStyle.Sizable;
+                //MessageBox.Show(idTorneoFK.ToString());
+            }
+        }
+
+        private int obtenTorneo(int idPartido)
+        {
+            using (SqlConnection conexion = varConexion.conectar())
+            {
+                try
+                {
+                    conexion.Open();
+                    string query = @"SELECT t.IdTorneo
+                    FROM Evento.Partido p
+                    INNER JOIN Juego.Jornada j ON p.IdJornada = j.IdJornada
+                    INNER JOIN Juego.Torneo t ON j.IdTorneo = t.IdTorneo
+                    WHERE p.IdPartido = @idPartido;";
+                    SqlCommand comando = new SqlCommand(query, conexion);
+                    comando.Parameters.AddWithValue("@idPartido", idPartido);
+                    object result = comando.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el torneo para el partido especificado.");
+                        return -1;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al obtener el torneo: " + ex.Message);
+                    return -1;
+                }
             }
         }
 
@@ -47,7 +83,8 @@ namespace ProyectoBD
                     CONCAT('EL: ', el.NombreEquipo, ' - EV: ', ev.NombreEquipo, ' - ', p.Fecha, ' [', l.Nombre, ']') AS DatosPartido,
                     tar.Minuto, 
                     eqAfectado.IdEquipo AS IdEqAfec,
-                    eqAfectado.NombreEquipo AS EquipoAfectado
+                    eqAfectado.NombreEquipo AS EquipoAfectado,
+                    t.IdTorneo AS IdTorneo
                 FROM Evento.Tarjeta tar
                 INNER JOIN Persona.Jugador jug 
                     ON tar.IdJugador = jug.IdJugador
@@ -66,6 +103,10 @@ namespace ProyectoBD
                     AND (de.IdEquipo = p.IdLocal OR de.IdEquipo = p.IdVisitante)
                 INNER JOIN Club.Equipo eqAfectado
                     ON eqAfectado.IdEquipo = de.IdEquipo 
+                INNER JOIN Juego.Jornada j
+                    ON j.IdJornada = p.IdJornada
+                INNER JOIN Juego.Torneo t
+                    ON t.IdTorneo = j.IdTorneo  
                 ORDER BY tar.IdTarjeta";
 
                     SqlCommand comando = new SqlCommand(query, conexion);
@@ -88,6 +129,7 @@ namespace ProyectoBD
                     dgvTarjetas.Columns["IdPartido"].Visible = false;
                     dgvTarjetas.Columns["IdEqAfec"].Visible = false;
                     dgvTarjetas.Columns["EquipoAfectado"].Visible = false;
+                    dgvTarjetas.Columns["IdTorneo"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -104,6 +146,7 @@ namespace ProyectoBD
             cbJugadores.SelectedIndex = -1;
             numericMin.Value = 0;
             cbTarjeta.SelectedIndex = -1;
+            idTorneoSeleccionado = -1;
         }
 
         private void cargaDatosPartidoForaneo(int idPartido)
@@ -140,7 +183,7 @@ namespace ProyectoBD
             }
         }
 
-        private void cargaJugadores(int idPartido)
+        private void cargaJugadores(int idPartido, int idTorneo)
         {
             using (SqlConnection conexion = varConexion.conectar())
             {
@@ -158,12 +201,16 @@ namespace ProyectoBD
                     ON e.IdEquipo = de.IdEquipo
                     INNER JOIN Evento.Partido pa
                     ON (e.IdEquipo = pa.IdLocal OR e.IdEquipo = pa.IdVisitante) 
-                    WHERE pa.IdPartido = @idPartido;";
+                    INNER JOIN Juego.Jornada jo
+                    ON jo.IdJornada = pa.IdJornada
+                    INNER JOIN Juego.Torneo t
+                    ON t.IdTorneo = jo.IdTorneo
+                    WHERE pa.IdPartido = @idPartido
+                    AND t.Genero = p.Genero;";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@idPartido", idPartido);
-                        SqlDataAdapter adaptador = new SqlDataAdapter(comando);
+                        comando.Parameters.AddWithValue("@idPartido", idPartido);                        SqlDataAdapter adaptador = new SqlDataAdapter(comando);
                         DataTable tablaJugadores = new DataTable();
                         adaptador.Fill(tablaJugadores);
                         cbJugadores.DisplayMember = "Jugador";
@@ -187,15 +234,16 @@ namespace ProyectoBD
                 {
                     DataGridViewRow fila = dgvTarjetas.Rows[e.RowIndex];
                     idTarjetaSeleccionada = Convert.ToInt32(fila.Cells["IdTarjeta"].Value);
-
-                    cargaJugadores(Convert.ToInt32(fila.Cells["IdPartido"].Value));
-
+                    idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
+                    idTorneoSeleccionado = Convert.ToInt32(fila.Cells["IdTorneo"].Value);
                     numericMin.Value = Convert.ToInt32(fila.Cells["Minuto"].Value);
                     cbTarjeta.Text = fila.Cells["TipoTarjeta"].Value.ToString();
-                    idPartidoSeleccionado = Convert.ToInt32(fila.Cells["IdPartido"].Value);
+                    
                     cbJugadores.SelectedValue = Convert.ToInt32(fila.Cells["IdJugador"].Value);
-                    idJugadorSeleccionado = Convert.ToInt32(fila.Cells["IdJugador"].Value);
+                    //idJugadorSeleccionado = Convert.ToInt32(fila.Cells["IdJugador"].Value);
+                    idTorneoSeleccionado = Convert.ToInt32(fila.Cells["IdTorneo"].Value);
                     cargaDatosPartidoForaneo(Convert.ToInt32(fila.Cells["IdPartido"].Value));
+                    cargaJugadores(idPartidoSeleccionado, idTorneoSeleccionado);
                 }
             }
             catch (Exception ex)

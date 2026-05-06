@@ -314,11 +314,24 @@ namespace ProyectoBD
             }
         }
 
-        //Función para habilitar/deshabilitar los botones de registrar como árbitro y jugador
+
         private void btnRegistrarArbitro_Click(object sender, EventArgs e)
         {
             if (idParticipanteSeleccionado != -1)
             {
+                int esJugador = verificaRegistro(idParticipanteSeleccionado, 1);
+                int esArbitro = verificaRegistro(idParticipanteSeleccionado, 2);
+
+                if (esArbitro > 0)
+                {
+                    MessageBox.Show("Este participante ya está registrado como Árbitro.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (esJugador > 0)
+                {
+                    MessageBox.Show("Este participante ya está registrado como Jugador.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 Form formulario = new CapturaArbitro(idParticipanteSeleccionado);
                 formulario.ShowDialog();
                 limpiaElementos();
@@ -330,6 +343,7 @@ namespace ProyectoBD
             }
         }
 
+        //Función para habilitar/deshabilitar los botones de registrar como árbitro y jugador
         private void actualizaBotones(int op)
         {
             if (op == 1)
